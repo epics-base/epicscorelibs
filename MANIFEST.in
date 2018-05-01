@@ -1,0 +1,25 @@
+include LICENSE
+include configure/CONFIG_BASE_VERSION
+include configure/CONFIG_ENV
+include configure/CONFIG_SITE_ENV
+
+include setup.py.d/*
+
+recursive-include modules/libcom/src *.h *.c *.cpp
+prune modules/libcom/src/as
+prune modules/libcom/src/osi/os/RTEMS
+prune modules/libcom/src/osi/os/vxWorks
+prune modules/libcom/src/O.*
+
+include modules/ca/src/client/*.h
+include modules/ca/src/client/*.c
+include modules/ca/src/client/*.cpp
+prune modules/ca/src/O.*
+
+include modules/pvData/configure/CONFIG_PVDATA_VERSION
+recursive-include modules/pvData/src *.h *.h@ *.cpp
+prune modules/pvData/src/O.*
+
+include modules/pvAccess/configure/CONFIG_PVACCESS_VERSION
+recursive-include modules/pvAccess/src *.h *.h@ *.cpp
+prune modules/pvAccess/src/O.*

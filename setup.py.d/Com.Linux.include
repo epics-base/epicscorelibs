@@ -1,0 +1,4 @@
+osi/os/Linux
+osi/os/posix
+osi/os/default
+osi/compiler/gcc

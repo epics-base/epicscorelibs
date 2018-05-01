@@ -1,0 +1,8 @@
+client/cadef.h
+client/caerr.h
+client/caeventmask.h
+client/caProto.h
+client/db_access.h
+client/addrList.h
+client/cacIO.h
+client/caDiagnostics.h
