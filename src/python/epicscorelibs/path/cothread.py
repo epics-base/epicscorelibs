@@ -18,5 +18,5 @@ if 'cothread.load_ca' in sys.modules or 'cothread.catools' in sys.modules:
     warnings.warn("epicscorelibs.path.cothread must be imported before cothread.catools to have effect")
 
 # don't override if already set
-if 'CATOOLS_LIBCA_PATH' not is os.environ:
+if 'CATOOLS_LIBCA_PATH' not in os.environ:
     os.environ['CATOOLS_LIBCA_PATH'] = get_lib('ca')
