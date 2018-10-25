@@ -37,7 +37,8 @@ def docker(args):
 
 def prepare(args):
     call_py(['-m', 'pip', 'install', '-U', 'pip'])
-    call_py(['-m', 'pip', 'install', '-U', 'wheel', 'setuptools_dso', 'nose', 'twine'])
+    call_py(['-m', 'pip', 'install', '-U', 'wheel', 'setuptools', 'nose', 'twine'])
+    call_py(['-m', 'pip', 'install', '-U', '--pre', 'setuptools-dso'])
 
 def build(args):
     tag = args.pop(0)
