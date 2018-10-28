@@ -4,6 +4,8 @@ include configure/CONFIG_ENV
 include configure/CONFIG_SITE_ENV
 include pyproject.toml
 
+include src/python/epicscorelibs/*.pxd
+
 include setup.py.d/*
 
 recursive-include modules/libcom/src *.h *.c *.cpp

@@ -395,6 +395,7 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
 
     packages=['epicscorelibs', 'epicscorelibs.path', 'epicscorelibs.test'],
     package_dir={'':os.path.join('src','python')},
+    package_data={'':['*.pxd']},
     x_dsos = modules,
     x_headers = headers,
     x_expand = [
