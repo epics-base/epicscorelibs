@@ -1,0 +1,15 @@
+Maintainer notes
+
+setup.py.d/*
+
+  <library>.<OS_CLASS>.<Part>
+
+  OS_CLASS
+    all - Common to all targets
+    Linux, Darwin, WIN32
+
+  Part
+    header - Public header files to be distributed
+    include - module sub-directories containing internal headers
+    source - list of source files
+
