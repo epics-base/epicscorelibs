@@ -13,3 +13,29 @@ setup.py.d/*
     include - module sub-directories containing internal headers
     source - list of source files
 
+Generated files
+
+  rather than build/run antelope (modified yacc) and e_flex executables
+  as part of our build process.  Instead, do a regular (Makefile) build
+  and copy the generated sources into modules/*/generated/
+
+  find . -name '*.y' -or -name '*.l'
+
+    ./modules/database/src/ioc/dbStatic/dbYacc.y
+    ./modules/database/src/ioc/dbStatic/dbLex.l
+    ./modules/database/src/ioc/dbtemplate/dbLoadTemplate.y
+    ./modules/database/src/ioc/dbtemplate/dbLoadTemplate_lex.l
+    ./modules/libcom/src/flex/parse.y
+    ./modules/libcom/src/as/asLib_lex.l
+    ./modules/libcom/src/as/asLib.y
+
+  install -d modules/libcom/src/generated
+  install -d modules/database/src/ioc/generated
+    
+  cp modules/libcom/src/O.linux-x86_64/asLib_lex.c \
+     modules/libcom/src/O.linux-x86_64/asLib.c \
+     modules/libcom/src/generated/
+
+  cp modules/database/src/ioc/O.linux-x86_64/dbYacc.c \
+     modules/database/src/ioc/O.linux-x86_64/dbLex.c \
+     modules/database/src/ioc/generated/
