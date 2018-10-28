@@ -60,7 +60,7 @@ def main(args):
                 print(repr(line))
                 if line=='Root-Is-Purelib: true\n':
                     line='Root-Is-Purelib: false\n'
-                elif line.startswith('Tag: '):
+                elif args.tag is not None and line.startswith('Tag: '):
                     line = 'Tag: %s\n'%args.tag
                 wheelinfo.append(line.strip())
 

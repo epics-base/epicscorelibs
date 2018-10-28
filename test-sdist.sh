@@ -10,6 +10,7 @@ TDIR=`mktemp -d`
 trap 'rm -rf $TDIR' INT TERM QUIT EXIT
 
 install -d "$TDIR"/dist
+install -d dist
 
 [ "$VENV" ] || VENV="$TDIR"/env
 [ -d "$VENV" ] && rm -rf "$VENV"
@@ -26,9 +27,14 @@ else
 fi
 
 $PYTHON setup.py sdist -d "$TDIR"/dist
-ls "$TDIR"/dist/*
+ls "$TDIR"/dist/*.gz
+cp "$TDIR"/dist/*.gz dist/
 
-$PYTHON -m pip install -v "$TDIR"/dist/*
+#$PYTHON -m pip install -v "$TDIR"/dist/*
+$PYTHON -m pip wheel -w "$TDIR"/dist -v "$TDIR"/dist/*.gz
+cp "$TDIR"/dist/*.whl dist/
+
+$PYTHON -m pip install "$TDIR"/dist/*.whl
 
 $PYTHON -m nose epicscorelibs
 
