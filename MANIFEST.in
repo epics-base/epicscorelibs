@@ -7,7 +7,6 @@ include pyproject.toml
 include setup.py.d/*
 
 recursive-include modules/libcom/src *.h *.c *.cpp
-prune modules/libcom/src/as
 prune modules/libcom/src/osi/os/RTEMS
 prune modules/libcom/src/osi/os/vxWorks
 prune modules/libcom/src/O.*
@@ -16,6 +15,12 @@ include modules/ca/src/client/*.h
 include modules/ca/src/client/*.c
 include modules/ca/src/client/*.cpp
 prune modules/ca/src/O.*
+
+recursive-include modules/database/src/ioc *.h *.c *.cpp
+prune modules/database/src/ioc/O.*
+
+recursive-include modules/database/src/std *.h *.c *.cpp
+prune modules/database/src/std/O.*
 
 include modules/pvData/configure/CONFIG_PVDATA_VERSION
 recursive-include modules/pvData/src *.h *.h@ *.cpp

@@ -98,6 +98,8 @@ class GenVersionError(Command):
 #define EPICS_DEV_SNAPSHOT   "%(EPICS_DEV_SNAPSHOT)s"
 #define EPICS_SITE_VERSION   "%(EPICS_SITE_VERSION)s"
 
+#define EPICS_VERSION_SHORT "%(EPICS_VERSION)s.%(EPICS_REVISION)s.%(EPICS_MODIFICATION)s.%(EPICS_PATCH_LEVEL)s"
+#define EPICS_VERSION_FULL "%(EPICS_VERSION)s.%(EPICS_REVISION)s.%(EPICS_MODIFICATION)s.%(EPICS_PATCH_LEVEL)s%(EPICS_DEV_SNAPSHOT)s"
 #define EPICS_VERSION_STRING "EPICS %(EPICS_VERSION)s.%(EPICS_REVISION)s.%(EPICS_MODIFICATION)s.%(EPICS_PATCH_LEVEL)s%(EPICS_DEV_SNAPSHOT)s"
 #define epicsReleaseVersion  "EPICS %(EPICS_VERSION)s.%(EPICS_REVISION)s.%(EPICS_MODIFICATION)s.%(EPICS_PATCH_LEVEL)s%(EPICS_DEV_SNAPSHOT)s"
 
@@ -110,6 +112,7 @@ class GenVersionError(Command):
 """%defs)
 
         defs = {}
+        defs['EPICS_BUILD_TARGET_ARCH'] = get_config_var('EPICS_HOST_ARCH')
         readmake(defs, 'configure', 'CONFIG_ENV')
         readmake(defs, 'configure', 'CONFIG_SITE_ENV')
 
@@ -286,12 +289,14 @@ def readlists(name, prefix):
 modules = []
 headers = ['epicsVersion.h']
 
+local_defs = [('USE_TYPED_RSET', None)]
+
 def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
     #print("Include EPICS module %s in %s"%(name, srcdir))
     src, inc, hdr = readlists(name, srcdir)
     if len(src)==0:
         raise RuntimeError("module %s has no source"%name)
-    defs = get_config_var('CPPFLAGS') + defs
+    defs = get_config_var('CPPFLAGS') + local_defs + defs
 
     MOD = DSO(
         name='epicscorelibs.lib.'+name,
@@ -300,6 +305,7 @@ def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
         define_macros = defs,
         dsos = ['epicscorelibs.lib.'+D for D in deps],
         libraries = get_config_var('LDADD'),
+        extra_link_args = get_config_var('LDFLAGS'),
         lang_compile_args = {
             'c':get_config_var('CFLAGS'),
             'c++':get_config_var('CXXFLAGS'),
@@ -316,6 +322,12 @@ build_module('Com', 'modules/libcom/src',
 )
 build_module('ca', 'modules/ca/src',
              deps=['Com'],
+)
+build_module('dbCore', 'modules/database/src/ioc',
+             deps=['ca','Com'],
+)
+build_module('dbRecStd', 'modules/database/src/std',
+             deps=['dbCore', 'ca','Com'],
 )
 build_module('pvData', 'modules/pvData',
              deps=['ca', 'Com'],

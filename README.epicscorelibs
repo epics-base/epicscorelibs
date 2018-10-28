@@ -15,9 +15,10 @@ setup.py.d/*
 
 Generated files
 
-  rather than build/run antelope (modified yacc) and e_flex executables
-  as part of our build process.  Instead, do a regular (Makefile) build
-  and copy the generated sources into modules/*/generated/
+  rather than build/run antelope (modified yacc) and e_flex executables,
+  or replicate all of the perl scripts as part of our build process.
+  Instead, do a regular (Makefile) build and copy the generated
+  sources into modules/*/generated/
 
   find . -name '*.y' -or -name '*.l'
 
@@ -31,11 +32,19 @@ Generated files
 
   install -d modules/libcom/src/generated
   install -d modules/database/src/ioc/generated
-    
-  cp modules/libcom/src/O.linux-x86_64/asLib_lex.c \
-     modules/libcom/src/O.linux-x86_64/asLib.c \
+  install -d modules/database/src/std/generated
+
+  cp modules/libcom/src/O.*/asLib_lex.c \
+     modules/libcom/src/O.*/asLib.c \
      modules/libcom/src/generated/
 
-  cp modules/database/src/ioc/O.linux-x86_64/dbYacc.c \
-     modules/database/src/ioc/O.linux-x86_64/dbLex.c \
+  cp modules/database/src/ioc/O.*/dbYacc.c \
+     modules/database/src/ioc/O.*/dbLex.c \
+     modules/database/src/ioc/O.*/dbLoadTemplate_lex.c \
+     modules/database/src/ioc/O.*/dbLoadTemplate.c \
+     modules/database/src/ioc/O.Common/dbCommon.h \
+     modules/database/src/ioc/O.Common/menu*.h \
      modules/database/src/ioc/generated/
+
+  cp modules/database/src/std/O.Common/*.h \
+     modules/database/src/std/generated/

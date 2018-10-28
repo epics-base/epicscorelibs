@@ -1,5 +1,5 @@
-#as/asLib.h
-#as/asTrapWrite.h
+as/asLib.h
+as/asTrapWrite.h
 bucketLib/bucketLib.h
 calc/postfix.h
 cppStd/epicsAlgorithm.h
@@ -25,7 +25,7 @@ fdmgr/fdmgr.h
 flex/flexdef.h
 freeList/freeList.h
 gpHash/gpHash.h
-#iocsh/initHooks.h
+iocsh/initHooks.h
 iocsh/iocsh.h
 iocsh/libComRegister.h
 iocsh/registry.h

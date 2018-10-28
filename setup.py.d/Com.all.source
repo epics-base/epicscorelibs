@@ -1,3 +1,6 @@
+as/asTrapWrite.c
+generated/asLib.c
+
 bucketLib/bucketLib.c
 calc/calcPerform.c
 calc/postfix.c
@@ -15,7 +18,7 @@ fdmgr/fdmgr.cpp
 
 freeList/freeListLib.c
 gpHash/gpHashLib.c
-#iocsh/initHooks.c
+iocsh/initHooks.c
 iocsh/iocsh.cpp
 iocsh/libComRegister.c
 iocsh/registry.c

@@ -1,38 +1,35 @@
 #!/bin/sh
 set -e -x
 
-PYTHON="$1"
+VENV="$1"
 [ "$PYTHON" ] || PYTHON=python
 
 [ -f setup.py ] || exit 1
 
-install -d dist
-cd dist
+TDIR=`mktemp -d`
+trap 'rm -rf $TDIR' INT TERM QUIT EXIT
 
-rm -rf testenv
+install -d "$TDIR"/dist
 
-virtualenv testenv
+[ "$VENV" ] || VENV="$TDIR"/env
+[ -d "$VENV" ] && rm -rf "$VENV"
 
-. testenv/bin/activate
+$PYTHON -m virtualenv --system-site-packages "$VENV"
 
-pip install nose
-pip install ~/projects/setuptools-dso/dist/setuptools_dso-0.1a9-py2.py3-none-any.whl
+. "$VENV"/bin/activate
 
-cd ..
-
-python setup.py sdist
-
-cd dist
-
-if ! [ `ls -1 epicscorelibs-*.tar.gz|wc -l` = 1 ]
+if [ -d "$HOME"/projects/setuptools-dso ]
 then
-  ls epicscorelibs-*.tar.gz
-  echo "Too many source tars" >&2
-  exit 1
+    $PYTHON -m pip install file://"$HOME"/projects/setuptools-dso
+else
+    $PYTHON -m pip install setuptools-dso
 fi
 
-pip install -v epicscorelibs-*.tar.gz
+$PYTHON setup.py sdist -d "$TDIR"/dist
+ls "$TDIR"/dist/*
 
-python -m nose epicscorelibs
+$PYTHON -m pip install -v "$TDIR"/dist/*
+
+$PYTHON -m nose epicscorelibs
 
 echo "Success"

@@ -98,7 +98,8 @@ def _makebuild():
 
     if OS_CLASS=='Linux':
         build['CPPFLAGS'] += [('_GNU_SOURCE', None), ('_DEFAULT_SOURCE', None), ('linux', None)]
-        build['LDADD'] += ['rt']
+        build['LDFLAGS'] += ['-Wl,--no-undefined', '-Wl,--no-allow-shlib-undefined']
+        build['LDADD'] += ['m', 'rt', 'dl']
 
     if OS_CLASS=='Darwin':
         build['CPPFLAGS'] += [('darwin', None)]
