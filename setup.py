@@ -384,8 +384,8 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     ],
     keywords='epics scada',
     project_urls = {
-        'Source': 'https://github.com/mdavidsaver/epics-base/tree/pipi',
-        'Tracker': 'https://github.com/mdavidsaver/epics-base/issues',
+        'Source': 'https://github.com/mdavidsaver/epicscorelibs',
+        'Tracker': 'https://github.com/mdavidsaver/epicscorelibs/issues',
         'Upstream': 'https://epics.anl.gov/',
     },
     python_requires='>=2.7',
