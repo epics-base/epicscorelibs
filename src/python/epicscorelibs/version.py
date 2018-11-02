@@ -22,7 +22,7 @@ version = _me.version # as a string
 #version_info = parse_version(version)
 #base_version = version_info.base_version # w/o pre-release suffix
 
-base_version, = re.match(r'([\d.]+)[a-z]+\d+', version).groups()
+base_version, = re.match(r'([\d.]+)(?:[a-z]+\d+)?', version).groups()
 
 def abi_requires():
     """Return a version requirement string which identifies
