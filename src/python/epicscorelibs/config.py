@@ -52,7 +52,7 @@ def _makeconf():
     HA = None
     if osname=='Linux':
         if machine=='x86_64':
-            HA = 'linux-x64_64'
+            HA = 'linux-x86_64'
         elif machine=='ppc':
             HA = 'linux-ppc'
         elif machine=='arm':
