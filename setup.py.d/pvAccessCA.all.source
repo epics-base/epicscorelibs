@@ -4,4 +4,4 @@ src/ca/dbdToPv.cpp
 src/ca/getDoneThread.cpp
 src/ca/monitorEventThread.cpp
 src/ca/putDoneThread.cpp
-
+src/ca/channelConnectThread.cpp

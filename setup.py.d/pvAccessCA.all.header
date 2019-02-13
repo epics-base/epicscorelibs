@@ -3,3 +3,4 @@ src/ca/dbdToPv.h
 src/ca/getDoneThread.h
 src/ca/monitorEventThread.h
 src/ca/putDoneThread.h
+src/ca/channelConnectThread.h
