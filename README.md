@@ -1,6 +1,9 @@
 epicscorelibs
 =============
 
+  <img src="https://travis-ci.org/mdavidsaver/epicscorelibs.svg?branch=master">
+  <img src="https://ci.appveyor.com/api/projects/status/github/mdavidsaver/epicscorelibs?svg=true">
+
 Not an end user library.
 
 This repository contains the source used to build

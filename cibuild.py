@@ -65,7 +65,7 @@ def build(args):
     call_py(['-m', 'change_tag', '--rm', '--tag', tag, results[0]])
 
 def upload(args):
-    if 'APPVEYOR_PULL_REQUEST_NUMBER' in os.environ:
+    if 'APPVEYOR_PULL_REQUEST_NUMBER' in os.environ or 'TWINE_USERNAME' not in os.environ:
         print("APPVEYOR is PR, skip upload attempt")
         return
 
