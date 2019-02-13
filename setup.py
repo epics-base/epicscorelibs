@@ -25,7 +25,7 @@ from epicscorelibs.config import get_config_var
 
 # our choice of version suffix is constrained by PEP 440
 # so we always append .99.ABI.SRC to most recent upstream version
-package_version = '7.0.1.99.16.3'
+package_version = '7.0.2.99.0.0'
 
 assert package_version.split('.')[-3]=='99', package_version
 
