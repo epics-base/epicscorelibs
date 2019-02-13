@@ -178,9 +178,11 @@ void epicsShareAPI iocshRegisterVariable (const iocshVarDef *piocshVarDef)
         for (l = NULL, p = iocshVariableHead ; p != NULL ; l = p, p = p->next) {
             i = strcmp (piocshVarDef->name, p->pVarDef->name);
             if (i == 0) {
-                errlogPrintf("Warning: iocshRegisterVariable redefining %s.\n",
-                    piocshVarDef->name);
-                p->pVarDef = piocshVarDef;
+                if (p->pVarDef != piocshVarDef) {
+                    errlogPrintf("Warning: iocshRegisterVariable redefining %s.\n",
+                        piocshVarDef->name);
+                    p->pVarDef = piocshVarDef;
+                }
                 found = 1;
                 break;
             }
@@ -599,12 +601,12 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
     macPushScope(handle);
     macInstallMacros(handle, defines);
     
+    wasOkToBlock = epicsThreadIsOkToBlock();
+    epicsThreadSetOkToBlock(1);
+
     /*
      * Read commands till EOF or exit
      */
-    argc = 0;
-    wasOkToBlock = epicsThreadIsOkToBlock();
-    epicsThreadSetOkToBlock(1);
     for (;;) {
         /*
          * Read a line
@@ -679,15 +681,15 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
         redirect = NULL;
         for (;;) {
             if (argc >= argvCapacity) {
-                char **av;
-                argvCapacity += 50;
-                av = (char **)realloc (argv, argvCapacity * sizeof *argv);
-                if (av == NULL) {
+                int newCapacity = argvCapacity + 20;
+                char **newv = (char **)realloc (argv, newCapacity * sizeof *argv);
+                if (newv == NULL) {
                     fprintf (epicsGetStderr(), "Out of memory!\n");
                     argc = -1;
                     break;
                 }
-                argv = av;
+                argv = newv;
+                argvCapacity = newCapacity;
             }
             c = line[icin++];
             if (c == '\0')
@@ -836,16 +838,14 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
                         break;
                     }
                     if (iarg >= argBufCapacity) {
-                        void *np;
-
-                        argBufCapacity += 20;
-                        np = realloc (argBuf, argBufCapacity * sizeof *argBuf);
-                        if (np == NULL) {
+                        int newCapacity = argBufCapacity + 20;
+                        void *newBuf = realloc(argBuf, newCapacity * sizeof *argBuf);
+                        if (newBuf == NULL) {
                             fprintf (epicsGetStderr(), "Out of memory!\n");
-                            argBufCapacity -= 20;
                             break;
                         }
-                        argBuf = (iocshArgBuf *)np;
+                        argBuf = (iocshArgBuf *) newBuf;
+                        argBufCapacity = newCapacity;
                     }
                     if (piocshFuncDef->arg[iarg]->type == iocshArgArgv) {
                         argBuf[iarg].aval.ac = argc-iarg;
@@ -890,7 +890,7 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
     errlogFlush();
     if (readlineContext)
         epicsReadlineEnd(readlineContext);
-    epicsThreadSetOkToBlock( wasOkToBlock);
+    epicsThreadSetOkToBlock(wasOkToBlock);
     return 0;
 }
 
