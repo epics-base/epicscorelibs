@@ -288,4 +288,15 @@ TESTPROD_HOST += cvtFastPerform
 cvtFastPerform_SRCS += cvtFastPerform.cpp
 testHarness_SRCS += cvtFastPerform.cpp
 
+ifeq ($(OS_CLASS),Linux)
+ifeq ($(USE_POSIX_THREAD_PRIORITY_SCHEDULING),YES)
+TESTPROD_HOST += nonEpicsThreadPriorityTest
+nonEpicsThreadPriorityTest_SRCS += nonEpicsThreadPriorityTest.cpp
+nonEpicsThreadPriorityTest_SYS_LIBS += $(POSIX_LDLIBS:-l%=%)
+testHarness_SRCS += nonEpicsThreadPriorityTest.cpp
+epicsRunLibComTests_CFLAGS += -DHAVE_PTHREAD_PRIORITY_SCHEDULING
+TESTS += nonEpicsThreadPriorityTest
+endif
+endif
+
 include $(TOP)/configure/RULES

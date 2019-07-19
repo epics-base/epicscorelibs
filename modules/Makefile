@@ -5,6 +5,7 @@
 
 TOP = ..
 include $(TOP)/configure/CONFIG
+include CONFIG_SITE.local
 
 # Submodules for bundle build
 SUBMODULES += libcom
@@ -39,20 +40,4 @@ example_DEPEND_DIRS = pva2pva pvaClient
 # Allow sites to add extra submodules
 -include Makefile.local
 
-# Add only checked-out submodules to DIRS
-DIRS += $(subst /Makefile,,$(wildcard $(addsuffix /Makefile, $(SUBMODULES))))
-
-include $(TOP)/configure/RULES_DIRS
-
-INSTALL_LOCATION_ABS := $(abspath $(INSTALL_LOCATION))
-RELEASE_LOCAL := RELEASE.$(EPICS_HOST_ARCH).local
-
-# Ensure that RELEASE.<host>.local exists before doing anything else
-all host $(DIRS) $(ARCHS) $(ACTIONS) $(dirActionTargets) $(dirArchTargets) \
-    $(dirActionArchTargets) $(actionArchTargets): | $(RELEASE_LOCAL)
-
-$(RELEASE_LOCAL):
-	$(ECHO) Creating $@, EPICS_BASE = $(INSTALL_LOCATION_ABS)
-	@echo EPICS_BASE = $(INSTALL_LOCATION_ABS)> $@
-realclean:
-	$(RM) $(wildcard RELEASE.*.local)
+include $(TOP)/configure/RULES_MODULES

@@ -86,10 +86,11 @@ $(DIRS) $(dirActionTargets) $(dirArchTargets) $(dirActionArchTargets) :
 $(ARCHS) $(ACTIONS) $(actionArchTargets) :%: \
     $(foreach dir, $(DIRS), $(dir)$(DIVIDER)%)
 
-.PHONY : $(DIRS) all host rebuild
-.PHONY : $(ARCHS) $(ACTIONS)
-.PHONY : $(dirActionTargets) $(dirArchTargets)
-.PHONY : $(dirActionArchTargets)
-.PHONY : $(actionArchTargets)
+
+.PHONY: $(DIRS) all host rebuild
+.PHONY: $(ARCHS) $(ACTIONS)
+.PHONY: $(dirActionTargets) $(dirArchTargets)
+.PHONY: $(dirActionArchTargets)
+.PHONY: $(actionArchTargets)
 
 include $(CONFIG)/RULES_COMMON
