@@ -113,7 +113,7 @@ def _makebuild():
     if OS_CLASS=='WIN32':
         build['CPPFLAGS'] += [('EPICS_BUILD_DLL', None), ('EPICS_CALL_DLL', None), ('NOMINMAX', None)]
         build['CXXFLAGS'] += ['-EHsc']
-        build['LDADD'] += ['ws2_32', 'advapi32', 'user32']
+        build['LDADD'] += ['netapi32', 'ws2_32', 'advapi32', 'user32']
 
     return build
 
