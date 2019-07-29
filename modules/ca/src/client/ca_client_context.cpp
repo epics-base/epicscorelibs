@@ -45,20 +45,12 @@ static epicsThreadOnceId cacOnce = EPICS_THREAD_ONCE_INIT;
 
 const unsigned ca_client_context :: flushBlockThreshold = 0x58000;
 
-extern "C" void cacExitHandler ( void *)
-{
-    epicsThreadPrivateDelete ( caClientCallbackThreadId );
-    caClientCallbackThreadId = 0;
-    delete ca_client_context::pDefaultServiceInstallMutex;
-}
-
 // runs once only for each process
 extern "C" void cacOnceFunc ( void * )
 {
     caClientCallbackThreadId = epicsThreadPrivateCreate ();
     assert ( caClientCallbackThreadId );
     ca_client_context::pDefaultServiceInstallMutex = newEpicsMutex;
-    epicsAtExit ( cacExitHandler,0 );
 }
 
 extern epicsThreadPrivateId caClientContextId;
@@ -67,6 +59,8 @@ cacService * ca_client_context::pDefaultService = 0;
 epicsMutex * ca_client_context::pDefaultServiceInstallMutex;
 
 ca_client_context::ca_client_context ( bool enablePreemptiveCallback ) :
+    mutex(__FILE__, __LINE__),
+    cbMutex(__FILE__, __LINE__),
     createdByThread ( epicsThreadGetIdSelf () ),
     ca_exception_func ( 0 ), ca_exception_arg ( 0 ),
     pVPrintfFunc ( errlogVprintf ), fdRegFunc ( 0 ), fdRegArg ( 0 ),

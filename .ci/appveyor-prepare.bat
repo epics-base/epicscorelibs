@@ -55,16 +55,9 @@ if "%TOOLCHAIN%"=="mingw" (
     ) || (
         echo [INFO] EPICS set up for optimized build
     )
-    if "%OS%"=="64BIT" (
-        echo [INFO] Installing MinGW 64bit
-        cinst mingw || cinst mingw
-    ) else (
-        echo [INFO] Installing MinGW 32bit
-        cinst mingw --x86 || cinst mingw --x86
-    )
 )
 
-echo [INFO] Installing Make 4.1
-curl -fsS --retry 3 -o C:\tools\make-4.1.zip https://epics.anl.gov/download/tools/make-4.1-win64.zip
+echo [INFO] Installing Make 4.2.1 from ANL web site
+curl -fsS --retry 3 -o C:\tools\make-4.2.1.zip https://epics.anl.gov/download/tools/make-4.2.1-win64.zip
 cd \tools
-"C:\Program Files\7-Zip\7z" e make-4.1.zip
+"C:\Program Files\7-Zip\7z" e make-4.2.1.zip

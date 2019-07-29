@@ -108,11 +108,11 @@ inline double delayVerify::delay () const
 
 double delayVerify::checkError () const
 {
-    const double messageThresh = 2.0; // percent 
+    const double messageThresh = 5.0; // percent
     double actualDelay =  this->expireStamp - this->beginStamp;
     double measuredError = actualDelay - this->expectedDelay;
     double percentError = 100.0 * fabs ( measuredError ) / this->expectedDelay;
-    if ( ! testOk1 ( percentError < messageThresh ) ) {
+    if ( ! testOk ( percentError < messageThresh, "%f < %f", percentError, messageThresh ) ) {
         testDiag ( "delay = %f s, error = %f s (%.1f %%)", 
             this->expectedDelay, measuredError, percentError );
     }
