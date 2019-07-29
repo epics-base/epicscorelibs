@@ -6,6 +6,7 @@ So hey, why not just script in python...
 from __future__ import print_function
 
 import sys, os, platform
+import re
 import shutil
 import subprocess as SP
 from glob import glob
@@ -20,6 +21,12 @@ from glob import glob
 #  cp35-none-win32
 #  cp34-none-win_amd64
 #  cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64
+
+def is_pre():
+    with open('setup.py', 'r') as F:
+        ver = re.match(r".*package_version\s*=\s*'([^']*)'.*", F.read(), flags=re.DOTALL).group(1)
+
+    return ver.find('a')!=-1
 
 def call_py(args, **kws):
     print('EXEC', sys.executable, args, kws)
@@ -38,7 +45,11 @@ def docker(args):
 def prepare(args):
     call_py(['-m', 'pip', 'install', '-U', 'pip'])
     call_py(['-m', 'pip', 'install', '-U', 'wheel', 'setuptools', 'nose', 'twine'])
-    call_py(['-m', 'pip', 'install', '-U', '--pre', 'setuptools-dso'])
+    # our pre-release builds may use pre-release deps
+    if is_pre():
+        call_py(['-m', 'pip', 'install', '-U', '--pre', 'setuptools-dso'])
+    else:
+        call_py(['-m', 'pip', 'install', '-U', 'setuptools-dso'])
 
 def build(args):
     tag = args.pop(0)
