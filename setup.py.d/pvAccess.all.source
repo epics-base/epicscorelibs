@@ -31,6 +31,7 @@ src/utils/requester.cpp
 src/utils/logger.cpp
 src/utils/configuration.cpp
 src/utils/introspectionRegistry.cpp
+src/utils/getgroups.cpp
 src/pva/pvaVersion.cpp
 src/pva/clientFactory.cpp
 src/factory/ChannelAccessFactory.cpp

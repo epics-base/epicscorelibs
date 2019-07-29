@@ -39,8 +39,6 @@ src/misc/pv/sharedVector.h
 src/misc/pv/sharedPtr.h
 src/misc/pv/epicsException.h
 src/misc/pv/event.h
-src/misc/pv/localStaticLock.h
 src/factory/pv/factory.h
 src/json/pv/json.h
 src/copy/pv/createRequest.h
-src/copy/pv/pvCopy.h

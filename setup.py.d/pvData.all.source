@@ -9,7 +9,6 @@ src/property/alarm.cpp
 src/property/pvEnumerated.cpp
 src/property/pvAlarm.cpp
 src/misc/anyscalar.cpp
-src/misc/localStaticLock.cpp
 src/misc/timer.cpp
 src/misc/byteBuffer.cpp
 src/misc/event.cpp
@@ -45,5 +44,4 @@ src/json/parseinto.cpp
 src/json/parsehelper.cpp
 src/copy/createRequest.cpp
 src/copy/requestmapper.cpp
-src/copy/pvCopy.cpp
 src/misc/thread.cpp

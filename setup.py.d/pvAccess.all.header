@@ -14,7 +14,6 @@ src/utils/pv/requester.h
 src/utils/pv/destroyable.h
 src/utils/pv/introspectionRegistry.h
 src/utils/pv/wildcard.h
-src/utils/pv/namedLockPattern.h
 src/utils/pv/fairQueue.h
 src/utils/pv/configuration.h
 src/utils/pv/likely.h
