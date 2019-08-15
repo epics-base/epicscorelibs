@@ -12,12 +12,6 @@
 #include "postfix.h"
 
 typedef enum {
-    calcoutDOPT_Use_VAL             /* Use CALC */,
-    calcoutDOPT_Use_OVAL            /* Use OCAL */
-} calcoutDOPT;
-#define calcoutDOPT_NUM_CHOICES 2
-
-typedef enum {
     calcoutINAV_EXT_NC              /* Ext PV NC */,
     calcoutINAV_EXT                 /* Ext PV OK */,
     calcoutINAV_LOC                 /* Local PV */,
@@ -34,6 +28,12 @@ typedef enum {
     calcoutOOPT_Transition_To_Non_zero /* Transition To Non-zero */
 } calcoutOOPT;
 #define calcoutOOPT_NUM_CHOICES 6
+
+typedef enum {
+    calcoutDOPT_Use_VAL             /* Use CALC */,
+    calcoutDOPT_Use_OVAL            /* Use OCAL */
+} calcoutDOPT;
+#define calcoutDOPT_NUM_CHOICES 2
 
 typedef struct calcoutRecord {
     char                name[61];   /* Record Name */
