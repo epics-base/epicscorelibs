@@ -61,7 +61,12 @@ def build(args):
     shutil.rmtree('dist', ignore_errors=True)
     shutil.rmtree('build', ignore_errors=True)
 
-    call_py(['setup.py', 'sdist'])
+    source_format = "gztar"  # https://python.readthedocs.io/en/stable/distutils/sourcedist.html
+    if platform.system() == 'Windows':
+        source_format = "zip"
+    format_arg = '--formats={}'.format(source_format)
+
+    call_py(['setup.py', 'sdist', format_arg])
     call_py(['setup.py', '-v', 'bdist_wheel'])
 
     results = glob('dist/*.whl')
@@ -83,6 +88,7 @@ def upload(args):
     files = []
     files.extend(glob('dist/*.whl'))
     files.extend(glob('dist/*.tar.*'))
+    files.extend(glob('dist/*.zip'))
 
     call_py(['-m', 'twine', 'upload', '--skip-existing']+files)
 
