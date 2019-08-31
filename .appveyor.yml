@@ -1,7 +1,3 @@
-init:
-  # Set autocrlf to make batch files work
-  - git config --global core.autocrlf true
-
 environment:
   global:
     # SDK v7.0 MSVC Express 2008's SetEnv.cmd script will fail if the
