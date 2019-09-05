@@ -106,7 +106,8 @@ def _makebuild():
 
     if OS_CLASS=='Darwin':
         build['CPPFLAGS'] += [('darwin', None)]
-        build['CXXFLAGS'] += ['-std=c++98', '-stdlib=libstdc++']
+        build['CXXFLAGS'] += ['-mmacosx-version-min=10.7','-std=c++11', '-stdlib=libc++']
+        build['LDFLAGS'] += ['-mmacosx-version-min=10.7','-std=c++11', '-stdlib=libc++']
 
     if OS_CLASS!='WIN32':
         build['CPPFLAGS'] += [('UNIX', None)]
