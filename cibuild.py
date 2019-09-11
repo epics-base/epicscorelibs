@@ -54,15 +54,14 @@ def prepare(args):
 def build(args):
     tag = args.pop(0)
     print('ABI tag', tag)
-    assert len(tag.split('-'))==3, tag
-    
+
     call_py(['setup.py', 'clean', '-a']) # serves to verify that ./setup.py exists before we delete anything
 
     shutil.rmtree('dist', ignore_errors=True)
     shutil.rmtree('build', ignore_errors=True)
 
     call_py(['setup.py', 'sdist'])
-    call_py(['setup.py', '-v', 'bdist_wheel'])
+    call_py(['setup.py', '-v', 'bdist_wheel', '-p', tag])
 
     results = glob('dist/*.whl')
     print('RESULT', results)
@@ -73,7 +72,6 @@ def build(args):
 
     call_py(['-m', 'pip', 'install', results[0]])
     call_py(['-m', 'nose', 'epicscorelibs'])
-    call_py(['-m', 'change_tag', '--rm', '--tag', tag, results[0]])
 
 def upload(args):
     if 'APPVEYOR_PULL_REQUEST_NUMBER' in os.environ or 'TWINE_USERNAME' not in os.environ:
