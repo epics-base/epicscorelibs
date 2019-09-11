@@ -22,7 +22,7 @@ static struct PyModuleDef baseymodule = {
 #endif
 
 extern "C"
-PyMOD(base)
+PyMOD(_base)
 {
 #if PY_MAJOR_VERSION >= 3
         PyObject *mod = PyModule_Create(&baseymodule);
