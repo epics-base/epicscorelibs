@@ -10,7 +10,7 @@ from setuptools import Command, Distribution
 from setuptools.command import install
 from distutils.command import build
 
-from setuptools_dso import setup, DSO, build_dso
+from setuptools_dso import Extension, setup, DSO, build_dso
 
 from distutils import log
 
@@ -362,6 +362,13 @@ def proc_headers(headers):
 
 headers = proc_headers(headers)
 
+# a dummy extension so that bdist_wheel will recognise this package
+# as containing binaries.
+ext = Extension(
+    name='epicscorelibs._base',
+    sources = ['src/python/epicscorelibs/base.cpp'],
+)
+
 setup(
     name='epicscorelibs',
     version=package_version,
@@ -397,6 +404,7 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     packages=['epicscorelibs', 'epicscorelibs.path', 'epicscorelibs.test'],
     package_dir={'':os.path.join('src','python')},
     package_data={'':['*.pxd']},
+    ext_modules = [ext],
     x_dsos = modules,
     x_headers = headers,
     x_expand = [
