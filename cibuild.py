@@ -5,7 +5,7 @@ So hey, why not just script in python...
 
 from __future__ import print_function
 
-import sys, os, platform
+import sys, os, platform, distutils.util
 import re
 import shutil
 import subprocess as SP
@@ -95,6 +95,31 @@ actions = {
 
 if __name__=='__main__':
     print(sys.version)
+
+    print('PYTHONPATH')
+    for dname in sys.path:
+        print(' ', dname)
+
+    print('platform =', distutils.util.get_platform())
+
+    try:
+        from pip._internal import pep425tags
+    except ImportError:
+        print('No pip?')
+    else:
+        print('PIP compatible')
+        for parts in pep425tags.get_supported():
+            print('  ', "-".join(parts))
+
+    try:
+        from wheel import pep425tags
+    except ImportError:
+        print('No wheel?')
+    else:
+        print('Wheel compatible')
+        for parts in pep425tags.get_supported():
+            print('  ', "-".join(parts))
+
     args = sys.argv[1:]
     while len(args)>0:
         name = args.pop(0)
