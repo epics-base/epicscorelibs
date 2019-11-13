@@ -4,6 +4,7 @@ osi/os/Darwin/osdEnv.c
 osi/os/Darwin/osdFindAddr.c
 osi/os/Darwin/osdMonotonic.c
 osi/os/Darwin/osdSockAddrReuse.cpp
+osi/os/Darwin/osdSockUnsentCount.c
 osi/os/Darwin/osdTime.cpp
 
 osi/os/posix/epicsAtomicOSD.cpp

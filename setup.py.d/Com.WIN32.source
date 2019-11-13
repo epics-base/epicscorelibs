@@ -13,6 +13,7 @@ osi/os/WIN32/osdProcess.c
 osi/os/WIN32/osdSignal.cpp
 osi/os/WIN32/osdSockAddrReuse.cpp
 osi/os/WIN32/osdSock.c
+osi/os/WIN32/osdSockUnsentCount.c
 osi/os/WIN32/osdStdio.c
 osi/os/WIN32/osdThread.c
 osi/os/WIN32/osdThreadExtra.c

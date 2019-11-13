@@ -1,6 +1,7 @@
 
 osi/os/Linux/osdBackTrace.cpp
 osi/os/Linux/osdFindAddr.c
+osi/os/Linux/osdSockUnsentCount.c
 osi/os/Linux/osdThreadExtra.c
 
 osi/os/posix/epicsAtomicOSD.cpp
