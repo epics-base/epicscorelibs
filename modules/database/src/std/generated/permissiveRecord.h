@@ -55,10 +55,10 @@ typedef struct permissiveRecord {
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */
     DBLINK              flnk;       /* Forward Process Link */
-    char                labl[20];   /* Button Label */
     epicsUInt16         val;        /* Status */
-    epicsUInt16         oval;       /* Old Status */
     epicsUInt16         wflg;       /* Wait Flag */
+    char                labl[20];   /* Button Label */
+    epicsUInt16         oval;       /* Old Status */
     epicsUInt16         oflg;       /* Old Flag */
 } permissiveRecord;
 
@@ -108,10 +108,10 @@ typedef enum {
 	permissiveRecordUDFS = 42,
 	permissiveRecordTIME = 43,
 	permissiveRecordFLNK = 44,
-	permissiveRecordLABL = 45,
-	permissiveRecordVAL = 46,
-	permissiveRecordOVAL = 47,
-	permissiveRecordWFLG = 48,
+	permissiveRecordVAL = 45,
+	permissiveRecordWFLG = 46,
+	permissiveRecordLABL = 47,
+	permissiveRecordOVAL = 48,
 	permissiveRecordOFLG = 49
 } permissiveFieldIndex;
 
@@ -172,10 +172,10 @@ static int permissiveRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[permissiveRecordUDFS]->size = sizeof(prec->udfs);
     prt->papFldDes[permissiveRecordTIME]->size = sizeof(prec->time);
     prt->papFldDes[permissiveRecordFLNK]->size = sizeof(prec->flnk);
-    prt->papFldDes[permissiveRecordLABL]->size = sizeof(prec->labl);
     prt->papFldDes[permissiveRecordVAL]->size = sizeof(prec->val);
-    prt->papFldDes[permissiveRecordOVAL]->size = sizeof(prec->oval);
     prt->papFldDes[permissiveRecordWFLG]->size = sizeof(prec->wflg);
+    prt->papFldDes[permissiveRecordLABL]->size = sizeof(prec->labl);
+    prt->papFldDes[permissiveRecordOVAL]->size = sizeof(prec->oval);
     prt->papFldDes[permissiveRecordOFLG]->size = sizeof(prec->oflg);
     prt->papFldDes[permissiveRecordNAME]->offset = (unsigned short)((char *)&prec->name - (char *)prec);
     prt->papFldDes[permissiveRecordDESC]->offset = (unsigned short)((char *)&prec->desc - (char *)prec);
@@ -222,10 +222,10 @@ static int permissiveRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[permissiveRecordUDFS]->offset = (unsigned short)((char *)&prec->udfs - (char *)prec);
     prt->papFldDes[permissiveRecordTIME]->offset = (unsigned short)((char *)&prec->time - (char *)prec);
     prt->papFldDes[permissiveRecordFLNK]->offset = (unsigned short)((char *)&prec->flnk - (char *)prec);
-    prt->papFldDes[permissiveRecordLABL]->offset = (unsigned short)((char *)&prec->labl - (char *)prec);
     prt->papFldDes[permissiveRecordVAL]->offset = (unsigned short)((char *)&prec->val - (char *)prec);
-    prt->papFldDes[permissiveRecordOVAL]->offset = (unsigned short)((char *)&prec->oval - (char *)prec);
     prt->papFldDes[permissiveRecordWFLG]->offset = (unsigned short)((char *)&prec->wflg - (char *)prec);
+    prt->papFldDes[permissiveRecordLABL]->offset = (unsigned short)((char *)&prec->labl - (char *)prec);
+    prt->papFldDes[permissiveRecordOVAL]->offset = (unsigned short)((char *)&prec->oval - (char *)prec);
     prt->papFldDes[permissiveRecordOFLG]->offset = (unsigned short)((char *)&prec->oflg - (char *)prec);
     prt->rec_size = sizeof(*prec);
     return 0;

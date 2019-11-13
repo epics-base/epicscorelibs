@@ -10,6 +10,7 @@
 #include "epicsTime.h"
 #include "callback.h"
 
+#ifndef histogramCMD_NUM_CHOICES
 typedef enum {
     histogramCMD_Read               /* Read */,
     histogramCMD_Clear              /* Clear */,
@@ -17,6 +18,7 @@ typedef enum {
     histogramCMD_Stop               /* Stop */
 } histogramCMD;
 #define histogramCMD_NUM_CHOICES 4
+#endif
 
 typedef struct histogramRecord {
     char                name[61];   /* Record Name */
@@ -87,7 +89,7 @@ typedef struct histogramRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
     epicsUInt32         hopr;       /* High Operating Range */
     epicsUInt32         lopr;       /* Low Operating Range */
 } histogramRecord;

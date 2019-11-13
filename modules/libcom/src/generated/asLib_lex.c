@@ -105,7 +105,7 @@ static int yyterminate_internal( void );
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 #define YY_CHAR unsigned char
-# line 1 "../../src/as/asLib_lex.l"
+# line 1 "../as/asLib_lex.l"
 #define INITIAL 0
 /*************************************************************************\
 * Copyright (c) 2002 The University of Chicago, as Operator of Argonne
@@ -115,7 +115,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
-# line 23 "../../src/as/asLib_lex.l"
+# line 23 "../as/asLib_lex.l"
 static ASINPUTFUNCPTR *my_yyinput;
 #undef YY_INPUT
 #define YY_INPUT(b,r,ms) (r=(*my_yyinput)((char *)b,ms))
@@ -127,7 +127,7 @@ static int yyreset(void)
 	return(0);
 }
 
-# line 36 "../../src/as/asLib_lex.l"
+# line 36 "../as/asLib_lex.l"
 
 /* done after the current pattern has been matched and before the
  * corresponding action - sets up yytext
@@ -437,27 +437,27 @@ do_action:	/* this label is used only to access EOF actions */
 	    goto yy_find_action;
 
 case 1:
-# line 38 "../../src/as/asLib_lex.l"
+# line 38 "../as/asLib_lex.l"
 { return(tokenUAG);	}
 	YY_BREAK
 case 2:
-# line 39 "../../src/as/asLib_lex.l"
+# line 39 "../as/asLib_lex.l"
 { return(tokenHAG);	}
 	YY_BREAK
 case 3:
-# line 40 "../../src/as/asLib_lex.l"
+# line 40 "../as/asLib_lex.l"
 { return(tokenASG);	}
 	YY_BREAK
 case 4:
-# line 41 "../../src/as/asLib_lex.l"
+# line 41 "../as/asLib_lex.l"
 { return(tokenRULE);	}
 	YY_BREAK
 case 5:
-# line 42 "../../src/as/asLib_lex.l"
+# line 42 "../as/asLib_lex.l"
 { return(tokenCALC);	}
 	YY_BREAK
 case 6:
-# line 44 "../../src/as/asLib_lex.l"
+# line 44 "../as/asLib_lex.l"
 {
 	yylval.Int = (unsigned char)yytext[3];
 	yylval.Int -= 'A';
@@ -465,21 +465,21 @@ case 6:
 }
 	YY_BREAK
 case 7:
-# line 50 "../../src/as/asLib_lex.l"
+# line 50 "../as/asLib_lex.l"
 { /*integer*/
 	yylval.Int = atoi((char *)yytext);
 	return(tokenINTEGER);
 }
 	YY_BREAK
 case 8:
-# line 55 "../../src/as/asLib_lex.l"
+# line 55 "../as/asLib_lex.l"
 { /*unquoted string*/
 	yylval.Str=asStrdup(yytext);
 	return(tokenSTRING);
 }
 	YY_BREAK
 case 9:
-# line 60 "../../src/as/asLib_lex.l"
+# line 60 "../as/asLib_lex.l"
 { /* quoted string */
 	yylval.Str=asStrdup(yytext+1);
 	yylval.Str[strlen(yylval.Str)-1] = '\0';
@@ -487,29 +487,29 @@ case 9:
 }
 	YY_BREAK
 case 10:
-# line 66 "../../src/as/asLib_lex.l"
+# line 66 "../as/asLib_lex.l"
 { /* bad string */
 	yyerror("Newline in quoted string, closing quote missing");
 }
 	YY_BREAK
 case 11:
-# line 70 "../../src/as/asLib_lex.l"
+# line 70 "../as/asLib_lex.l"
 { return(yytext[0]); }
 	YY_BREAK
 case 12:
-# line 72 "../../src/as/asLib_lex.l"
+# line 72 "../as/asLib_lex.l"
 { line_num++; }
 	YY_BREAK
 case 13:
-# line 74 "../../src/as/asLib_lex.l"
+# line 74 "../as/asLib_lex.l"
 ;
 	YY_BREAK
 case 14:
-# line 75 "../../src/as/asLib_lex.l"
+# line 75 "../as/asLib_lex.l"
 ;
 	YY_BREAK
 case 15:
-# line 77 "../../src/as/asLib_lex.l"
+# line 77 "../as/asLib_lex.l"
 {
 	char message[40];
 	YY_BUFFER_STATE *dummy=0;
@@ -528,7 +528,7 @@ case 15:
 }
 	YY_BREAK
 case 16:
-# line 94 "../../src/as/asLib_lex.l"
+# line 94 "../as/asLib_lex.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1023,5 +1023,5 @@ static int yyterminate_internal( void )
 	return YY_NULL;
 }
 
-# line 94 "../../src/as/asLib_lex.l"
+# line 94 "../as/asLib_lex.l"
 

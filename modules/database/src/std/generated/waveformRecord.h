@@ -10,11 +10,31 @@
 #include "epicsTime.h"
 #include "callback.h"
 
+#ifndef waveformPOST_NUM_CHOICES
 typedef enum {
     waveformPOST_Always             /* Always */,
     waveformPOST_OnChange           /* On Change */
 } waveformPOST;
 #define waveformPOST_NUM_CHOICES 2
+#endif
+
+#ifndef menuFtype_NUM_CHOICES
+typedef enum {
+    menuFtypeSTRING                 /* STRING */,
+    menuFtypeCHAR                   /* CHAR */,
+    menuFtypeUCHAR                  /* UCHAR */,
+    menuFtypeSHORT                  /* SHORT */,
+    menuFtypeUSHORT                 /* USHORT */,
+    menuFtypeLONG                   /* LONG */,
+    menuFtypeULONG                  /* ULONG */,
+    menuFtypeINT64                  /* INT64 */,
+    menuFtypeUINT64                 /* UINT64 */,
+    menuFtypeFLOAT                  /* FLOAT */,
+    menuFtypeDOUBLE                 /* DOUBLE */,
+    menuFtypeENUM                   /* ENUM */
+} menuFtype;
+#define menuFtype_NUM_CHOICES 12
+#endif
 
 typedef struct waveformRecord {
     char                name[61];   /* Record Name */
@@ -81,7 +101,7 @@ typedef struct waveformRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
     epicsEnum16         mpst;       /* Post Value Monitors */
     epicsEnum16         apst;       /* Post Archive Monitors */
     epicsUInt32         hash;       /* Hash of OnChange data. */

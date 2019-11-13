@@ -9,12 +9,14 @@
 #include "ellLib.h"
 #include "epicsTime.h"
 
+#ifndef seqSELM_NUM_CHOICES
 typedef enum {
     seqSELM_All                     /* All */,
     seqSELM_Specified               /* Specified */,
     seqSELM_Mask                    /* Mask */
 } seqSELM;
 #define seqSELM_NUM_CHOICES 3
+#endif
 
 typedef struct seqRecord {
     char                name[61];   /* Record Name */

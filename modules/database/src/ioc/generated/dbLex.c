@@ -105,7 +105,7 @@ static int yyterminate_internal( void );
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 #define YY_CHAR unsigned char
-# line 1 "../../../src/ioc/dbStatic/dbLex.l"
+# line 1 "../dbStatic/dbLex.l"
 #define INITIAL 0
 /*************************************************************************\
 * Copyright (c) 2016 UChicago Argonne LLC, as Operator of Argonne
@@ -115,7 +115,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution. 
 \*************************************************************************/
-# line 33 "../../../src/ioc/dbStatic/dbLex.l"
+# line 33 "../dbStatic/dbLex.l"
 #undef YY_INPUT
 #define YY_INPUT(b,r,ms) (r=(*db_yyinput)((char *)b,ms))
 
@@ -126,7 +126,7 @@ static int yyreset(void)
 }
 
 #define JSON 1
-# line 46 "../../../src/ioc/dbStatic/dbLex.l"
+# line 46 "../dbStatic/dbLex.l"
 
 /* done after the current pattern has been matched and before the
  * corresponding action - sets up yytext
@@ -538,86 +538,86 @@ do_action:	/* this label is used only to access EOF actions */
 	    goto yy_find_action;
 
 case 1:
-# line 48 "../../../src/ioc/dbStatic/dbLex.l"
+# line 48 "../dbStatic/dbLex.l"
 return(tokenINCLUDE);
 	YY_BREAK
 case 2:
-# line 49 "../../../src/ioc/dbStatic/dbLex.l"
+# line 49 "../dbStatic/dbLex.l"
 return(tokenPATH);
 	YY_BREAK
 case 3:
-# line 50 "../../../src/ioc/dbStatic/dbLex.l"
+# line 50 "../dbStatic/dbLex.l"
 return(tokenADDPATH);
 	YY_BREAK
 case 4:
-# line 51 "../../../src/ioc/dbStatic/dbLex.l"
+# line 51 "../dbStatic/dbLex.l"
 return(tokenMENU);
 	YY_BREAK
 case 5:
-# line 52 "../../../src/ioc/dbStatic/dbLex.l"
+# line 52 "../dbStatic/dbLex.l"
 return(tokenCHOICE);
 	YY_BREAK
 case 6:
-# line 53 "../../../src/ioc/dbStatic/dbLex.l"
+# line 53 "../dbStatic/dbLex.l"
 return(tokenRECORDTYPE);
 	YY_BREAK
 case 7:
-# line 54 "../../../src/ioc/dbStatic/dbLex.l"
+# line 54 "../dbStatic/dbLex.l"
 return(tokenFIELD);
 	YY_BREAK
 case 8:
-# line 55 "../../../src/ioc/dbStatic/dbLex.l"
+# line 55 "../dbStatic/dbLex.l"
 return(tokenDEVICE);
 	YY_BREAK
 case 9:
-# line 56 "../../../src/ioc/dbStatic/dbLex.l"
+# line 56 "../dbStatic/dbLex.l"
 return(tokenDRIVER);
 	YY_BREAK
 case 10:
-# line 57 "../../../src/ioc/dbStatic/dbLex.l"
+# line 57 "../dbStatic/dbLex.l"
 return(tokenLINK);
 	YY_BREAK
 case 11:
-# line 58 "../../../src/ioc/dbStatic/dbLex.l"
+# line 58 "../dbStatic/dbLex.l"
 return(tokenBREAKTABLE);
 	YY_BREAK
 case 12:
-# line 59 "../../../src/ioc/dbStatic/dbLex.l"
+# line 59 "../dbStatic/dbLex.l"
 return(tokenRECORD);
 	YY_BREAK
 case 13:
-# line 60 "../../../src/ioc/dbStatic/dbLex.l"
+# line 60 "../dbStatic/dbLex.l"
 return(tokenGRECORD);
 	YY_BREAK
 case 14:
-# line 61 "../../../src/ioc/dbStatic/dbLex.l"
+# line 61 "../dbStatic/dbLex.l"
 return(tokenALIAS);
 	YY_BREAK
 case 15:
-# line 62 "../../../src/ioc/dbStatic/dbLex.l"
+# line 62 "../dbStatic/dbLex.l"
 return(tokenINFO);
 	YY_BREAK
 case 16:
-# line 63 "../../../src/ioc/dbStatic/dbLex.l"
+# line 63 "../dbStatic/dbLex.l"
 return(tokenREGISTRAR);
 	YY_BREAK
 case 17:
-# line 64 "../../../src/ioc/dbStatic/dbLex.l"
+# line 64 "../dbStatic/dbLex.l"
 return(tokenFUNCTION);
 	YY_BREAK
 case 18:
-# line 65 "../../../src/ioc/dbStatic/dbLex.l"
+# line 65 "../dbStatic/dbLex.l"
 return(tokenVARIABLE);
 	YY_BREAK
 case 19:
-# line 67 "../../../src/ioc/dbStatic/dbLex.l"
+# line 67 "../dbStatic/dbLex.l"
 { /* unquoted string or number */
 	yylval.Str = dbmfStrdup((char *) yytext);
 	return(tokenSTRING); 
 }
 	YY_BREAK
 case 20:
-# line 72 "../../../src/ioc/dbStatic/dbLex.l"
+# line 72 "../dbStatic/dbLex.l"
 { /* quoted string */
 	yylval.Str = dbmfStrdup((char *) yytext+1);
 	yylval.Str[strlen(yylval.Str)-1] = '\0';
@@ -625,85 +625,85 @@ case 20:
 }
 	YY_BREAK
 case 21:
-# line 78 "../../../src/ioc/dbStatic/dbLex.l"
+# line 78 "../dbStatic/dbLex.l"
 { /*C definition in recordtype*/
 	yylval.Str = dbmfStrdup((char *) yytext+1);
 	return(tokenCDEFS);
 }
 	YY_BREAK
 case 22:
-# line 83 "../../../src/ioc/dbStatic/dbLex.l"
+# line 83 "../dbStatic/dbLex.l"
 return(yytext[0]);
 	YY_BREAK
 case 23:
-# line 84 "../../../src/ioc/dbStatic/dbLex.l"
+# line 84 "../dbStatic/dbLex.l"
 return(yytext[0]);
 	YY_BREAK
 case 24:
-# line 85 "../../../src/ioc/dbStatic/dbLex.l"
+# line 85 "../dbStatic/dbLex.l"
 return(yytext[0]);
 	YY_BREAK
 case 25:
-# line 86 "../../../src/ioc/dbStatic/dbLex.l"
+# line 86 "../dbStatic/dbLex.l"
 return(yytext[0]);
 	YY_BREAK
 case 26:
-# line 87 "../../../src/ioc/dbStatic/dbLex.l"
+# line 87 "../dbStatic/dbLex.l"
 return(yytext[0]);
 	YY_BREAK
 case 27:
-# line 89 "../../../src/ioc/dbStatic/dbLex.l"
+# line 89 "../dbStatic/dbLex.l"
 { /* bad string */
 	yyerrorAbort("Newline in string, closing quote missing");
 }
 	YY_BREAK
 case 28:
-# line 93 "../../../src/ioc/dbStatic/dbLex.l"
+# line 93 "../dbStatic/dbLex.l"
 return jsonNULL;
 	YY_BREAK
 case 29:
-# line 94 "../../../src/ioc/dbStatic/dbLex.l"
+# line 94 "../dbStatic/dbLex.l"
 return jsonTRUE;
 	YY_BREAK
 case 30:
-# line 95 "../../../src/ioc/dbStatic/dbLex.l"
+# line 95 "../dbStatic/dbLex.l"
 return jsonFALSE;
 	YY_BREAK
 case 31:
-# line 97 "../../../src/ioc/dbStatic/dbLex.l"
+# line 97 "../dbStatic/dbLex.l"
 return yytext[0];
 	YY_BREAK
 case 32:
-# line 99 "../../../src/ioc/dbStatic/dbLex.l"
+# line 99 "../dbStatic/dbLex.l"
 {
 	yylval.Str = dbmfStrdup((char *) yytext);
 	return jsonSTRING;
 }
 	YY_BREAK
 case 33:
-# line 104 "../../../src/ioc/dbStatic/dbLex.l"
+# line 104 "../dbStatic/dbLex.l"
 {
 	yylval.Str = dbmfStrdup((char *) yytext);
 	return jsonNUMBER;
 }
 	YY_BREAK
 case 34:
-# line 109 "../../../src/ioc/dbStatic/dbLex.l"
+# line 109 "../dbStatic/dbLex.l"
 {
 	yylval.Str = dbmfStrdup((char *) yytext);
 	return jsonBARE;
 }
 	YY_BREAK
 case 35:
-# line 114 "../../../src/ioc/dbStatic/dbLex.l"
+# line 114 "../dbStatic/dbLex.l"
 ;
 	YY_BREAK
 case 36:
-# line 116 "../../../src/ioc/dbStatic/dbLex.l"
+# line 116 "../dbStatic/dbLex.l"
 ;
 	YY_BREAK
 case 37:
-# line 118 "../../../src/ioc/dbStatic/dbLex.l"
+# line 118 "../dbStatic/dbLex.l"
 {
 	char message[40];
 	YY_BUFFER_STATE *dummy=0;
@@ -721,7 +721,7 @@ case 37:
 }
 	YY_BREAK
 case 38:
-# line 134 "../../../src/ioc/dbStatic/dbLex.l"
+# line 134 "../dbStatic/dbLex.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -1217,5 +1217,5 @@ static int yyterminate_internal( void )
 	return YY_NULL;
 }
 
-# line 134 "../../../src/ioc/dbStatic/dbLex.l"
+# line 134 "../dbStatic/dbLex.l"
 

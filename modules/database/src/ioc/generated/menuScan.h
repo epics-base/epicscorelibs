@@ -3,6 +3,7 @@
 #ifndef INC_menuScan_H
 #define INC_menuScan_H
 
+#ifndef menuScan_NUM_CHOICES
 typedef enum {
     menuScanPassive                 /* Passive */,
     menuScanEvent                   /* Event */,
@@ -16,6 +17,7 @@ typedef enum {
     menuScan_1_second               /* .1 second */
 } menuScan;
 #define menuScan_NUM_CHOICES 10
+#endif
 
 
 #endif /* INC_menuScan_H */

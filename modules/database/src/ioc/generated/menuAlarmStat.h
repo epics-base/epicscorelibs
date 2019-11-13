@@ -3,6 +3,7 @@
 #ifndef INC_menuAlarmStat_H
 #define INC_menuAlarmStat_H
 
+#ifndef menuAlarmStat_NUM_CHOICES
 typedef enum {
     menuAlarmStatNO_ALARM           /* NO_ALARM */,
     menuAlarmStatREAD               /* READ */,
@@ -28,6 +29,7 @@ typedef enum {
     menuAlarmStatWRITE_ACCESS       /* WRITE_ACCESS */
 } menuAlarmStat;
 #define menuAlarmStat_NUM_CHOICES 22
+#endif
 
 
 #endif /* INC_menuAlarmStat_H */

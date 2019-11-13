@@ -10,11 +10,13 @@
 #include "epicsTime.h"
 #include "callback.h"
 
+#ifndef aoOIF_NUM_CHOICES
 typedef enum {
     aoOIF_Full                      /* Full */,
     aoOIF_Incremental               /* Incremental */
 } aoOIF;
 #define aoOIF_NUM_CHOICES 2
+#endif
 
 typedef struct aoRecord {
     char                name[61];   /* Record Name */
@@ -112,7 +114,7 @@ typedef struct aoRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
     epicsEnum16         ivoa;       /* INVALID output action */
     epicsFloat64        ivov;       /* INVALID output value */
     epicsUInt8          omod;       /* Was OVAL modified? */

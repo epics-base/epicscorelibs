@@ -3,6 +3,7 @@
 #ifndef INC_menuFtype_H
 #define INC_menuFtype_H
 
+#ifndef menuFtype_NUM_CHOICES
 typedef enum {
     menuFtypeSTRING                 /* STRING */,
     menuFtypeCHAR                   /* CHAR */,
@@ -18,6 +19,7 @@ typedef enum {
     menuFtypeENUM                   /* ENUM */
 } menuFtype;
 #define menuFtype_NUM_CHOICES 12
+#endif
 
 
 #endif /* INC_menuFtype_H */

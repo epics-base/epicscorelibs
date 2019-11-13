@@ -3,6 +3,7 @@
 #ifndef INC_menuConvert_H
 #define INC_menuConvert_H
 
+#ifndef menuConvert_NUM_CHOICES
 typedef enum {
     menuConvertNO_CONVERSION        /* NO CONVERSION */,
     menuConvertSLOPE                /* SLOPE */,
@@ -21,6 +22,7 @@ typedef enum {
     menuConverttypeSdegC            /* typeSdegC */
 } menuConvert;
 #define menuConvert_NUM_CHOICES 15
+#endif
 
 
 #endif /* INC_menuConvert_H */

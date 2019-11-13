@@ -10,11 +10,13 @@
 #include "epicsTime.h"
 #include "callback.h"
 
+#ifndef stringinPOST_NUM_CHOICES
 typedef enum {
     stringinPOST_OnChange           /* On Change */,
     stringinPOST_Always             /* Always */
 } stringinPOST;
 #define stringinPOST_NUM_CHOICES 2
+#endif
 
 typedef struct stringinRecord {
     char                name[61];   /* Record Name */
@@ -75,7 +77,7 @@ typedef struct stringinRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
 } stringinRecord;
 
 typedef enum {

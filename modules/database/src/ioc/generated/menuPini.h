@@ -3,6 +3,7 @@
 #ifndef INC_menuPini_H
 #define INC_menuPini_H
 
+#ifndef menuPini_NUM_CHOICES
 typedef enum {
     menuPiniNO                      /* NO */,
     menuPiniYES                     /* YES */,
@@ -12,6 +13,7 @@ typedef enum {
     menuPiniPAUSED                  /* PAUSED */
 } menuPini;
 #define menuPini_NUM_CHOICES 6
+#endif
 
 
 #endif /* INC_menuPini_H */

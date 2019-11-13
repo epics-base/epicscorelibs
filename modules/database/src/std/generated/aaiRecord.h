@@ -10,11 +10,13 @@
 #include "epicsTime.h"
 #include "callback.h"
 
+#ifndef aaiPOST_NUM_CHOICES
 typedef enum {
     aaiPOST_Always                  /* Always */,
     aaiPOST_OnChange                /* On Change */
 } aaiPOST;
 #define aaiPOST_NUM_CHOICES 2
+#endif
 
 typedef struct aaiRecord {
     char                name[61];   /* Record Name */
@@ -79,7 +81,7 @@ typedef struct aaiRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
     epicsEnum16         mpst;       /* Post Value Monitors */
     epicsEnum16         apst;       /* Post Archive Monitors */
     epicsUInt32         hash;       /* Hash of OnChange data. */

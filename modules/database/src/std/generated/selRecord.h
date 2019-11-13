@@ -9,6 +9,7 @@
 #include "ellLib.h"
 #include "epicsTime.h"
 
+#ifndef selSELM_NUM_CHOICES
 typedef enum {
     selSELM_Specified               /* Specified */,
     selSELM_High_Signal             /* High Signal */,
@@ -16,6 +17,7 @@ typedef enum {
     selSELM_Median_Signal           /* Median Signal */
 } selSELM;
 #define selSELM_NUM_CHOICES 4
+#endif
 
 typedef struct selRecord {
     char                name[61];   /* Record Name */

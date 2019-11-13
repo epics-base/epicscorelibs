@@ -6,7 +6,7 @@
 #define YYRECOVERING (yyerrflag!=0)
 static int yyparse(void);
 #define YYPREFIX "yy"
-#line 2 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 2 "../dbtemplate/dbLoadTemplate.y"
 
 /*************************************************************************\
 * Copyright (c) 2006 UChicago, as Operator of Argonne
@@ -47,7 +47,7 @@ static int var_count, sub_count;
 int dbTemplateMaxVars = 100;
 epicsExportAddress(int, dbTemplateMaxVars);
 
-#line 54 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 54 "../dbtemplate/dbLoadTemplate.y"
 typedef union
 {
     int Int;
@@ -224,7 +224,7 @@ static YYSTYPE yylval;
 static short yyss[YYSTACKSIZE];
 static YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 310 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 310 "../dbtemplate/dbLoadTemplate.y"
  
 #include "dbLoadTemplate_lex.c"
  
@@ -442,7 +442,7 @@ yyreduce:
     switch (yyn)
     {
 case 6:
-#line 74 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 74 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "global_definitions: %s\n", sub_collect+1);
@@ -451,7 +451,7 @@ case 6:
     }
 break;
 case 7:
-#line 83 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 83 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_substitutions: %s unused\n", db_file_name);
@@ -461,7 +461,7 @@ case 7:
     }
 break;
 case 8:
-#line 91 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 91 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_substitutions: %s finished\n", db_file_name);
@@ -471,7 +471,7 @@ case 8:
     }
 break;
 case 9:
-#line 101 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 101 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_filename: %s\n", yyvsp[0].Str);
@@ -483,7 +483,7 @@ case 9:
     }
 break;
 case 10:
-#line 111 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 111 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_filename: \"%s\"\n", yyvsp[0].Str);
@@ -495,7 +495,7 @@ case 10:
     }
 break;
 case 20:
-#line 138 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 138 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_name: [%d] = %s\n", var_count, yyvsp[0].Str);
@@ -515,7 +515,7 @@ case 20:
     }
 break;
 case 24:
-#line 163 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 163 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_definition: pattern_values empty\n");
@@ -525,7 +525,7 @@ case 24:
     }
 break;
 case 25:
-#line 171 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 171 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_definition:\n");
@@ -537,7 +537,7 @@ case 25:
     }
 break;
 case 26:
-#line 181 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 181 "../dbtemplate/dbLoadTemplate.y"
 {   /* DEPRECATED SYNTAX */
         fprintf(stderr,
             "dbLoadTemplate: Substitution file uses deprecated syntax.\n"
@@ -555,7 +555,7 @@ case 26:
     }
 break;
 case 30:
-#line 204 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 204 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_value: [%d] = \"%s\"\n", sub_count, yyvsp[0].Str);
@@ -575,7 +575,7 @@ case 30:
     }
 break;
 case 31:
-#line 222 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 222 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_value: [%d] = %s\n", sub_count, yyvsp[0].Str);
@@ -594,7 +594,7 @@ case 31:
     }
 break;
 case 35:
-#line 246 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 246 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_substitution: variable_definitions empty\n");
@@ -604,7 +604,7 @@ case 35:
     }
 break;
 case 36:
-#line 254 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 254 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_substitution:\n");
@@ -615,7 +615,7 @@ case 36:
     }
 break;
 case 37:
-#line 263 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 263 "../dbtemplate/dbLoadTemplate.y"
 {   /* DEPRECATED SYNTAX */
         fprintf(stderr,
             "dbLoadTemplate: Substitution file uses deprecated syntax.\n"
@@ -632,7 +632,7 @@ case 37:
     }
 break;
 case 41:
-#line 285 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 285 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_definition: %s = %s\n", yyvsp[-2].Str, yyvsp[0].Str);
@@ -645,7 +645,7 @@ case 41:
     }
 break;
 case 42:
-#line 296 "../../../src/ioc/dbtemplate/dbLoadTemplate.y"
+#line 296 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_definition: %s = \"%s\"\n", yyvsp[-2].Str, yyvsp[0].Str);

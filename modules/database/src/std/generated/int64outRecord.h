@@ -86,7 +86,7 @@ typedef struct int64outRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
     epicsEnum16         ivoa;       /* INVALID output action */
     epicsInt64          ivov;       /* INVALID output value */
 } int64outRecord;

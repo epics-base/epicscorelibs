@@ -11,6 +11,7 @@
 #include "dbScan.h"
 #include "postfix.h"
 
+#ifndef calcoutINAV_NUM_CHOICES
 typedef enum {
     calcoutINAV_EXT_NC              /* Ext PV NC */,
     calcoutINAV_EXT                 /* Ext PV OK */,
@@ -18,7 +19,17 @@ typedef enum {
     calcoutINAV_CON                 /* Constant */
 } calcoutINAV;
 #define calcoutINAV_NUM_CHOICES 4
+#endif
 
+#ifndef calcoutDOPT_NUM_CHOICES
+typedef enum {
+    calcoutDOPT_Use_VAL             /* Use CALC */,
+    calcoutDOPT_Use_OVAL            /* Use OCAL */
+} calcoutDOPT;
+#define calcoutDOPT_NUM_CHOICES 2
+#endif
+
+#ifndef calcoutOOPT_NUM_CHOICES
 typedef enum {
     calcoutOOPT_Every_Time          /* Every Time */,
     calcoutOOPT_On_Change           /* On Change */,
@@ -28,12 +39,7 @@ typedef enum {
     calcoutOOPT_Transition_To_Non_zero /* Transition To Non-zero */
 } calcoutOOPT;
 #define calcoutOOPT_NUM_CHOICES 6
-
-typedef enum {
-    calcoutDOPT_Use_VAL             /* Use CALC */,
-    calcoutDOPT_Use_OVAL            /* Use OCAL */
-} calcoutDOPT;
-#define calcoutDOPT_NUM_CHOICES 2
+#endif
 
 typedef struct calcoutRecord {
     char                name[61];   /* Record Name */

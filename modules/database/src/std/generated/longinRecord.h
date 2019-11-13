@@ -77,15 +77,15 @@ typedef struct longinRecord {
     epicsInt32          lalm;       /* Last Value Alarmed */
     epicsInt32          alst;       /* Last Value Archived */
     epicsInt32          mlst;       /* Last Val Monitored */
-    DBLINK              siol;       /* Simulation Input Link */
+    DBLINK              siol;       /* Sim Input Specifctn */
     epicsInt32          sval;       /* Simulation Value */
-    DBLINK              siml;       /* Simulation Mode Link */
+    DBLINK              siml;       /* Sim Mode Location */
     epicsEnum16         simm;       /* Simulation Mode */
-    epicsEnum16         sims;       /* Simulation Mode Severity */
+    epicsEnum16         sims;       /* Sim mode Alarm Svrty */
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
 } longinRecord;
 
 typedef enum {

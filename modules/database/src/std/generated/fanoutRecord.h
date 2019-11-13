@@ -9,12 +9,14 @@
 #include "ellLib.h"
 #include "epicsTime.h"
 
+#ifndef fanoutSELM_NUM_CHOICES
 typedef enum {
     fanoutSELM_All                  /* All */,
     fanoutSELM_Specified            /* Specified */,
     fanoutSELM_Mask                 /* Mask */
 } fanoutSELM;
 #define fanoutSELM_NUM_CHOICES 3
+#endif
 
 typedef struct fanoutRecord {
     char                name[61];   /* Record Name */

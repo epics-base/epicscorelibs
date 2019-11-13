@@ -60,15 +60,15 @@ typedef struct eventRecord {
     char                val[40];    /* Event Name To Post */
     EVENTPVT epvt;                  /* Event private */
     DBLINK              inp;        /* Input Specification */
-    DBLINK              siol;       /* Simulation Input Link */
+    DBLINK              siol;       /* Sim Input Specifctn */
     char                sval[40];   /* Simulation Value */
-    DBLINK              siml;       /* Simulation Mode Link */
+    DBLINK              siml;       /* Sim Mode Location */
     epicsEnum16         simm;       /* Simulation Mode */
-    epicsEnum16         sims;       /* Simulation Mode Severity */
+    epicsEnum16         sims;       /* Sim mode Alarm Svrty */
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
 } eventRecord;
 
 typedef enum {

@@ -105,7 +105,7 @@ static int yyterminate_internal( void );
 typedef struct yy_buffer_state *YY_BUFFER_STATE;
 
 #define YY_CHAR unsigned char
-# line 1 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 1 "../dbtemplate/dbLoadTemplate_lex.l"
 #define INITIAL 0
 /*************************************************************************\
 * Copyright (c) 2006 UChicago, as Operator of Argonne
@@ -113,7 +113,7 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution. 
 \*************************************************************************/
-# line 19 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 19 "../dbtemplate/dbLoadTemplate_lex.l"
 
 /* done after the current pattern has been matched and before the
  * corresponding action - sets up yytext
@@ -421,21 +421,21 @@ do_action:	/* this label is used only to access EOF actions */
 	    goto yy_find_action;
 
 case 1:
-# line 21 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 21 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(PATTERN);    }
 	YY_BREAK
 case 2:
-# line 22 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 22 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(DBFILE);     }
 	YY_BREAK
 case 3:
-# line 23 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 23 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(GLOBAL);     }
 	YY_BREAK
 case 4:
-# line 26 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 26 "../dbtemplate/dbLoadTemplate_lex.l"
 case 5:
-# line 26 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 26 "../dbtemplate/dbLoadTemplate_lex.l"
 {
     yylval.Str = dbmfStrdup((char *) yytext+1);
     yylval.Str[strlen(yylval.Str)-1] = '\0';
@@ -443,42 +443,42 @@ case 5:
 }
 	YY_BREAK
 case 6:
-# line 32 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 32 "../dbtemplate/dbLoadTemplate_lex.l"
 {
     yylval.Str = dbmfStrdup((char *) yytext);
     return(WORD);
 }
 	YY_BREAK
 case 7:
-# line 37 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 37 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(EQUALS);       }
 	YY_BREAK
 case 8:
-# line 38 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 38 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(COMMA);        }
 	YY_BREAK
 case 9:
-# line 39 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 39 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(O_BRACE);      }
 	YY_BREAK
 case 10:
-# line 40 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 40 "../dbtemplate/dbLoadTemplate_lex.l"
 { return(C_BRACE);      }
 	YY_BREAK
 case 11:
-# line 42 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 42 "../dbtemplate/dbLoadTemplate_lex.l"
 ;
 	YY_BREAK
 case 12:
-# line 43 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 43 "../dbtemplate/dbLoadTemplate_lex.l"
 ;
 	YY_BREAK
 case 13:
-# line 44 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 44 "../dbtemplate/dbLoadTemplate_lex.l"
 { line_num++;   }
 	YY_BREAK
 case 14:
-# line 46 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 46 "../dbtemplate/dbLoadTemplate_lex.l"
 {
     char message[40];
 
@@ -491,7 +491,7 @@ case 14:
 }
 	YY_BREAK
 case 15:
-# line 57 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 57 "../dbtemplate/dbLoadTemplate_lex.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -986,5 +986,5 @@ static int yyterminate_internal( void )
 	return YY_NULL;
 }
 
-# line 57 "../../../src/ioc/dbtemplate/dbLoadTemplate_lex.l"
+# line 57 "../dbtemplate/dbLoadTemplate_lex.l"
 

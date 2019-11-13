@@ -10,11 +10,22 @@
 #include "epicsTime.h"
 #include "callback.h"
 
+#ifndef menuIvoa_NUM_CHOICES
+typedef enum {
+    menuIvoaContinue_normally       /* Continue normally */,
+    menuIvoaDon_t_drive_outputs     /* Don't drive outputs */,
+    menuIvoaSet_output_to_IVOV      /* Set output to IVOV */
+} menuIvoa;
+#define menuIvoa_NUM_CHOICES 3
+#endif
+
+#ifndef stringoutPOST_NUM_CHOICES
 typedef enum {
     stringoutPOST_OnChange          /* On Change */,
     stringoutPOST_Always            /* Always */
 } stringoutPOST;
 #define stringoutPOST_NUM_CHOICES 2
+#endif
 
 typedef struct stringoutRecord {
     char                name[61];   /* Record Name */
@@ -76,7 +87,7 @@ typedef struct stringoutRecord {
     epicsEnum16         oldsimm;    /* Prev. Simulation Mode */
     epicsEnum16         sscn;       /* Sim. Mode Scan */
     epicsFloat64        sdly;       /* Sim. Mode Async Delay */
-    CALLBACK            *simpvt;    /* Sim. Mode Private */
+    epicsCallback            *simpvt; /* Sim. Mode Private */
     epicsEnum16         ivoa;       /* INVALID output action */
     char                ivov[40];   /* INVALID output value */
 } stringoutRecord;
