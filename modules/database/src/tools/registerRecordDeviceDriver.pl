@@ -12,9 +12,7 @@
 use strict;
 
 use FindBin qw($Bin);
-use lib ($Bin, "$Bin/../../lib/perl");
-use databaseModuleDirs;
-no lib $Bin;
+use lib ("$Bin/../../lib/perl");
 
 use DBD;
 use DBD::Parser;
@@ -277,7 +275,7 @@ static const iocshFuncDef rrddFuncDef =
     {"$subname", 1, rrddArgs};
 static void rrddCallFunc(const iocshArgBuf *)
 {
-    $subname(*iocshPpdbbase);
+    iocshSetError($subname(*iocshPpdbbase));
 }
 
 } // extern "C"

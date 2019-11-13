@@ -16,6 +16,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32
+#  include <crtdbg.h>
+#endif
+
 #define epicsExportSharedSymbols
 #include "epicsThread.h"
 #include "epicsMutex.h"
@@ -25,6 +29,7 @@
 #include "ellLib.h"
 #include "errlog.h"
 #include "cantProceed.h"
+#include "epicsStackTrace.h"
 
 typedef struct {
     ELLNODE node;
@@ -54,9 +59,44 @@ const char *testing = NULL;
 
 static epicsThreadOnceId onceFlag = EPICS_THREAD_ONCE_INIT;
 
+#ifdef _WIN32
+/*
+ * if we return FALSE, _CrtDbgReport is called to print to file etc
+ * if we return TRUE, we are the only function called
+ */
+static int testReportHook(int reportType, char *message, int *returnValue)
+{
+    int nRet = 0;
+    switch (reportType)
+    {
+        case _CRT_ASSERT:
+        case _CRT_ERROR:
+            epicsStackTrace();
+            break;
+
+        default:
+            break;
+   }
+   if (returnValue)
+   {
+      *returnValue = 0;
+   }
+   return nRet;
+}
+#endif
+
 static void testOnce(void *dummy) {
     testLock = epicsMutexMustCreate();
     perlHarness = (getenv("HARNESS_ACTIVE") != NULL);
+#ifdef _WIN32
+    _CrtSetReportMode( _CRT_ASSERT, _CRTDBG_MODE_FILE |_CRTDBG_MODE_DEBUG );
+    _CrtSetReportFile( _CRT_ASSERT, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_ERROR, _CRTDBG_MODE_FILE |_CRTDBG_MODE_DEBUG );
+    _CrtSetReportFile( _CRT_ERROR, _CRTDBG_FILE_STDERR );
+    _CrtSetReportMode( _CRT_WARN, _CRTDBG_MODE_FILE |_CRTDBG_MODE_DEBUG );
+    _CrtSetReportFile( _CRT_WARN, _CRTDBG_FILE_STDERR );
+    _CrtSetReportHook2( _CRT_RPTHOOK_INSTALL, testReportHook );
+#endif
 }
 
 void testPlan(int plan) {

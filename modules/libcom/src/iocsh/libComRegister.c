@@ -12,6 +12,7 @@
 
 #define epicsExportSharedSymbols
 #include "iocsh.h"
+#include "asLib.h"
 #include "epicsStdioRedirect.h"
 #include "epicsString.h"
 #include "epicsTime.h"
@@ -76,7 +77,7 @@ static const iocshFuncDef chdirFuncDef = {"cd",1,chdirArgs};
 static void chdirCallFunc(const iocshArgBuf *args)
 {
     if (args[0].sval == NULL ||
-        chdir(args[0].sval)) {
+        iocshSetError(chdir(args[0].sval))) {
         fprintf(stderr, "Invalid directory path, ignored\n");
     }
 }
@@ -393,6 +394,8 @@ static void installLastResortEventProviderCallFunc(const iocshArgBuf *args)
     installLastResortEventProvider();
 }
 
+static iocshVarDef asCheckClientIPDef[] = { { "asCheckClientIP", iocshArgInt, 0 }, { NULL, iocshArgInt, NULL } };
+
 void epicsShareAPI libComRegister(void)
 {
     iocshRegister(&dateFuncDef, dateCallFunc);
@@ -425,4 +428,7 @@ void epicsShareAPI libComRegister(void)
     
     iocshRegister(&generalTimeReportFuncDef,generalTimeReportCallFunc);
     iocshRegister(&installLastResortEventProviderFuncDef, installLastResortEventProviderCallFunc);
+
+    asCheckClientIPDef[0].pval = &asCheckClientIP;
+    iocshRegisterVariable(asCheckClientIPDef);
 }

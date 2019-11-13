@@ -135,18 +135,21 @@ OBJ_CXXFLAG = -Fo
 STATIC_CXXFLAGS_YES= -MT$(VISC_CFLAGS_DEBUG) $(BUILD_DLL_CFLAGS)
 STATIC_CXXFLAGS_NO= -MD$(VISC_CFLAGS_DEBUG) $(BUILD_DLL_CFLAGS) -DEPICS_CALL_DLL
 
-STATIC_LDLIBS_YES=ws2_32.lib advapi32.lib user32.lib kernel32.lib winmm.lib
+STATIC_LDLIBS_YES=ws2_32.lib advapi32.lib user32.lib kernel32.lib winmm.lib dbghelp.lib
 STATIC_LDLIBS_NO=
 STATIC_LDFLAGS=
 RANLIB=
 
 #
-# option needed for parallel builds with Visual Studio 2015 onward
-#
+# option needed for parallel builds with Visual Studio 2013 onward
+# VS2012 and above have VisualStudioVersion, so just need to exclude 2012 (11.0)
 # -FS Force Synchronous PDB Writes
+#
 ifneq ($(VisualStudioVersion),)
+ifneq ($(VisualStudioVersion),11.0)
   OPT_CXXFLAGS_NO += -FS
   OPT_CFLAGS_NO += -FS
+endif
 endif
 
 

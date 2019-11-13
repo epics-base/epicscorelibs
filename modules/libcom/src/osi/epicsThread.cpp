@@ -31,6 +31,18 @@
 
 using namespace std;
 
+epicsThreadId epicsShareAPI epicsThreadCreate (
+    const char * name, unsigned int priority, unsigned int stackSize,
+    EPICSTHREADFUNC funptr,void * parm )
+{
+    epicsThreadOpts opts = EPICS_THREAD_OPTS_INIT;
+    opts.priority = priority;
+    opts.stackSize = stackSize;
+    opts.joinable = 0;
+
+    return epicsThreadCreateOpt(name, funptr, parm, &opts);
+}
+
 epicsThreadRunable::~epicsThreadRunable () {}
 void epicsThreadRunable::run () {}
 void epicsThreadRunable::show ( unsigned int ) const {}
@@ -141,9 +153,18 @@ bool epicsThread::exitWait ( const double delay ) throw ()
             if ( this->pThreadDestroyed ) {
                 *this->pThreadDestroyed = true;
             }
+            bool j;
+            {
+                epicsGuard < epicsMutex > guard ( this->mutex );
+                j = joined;
+                joined = true;
+            }
+            if(!j) {
+                epicsThreadMustJoin(this->id);
+            }
             return true;
         }
-        epicsTime exitWaitBegin = epicsTime::getCurrent ();
+        epicsTime exitWaitBegin = epicsTime::getMonotonic ();
         double exitWaitElapsed = 0.0;
         epicsGuard < epicsMutex > guard ( this->mutex );
         this->cancel = true;
@@ -151,8 +172,14 @@ bool epicsThread::exitWait ( const double delay ) throw ()
             epicsGuardRelease < epicsMutex > unguard ( guard );
             this->event.signal ();
             this->exitEvent.wait ( delay - exitWaitElapsed );
-            epicsTime current = epicsTime::getCurrent ();
+            epicsTime current = epicsTime::getMonotonic ();
             exitWaitElapsed = current - exitWaitBegin;
+        }
+        if(this->terminated && !joined) {
+            joined = true;
+
+            epicsGuardRelease < epicsMutex > unguard ( guard );
+            epicsThreadMustJoin(this->id);
         }
     }
     catch ( std :: exception & except ) {
@@ -177,11 +204,18 @@ epicsThread::epicsThread (
     epicsThreadRunable & runableIn, const char * pName,
         unsigned stackSize, unsigned priority ) :
     runable ( runableIn ), id ( 0 ), pThreadDestroyed ( 0 ),
-    begin ( false ), cancel ( false ), terminated ( false )
+    begin ( false ), cancel ( false ), terminated ( false ),
+    joined ( false )
 {
-    this->id = epicsThreadCreate (
-        pName, priority, stackSize, epicsThreadCallEntryPoint,
-        static_cast < void * > ( this ) );
+    epicsThreadOpts opts = EPICS_THREAD_OPTS_INIT;
+    opts.stackSize = stackSize;
+    opts.priority = priority;
+    opts.joinable = 1;
+
+    this->id = epicsThreadCreateOpt(
+        pName, epicsThreadCallEntryPoint,
+        static_cast < void * > ( this ),
+        &opts);
     if ( ! this->id ) {
         throw unableToCreateThread ();
     }
@@ -193,9 +227,8 @@ epicsThread::~epicsThread () throw ()
         char nameBuf [256];
         this->getName ( nameBuf, sizeof ( nameBuf ) );
         fprintf ( stderr,
-            "epicsThread::~epicsThread(): "
-            "blocking for thread \"%s\" to exit\n",
-            nameBuf );
+            "epicsThread::~epicsThread(): \"%s\" blocking for thread \"%s\" to exit\n",
+            getNameSelf(), nameBuf );
         fprintf ( stderr,
             "was epicsThread object destroyed before thread exit ?\n");
     }

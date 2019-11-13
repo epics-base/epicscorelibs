@@ -1343,10 +1343,13 @@ void casExpandBuffer ( struct message_buffer *buf, ca_uint32_t size, int sendbuf
         // round up to multiple of 4K
         size = ((size-1)|0xfff)+1;
 
-        if (buf->type==mbtLargeTCP)
+        if (buf->type==mbtLargeTCP) {
             newbuf = realloc (buf->buf, size);
-        else
+            if(newbuf)
+                buf->buf = newbuf;
+        } else {
             newbuf = malloc (size);
+        }
         newtype = mbtLargeTCP;
         newsize = size;
 
@@ -1421,6 +1424,20 @@ struct client *create_tcp_client (SOCKET sock , const osiSockAddr *peerAddr)
     }
 
     client->addr = peerAddr->ia;
+    if(asCheckClientIP) {
+        epicsUInt32 ip = ntohl(client->addr.sin_addr.s_addr);
+        client->pHostName = malloc(24);
+        if(!client->pHostName) {
+            destroy_client ( client );
+            return NULL;
+        }
+        epicsSnprintf(client->pHostName, 24,
+                      "%u.%u.%u.%u",
+                      (ip>>24)&0xff,
+                      (ip>>16)&0xff,
+                      (ip>>8)&0xff,
+                      (ip>>0)&0xff);
+    }
 
     /*
      * see TCP(4P) this seems to make unsolicited single events much

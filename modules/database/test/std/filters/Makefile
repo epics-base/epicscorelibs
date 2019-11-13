@@ -7,9 +7,11 @@
 # in the file LICENSE that is included with this distribution.
 #*************************************************************************
 
-TOP = ../../..
+TOP = ../../../../..
 
 include $(TOP)/configure/CONFIG
+
+USR_CPPFLAGS += -DUSE_TYPED_RSET
 
 TESTLIBRARY = Recs
 
@@ -56,6 +58,12 @@ syncTest_SRCS += syncTest.c
 syncTest_SRCS += filterTest_registerRecordDeviceDriver.cpp
 testHarness_SRCS += syncTest.c
 TESTS += syncTest
+
+TESTPROD_HOST += decTest
+decTest_SRCS += decTest.c
+decTest_SRCS += filterTest_registerRecordDeviceDriver.cpp
+testHarness_SRCS += decTest.c
+TESTS += decTest
 
 # epicsRunFilterTests runs all the test programs in a known working order.
 testHarness_SRCS += epicsRunFilterTests.c

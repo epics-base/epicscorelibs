@@ -1,6 +1,8 @@
 package DBD::Menu;
 use DBD::Base;
-@ISA = qw(DBD::Base);
+our @ISA = qw(DBD::Base);
+
+use strict;
 
 sub init {
     my ($this, $name) = @_;
@@ -14,7 +16,7 @@ sub init {
 sub add_choice {
     my ($this, $name, $value) = @_;
     $name = $this->identifier($name, "Choice name");
-    foreach $pair ($this->choices) {
+    foreach my $pair ($this->choices) {
         dieContext("Duplicate menu choice name '$name'")
             if ($pair->[0] eq $name);
         dieContext("Duplicate menu choice string '$value'")
@@ -57,14 +59,17 @@ sub equals {
 sub toDeclaration {
     my $this = shift;
     my $name = $this->name;
+    my $macro_name = "${name}_NUM_CHOICES";
     my @choices = map {
         sprintf "    %-31s /* %s */", @{$_}[0], escapeCcomment(@{$_}[1]);
     } $this->choices;
     my $num = scalar @choices;
-    return "typedef enum {\n" .
+    return "#ifndef $macro_name\n" .
+           "typedef enum {\n" .
                join(",\n", @choices) .
            "\n} $name;\n" .
-           "#define ${name}_NUM_CHOICES $num\n\n";
+           "#define $macro_name $num\n" .
+           "#endif\n\n";
 }
 
 sub toDefinition {
