@@ -1,7 +1,8 @@
-filters/ts.c
 filters/arr.c
 filters/dbnd.c
+filters/decimate.c
 filters/sync.c
+filters/ts.c
 
 dev/devMbbiSoftCallback.c
 dev/devLsoSoft.c
