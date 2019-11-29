@@ -1,0 +1,21 @@
+
+
+link(const, lnkConstIf)
+
+
+
+link(calc, lnkCalcIf)
+
+
+
+link(state, lnkStateIf)
+
+
+
+link(debug, lnkDebugIf)
+variable(lnkDebug_debug, int)
+
+
+
+link(trace, lnkTraceIf)
+
