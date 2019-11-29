@@ -18,6 +18,9 @@ include modules/ca/src/client/*.c
 include modules/ca/src/client/*.cpp
 prune modules/ca/src/O.*
 
+include modules/database/src/ioc/*/*.dbd
+include modules/database/src/std/*/*.dbd
+
 recursive-include modules/database/src/ioc *.h *.c *.cpp
 prune modules/database/src/ioc/O.*
 

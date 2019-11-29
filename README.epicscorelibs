@@ -44,7 +44,9 @@ Generated files
      modules/database/src/ioc/O.*/dbLoadTemplate.c \
      modules/database/src/ioc/O.Common/dbCommon.h \
      modules/database/src/ioc/O.Common/menu*.h \
+     modules/database/src/ioc/O.Common/*.dbd \
      modules/database/src/ioc/generated/
 
   cp modules/database/src/std/O.Common/*.h \
+     modules/database/src/std/O.Common/*.dbd \
      modules/database/src/std/generated/
