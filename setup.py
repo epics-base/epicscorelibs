@@ -362,6 +362,12 @@ def proc_headers(headers):
 
 headers = proc_headers(headers)
 
+headers['epicscorelibs.dbd'] = [] \
+    + glob('modules/database/src/ioc/*/*.dbd') \
+    + glob('modules/database/src/std/*/*.dbd') \
+    + glob('modules/database/src/ioc/generated/*.dbd') \
+    + glob('modules/database/src/std/generated/*.dbd')
+
 # a dummy extension so that bdist_wheel will recognise this package
 # as containing binaries.
 ext = Extension(
@@ -403,7 +409,15 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
 
     packages=['epicscorelibs', 'epicscorelibs.path', 'epicscorelibs.test'],
     package_dir={'':os.path.join('src','python')},
-    package_data={'':['*.pxd']},
+    package_data={
+        '':['*.pxd'],
+        'dbd':[
+            'modules/database/src/ioc/*/*.dbd',
+            'modules/database/src/std/*/*.dbd',
+            'modules/database/src/ioc/generated/*.dbd',
+            'modules/database/src/std/generated/*.dbd',
+        ],
+    },
     ext_modules = [ext],
     x_dsos = modules,
     x_headers = headers,
