@@ -15,27 +15,27 @@ install -d dist
 [ "$VENV" ] || VENV="$TDIR"/env
 [ -d "$VENV" ] && rm -rf "$VENV"
 
-$PYTHON -m virtualenv --system-site-packages "$VENV"
+$PYTHON -m virtualenv -p $PYTHON --no-download --system-site-packages "$VENV"
 
 . "$VENV"/bin/activate
 
 if [ -d "$HOME"/projects/setuptools-dso ]
 then
-    $PYTHON -m pip install file://"$HOME"/projects/setuptools-dso
+    python -m pip install --no-index file://"$HOME"/projects/setuptools-dso
 else
-    $PYTHON -m pip install setuptools-dso
+    python -m pip install --pre setuptools-dso
 fi
 
-$PYTHON setup.py sdist -d "$TDIR"/dist
+python setup.py sdist -d "$TDIR"/dist
 ls "$TDIR"/dist/*.gz
 cp "$TDIR"/dist/*.gz dist/
 
-#$PYTHON -m pip install -v "$TDIR"/dist/*
-$PYTHON -m pip wheel -w "$TDIR"/dist -v "$TDIR"/dist/*.gz
+#python -m pip install -v "$TDIR"/dist/*
+python -m pip wheel -w "$TDIR"/dist -v "$TDIR"/dist/*.gz
 cp "$TDIR"/dist/*.whl dist/
 
-$PYTHON -m pip install "$TDIR"/dist/*.whl
+python -m pip install "$TDIR"/dist/*.whl
 
-$PYTHON -m nose epicscorelibs
+python -m nose epicscorelibs
 
 echo "Success"
