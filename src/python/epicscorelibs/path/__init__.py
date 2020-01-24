@@ -29,7 +29,7 @@ lib_path = os.path.join(base_path, 'lib')
 if OS_CLASS=='WIN32':
     # windows has nothing like -rpath let alone the $ORIGIN trick
     # so we must add our /lib directory, which contains the .dlls, to %PATH%
-    os.environ['PATH'] = '%s%s%s%s'%(os.environ.get('PATH', ''), os.pathsep, lib_path, os.pathsep)
+    os.environ['PATH'] = '%s%s%s%s'%(lib_path, os.pathsep, os.environ.get('PATH', ''), os.pathsep)
     try:
         # Fix for Python 3.8 under Windows. See: https://docs.python.org/3.8/whatsnew/3.8.html#bpo-36085-whatsnew
         os.add_dll_directory(lib_path)
