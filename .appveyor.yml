@@ -82,7 +82,7 @@ install:
   - "python cibuild.py prepare"
 
 build_script:
-  - "%CMD_IN_ENV% python cibuild.py build %PYTAG% upload"
+  - "%CMD_IN_ENV% python cibuild.py twine build %PYTAG% upload"
 
 artifacts:
   - path: "dist\\*.whl"

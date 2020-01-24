@@ -41,10 +41,13 @@ def docker(args):
     print("Switch to /io")
     os.chdir('/io')
 
+def twine(args):
+    call_py(['-m', 'pip', 'install', '-U', 'pip'])
+    call_py(['-m', 'pip', 'install', '-U', 'twine'])
 
 def prepare(args):
     call_py(['-m', 'pip', 'install', '-U', 'pip'])
-    call_py(['-m', 'pip', 'install', '-U', 'wheel', 'setuptools', 'nose', 'twine'])
+    call_py(['-m', 'pip', 'install', '-U', 'wheel', 'setuptools', 'nose'])
     # our pre-release builds may use pre-release deps
     if is_pre():
         call_py(['-m', 'pip', 'install', '-U', '--pre', 'setuptools-dso'])
@@ -86,6 +89,7 @@ def upload(args):
     call_py(['-m', 'twine', 'upload', '--skip-existing']+files)
 
 actions = {
+    'twine': twine,
     'docker': docker,
     'prepare': prepare,
     'build': build,
@@ -100,24 +104,6 @@ if __name__=='__main__':
         print(' ', dname)
 
     print('platform =', distutils.util.get_platform())
-
-    try:
-        from pip._internal import pep425tags
-    except ImportError:
-        print('No pip?')
-    else:
-        print('PIP compatible')
-        for parts in pep425tags.get_supported():
-            print('  ', "-".join(parts))
-
-    try:
-        from wheel import pep425tags
-    except ImportError:
-        print('No wheel?')
-    else:
-        print('Wheel compatible')
-        for parts in pep425tags.get_supported():
-            print('  ', "-".join(parts))
 
     args = sys.argv[1:]
     while len(args)>0:
