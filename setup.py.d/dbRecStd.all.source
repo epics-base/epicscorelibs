@@ -100,3 +100,5 @@ rec/stringoutRecord.c
 rec/calcoutRecord.c
 rec/int64inRecord.c
 rec/mbboDirectRecord.c
+
+generated/softIoc_registerRecordDeviceDriver.cpp
