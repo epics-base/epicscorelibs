@@ -49,4 +49,5 @@ Generated files
 
   cp modules/database/src/std/O.Common/*.h \
      modules/database/src/std/O.Common/*.dbd \
+     modules/database/src/std/O.*/*.cpp \
      modules/database/src/std/generated/
