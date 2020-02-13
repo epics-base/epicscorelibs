@@ -47,3 +47,9 @@ def test_loading():
     print(addrA, addrB)
 
     assert ctypes.addressof(addrA)==ctypes.addressof(addrB), (addrA, addrB)
+
+
+def test_ca_loading():
+    from epicscorelibs.ca import cadef, dbr
+    assert cadef
+    assert dbr

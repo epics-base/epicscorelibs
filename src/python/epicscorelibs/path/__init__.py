@@ -60,4 +60,5 @@ def get_lib(name):
         # eg. /path/to/libCom.so.X
         return glob(os.path.join(lib_path, '%s%s%s.*'%(_prefix, name, _suffix)))[0]
 
-libraries = ('Com', 'ca', 'pvData', 'pvAccess', 'pvAccessCA')
+
+libraries = ('Com', 'ca', 'pvData', 'pvAccess', 'pvAccessCA', 'dbCore', 'dbRecStd')

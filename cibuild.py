@@ -74,7 +74,7 @@ def build(args):
         sys.exit(1)
 
     call_py(['-m', 'pip', 'install', results[0]])
-    call_py(['-m', 'nose', 'epicscorelibs'])
+    call_py(['-m', 'nose', '-s', 'epicscorelibs'])
 
 def upload(args):
     if 'APPVEYOR_PULL_REQUEST_NUMBER' in os.environ or 'TWINE_USERNAME' not in os.environ:
