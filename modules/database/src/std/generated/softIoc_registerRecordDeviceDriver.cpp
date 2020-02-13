@@ -12,9 +12,6 @@
 #include "registryCommon.h"
 #include "recSup.h"
 
-#define epicsExportSharedSymbols
-#include "shareLib.h"
-
 extern "C" {
 
 epicsShareExtern typed_rset *pvar_rset_aSubRSET, *pvar_rset_aaiRSET,
@@ -248,6 +245,9 @@ static struct iocshVarDef vardefs[] = {
     {"seqDLYprecision", iocshArgInt, pvar_int_seqDLYprecision},
     {NULL, iocshArgInt, NULL}
 };
+
+#define epicsExportSharedSymbols
+#include "shareLib.h"
 
 epicsShareFunc
 int softIoc_registerRecordDeviceDriver(DBBASE *pbase)
