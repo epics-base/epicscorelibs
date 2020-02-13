@@ -281,7 +281,7 @@ def readlists(name, prefix):
                         if line[:1] in ('', '#'):
                             continue
                         R.append(os.path.normcase(line))
-                        
+
         R = [os.path.join(prefix, F) for F in R]
         ret.append(R)
 
@@ -405,9 +405,10 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     python_requires='>=2.7',
     install_requires=[
         'setuptools', # needed at runtime for 'pkg_resources'
+        'numpy', # needed for epicscorelibs.ca.dbr
     ],
 
-    packages=['epicscorelibs', 'epicscorelibs.path', 'epicscorelibs.test'],
+    packages=['epicscorelibs', 'epicscorelibs.path', 'epicscorelibs.test', 'epicscorelibs.ca'],
     package_dir={'':os.path.join('src','python')},
     package_data={
         '':['*.pxd'],
