@@ -1,5 +1,6 @@
 
 import os
+from glob import glob
 
 from ..config import get_config_var
 
@@ -42,6 +43,21 @@ def get_lib(name):
     :param str name: A library name.  eg. 'Com' or 'ca'.
     :returns: The full absolute path to this library.
     """
-    return os.path.join(lib_path, '%s%s%s'%(_prefix, name, _suffix))
+    # For ELF and MACH-O targets we are including two full copies
+    # of all libraries (can't store symlinks in zip files).
+    # To help maintain the sanity of those using ctypes, we always return
+    # the fully qualified name, which will be the one loaded implicitly
+    # by other libraries.
+
+    base = os.path.join(lib_path, '%s%s%s'%(_prefix, name, _suffix))
+    if OS_CLASS=='WIN32':
+        # eg. /path/to/Com.dll
+        return os.path.join(lib_path, '%s%s%s'%(_prefix, name, _suffix))
+    elif OS_CLASS=='Darwin':
+        # eg. /path/to/libCom.X.dylib
+        return glob(os.path.join(lib_path, '%s%s.*%s'%(_prefix, name, _suffix)))[0]
+    else:
+        # eg. /path/to/libCom.so.X
+        return glob(os.path.join(lib_path, '%s%s%s.*'%(_prefix, name, _suffix)))[0]
 
 libraries = ('Com', 'ca', 'pvData', 'pvAccess', 'pvAccessCA')
