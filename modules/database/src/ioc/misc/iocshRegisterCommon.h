@@ -18,8 +18,14 @@
 extern "C" {
 #endif
 
+struct dbBase;
+
 /* register many useful commands */
 epicsShareFunc void iocshRegisterCommon(void);
+
+epicsShareFunc
+long
+dynamic_registerRecordDeviceDriver(struct dbBase *pdbbase);
 
 #ifdef __cplusplus
 }
