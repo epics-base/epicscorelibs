@@ -24,9 +24,9 @@ from . import py23
 
 if path.OS_CLASS == "WIN32":
     # On windows, use stdcall calling convention for libca
-    libca = ctypes.WinDLL(path.get_lib("ca"))
+    libca = ctypes.WinDLL(path.get_lib("ca"), ctypes.RTLD_GLOBAL)
 else:
-    libca = ctypes.CDLL(path.get_lib("ca"))
+    libca = ctypes.CDLL(path.get_lib("ca"), ctypes.RTLD_GLOBAL)
 
 
 # -----------------------------------------------------------------------------
