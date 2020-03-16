@@ -5,6 +5,7 @@ import ctypes
 import tempfile
 import random
 import string
+import unittest
 
 try:
     from queue import Queue
@@ -31,7 +32,7 @@ def test_running_ioc():
             and sys.version_info[:2] == (3, 4):
         # This particular combination is broken. All the callbacks seem to
         # return junk. Not sure why
-        return
+        raise unittest.SkipTest()
 
     # Get something reasonably unique for the PV prefix
     pv = ''.join(random.choice(string.ascii_uppercase) for _ in range(12))
@@ -42,21 +43,13 @@ record(stringin, "%s") {
 }
 """ % pv).encode())
     dbfile.close()
-    proc = subprocess.Popen(
-        [sys.executable, '-m', 'epicscorelibs.ioc', '-d', dbfile.name],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-    )
-
-    def assert_startswith(expected):
-        l = proc.stdout.readline().decode()
-        assert l.startswith(expected), l
 
     try:
-        # Wait for IOC to be up
-        assert_startswith("Starting iocInit")
-        assert_startswith("iocRun: All initialization complete")
+        # Start the IOC
+        proc = subprocess.Popen(
+            [sys.executable, '-m', 'epicscorelibs.ioc', '-d', dbfile.name],
+            stdin=subprocess.PIPE,
+        )
 
         # Effectively do a caget with these parameters
         datatype = dbr.DBR_STRING
@@ -95,3 +88,4 @@ record(stringin, "%s") {
 
     finally:
         proc.terminate()
+        os.unlink(dbfile.name)
