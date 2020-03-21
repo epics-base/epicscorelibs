@@ -53,6 +53,7 @@ misc/epicsRelease.c
 misc/iocInit.c
 misc/iocshRegisterCommon.c
 misc/miscIocRegister.c
+misc/dynamic_registerRecordDeviceDriver.cpp
 
 registry/registryCommon.c
 registry/registryDeviceSupport.c
