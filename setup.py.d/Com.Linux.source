@@ -5,14 +5,13 @@ osi/os/Linux/osdSockUnsentCount.c
 osi/os/Linux/osdThreadExtra.c
 
 osi/os/posix/epicsAtomicOSD.cpp
-osi/os/posix/epicsTempFile.cpp
+osi/os/posix/epicsTempFile.c
 osi/os/posix/osdEvent.c
 osi/os/posix/osdFindSymbol.c
 osi/os/posix/osdMonotonic.c
 osi/os/posix/osdMutex.c
 osi/os/posix/osdProcess.c
 osi/os/posix/osdSignal.cpp
-osi/os/posix/osdSockAddrReuse.cpp
 osi/os/posix/osdSock.c
 osi/os/posix/osdSpin.c
 osi/os/posix/osdStdio.c
@@ -29,3 +28,4 @@ osi/os/default/osdMessageQueue.cpp
 osi/os/default/osdNetIntf.c
 osi/os/default/osdPoolStatus.c
 osi/os/default/osdThreadHooks.c
+osi/os/default/osdSockAddrReuse.cpp

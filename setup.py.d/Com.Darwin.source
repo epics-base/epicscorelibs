@@ -3,12 +3,11 @@ osi/os/Darwin/osdBackTrace.cpp
 osi/os/Darwin/osdEnv.c
 osi/os/Darwin/osdFindAddr.c
 osi/os/Darwin/osdMonotonic.c
-osi/os/Darwin/osdSockAddrReuse.cpp
 osi/os/Darwin/osdSockUnsentCount.c
 osi/os/Darwin/osdTime.cpp
 
 osi/os/posix/epicsAtomicOSD.cpp
-osi/os/posix/epicsTempFile.cpp
+osi/os/posix/epicsTempFile.c
 osi/os/posix/osdEvent.c
 osi/os/posix/osdFindSymbol.c
 osi/os/posix/osdMutex.c
@@ -29,3 +28,4 @@ osi/os/default/osdMessageQueue.cpp
 osi/os/default/osdNetIntf.c
 osi/os/default/osdPoolStatus.c
 osi/os/default/osdThreadHooks.c
+osi/os/default/osdSockAddrReuse.cpp

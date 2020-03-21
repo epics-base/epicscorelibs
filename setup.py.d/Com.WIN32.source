@@ -1,6 +1,6 @@
 osi/os/WIN32/epicsGetopt.c
 osi/os/WIN32/epicsSocketConvertErrnoToString.cpp
-osi/os/WIN32/epicsTempFile.cpp
+osi/os/WIN32/epicsTempFile.c
 osi/os/WIN32/forceBadAllocException.cpp
 osi/os/WIN32/osdBackTrace.cpp
 osi/os/WIN32/osdEvent.c
@@ -11,7 +11,6 @@ osi/os/WIN32/osdNetIntf.c
 osi/os/WIN32/osdPoolStatus.c
 osi/os/WIN32/osdProcess.c
 osi/os/WIN32/osdSignal.cpp
-osi/os/WIN32/osdSockAddrReuse.cpp
 osi/os/WIN32/osdSock.c
 osi/os/WIN32/osdSockUnsentCount.c
 osi/os/WIN32/osdStdio.c
@@ -29,3 +28,4 @@ osi/os/default/osdMessageQueue.cpp
 osi/os/default/osdThreadHooks.c
 osi/os/default/osdSpin.c
 osi/os/default/osdFindAddr.c
+osi/os/default/osdSockAddrReuse.cpp

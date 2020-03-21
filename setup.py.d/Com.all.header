@@ -3,7 +3,6 @@ as/asTrapWrite.h
 bucketLib/bucketLib.h
 calc/postfix.h
 cppStd/epicsAlgorithm.h
-cppStd/epicsExcept.h
 cvtFast/cvtFast.h
 cxxTemplates/epicsGuard.h
 cxxTemplates/epicsSingleton.h
