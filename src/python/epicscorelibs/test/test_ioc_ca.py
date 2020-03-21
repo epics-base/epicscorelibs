@@ -1,6 +1,7 @@
 import subprocess
 import os
 import sys
+import time
 import ctypes
 import tempfile
 import random
@@ -87,5 +88,18 @@ record(stringin, "%s") {
         assert results.get(timeout=1.0) == "blah"
 
     finally:
-        proc.terminate()
+        print('close IOC stdin')
+        proc.stdin.close()
+        # Popen.wait(timeout=) added in 3.3
+        for n in range(10):
+            ret = proc.poll()
+            if ret is not None:
+                print('IOC exits with',ret)
+                break
+            time.sleep(1.0)
+        else:
+            print('IOC killing')
+            proc.terminate()
+            proc.wait()
+            print('IOC dead')
         os.unlink(dbfile.name)
