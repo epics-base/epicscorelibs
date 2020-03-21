@@ -20,7 +20,8 @@ dbLoadDatabase.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_char_p]
 pdbbase = ctypes.c_void_p.in_dll(dbCore, "pdbbase")
 
 # softIoc_registerRecordDeviceDriver(pdbbase)
-registerRecordDeviceDriver = dbRecStd.softIoc_registerRecordDeviceDriver
+#registerRecordDeviceDriver = dbRecStd.softIoc_registerRecordDeviceDriver
+registerRecordDeviceDriver = dbCore.dynamic_registerRecordDeviceDriver
 registerRecordDeviceDriver.argtypes = [ctypes.c_void_p]
 
 # dbLoadRecords(file, subs)
