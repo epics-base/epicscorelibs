@@ -182,6 +182,19 @@ static ERRSYMTAB symTbl = {NELEMENTS(symbols), symbols};
 ERRSYMTAB_ID errSymTbl = &symTbl;
 """)
 
+        outfile = os.path.join(self.build_temp, 'epicsVCS.h')
+        if self.dry_run:
+            log.info("Would write %s", outfile)
+        else:
+            log.info("Writing %s", outfile)
+            with open(outfile, 'w') as F:
+                F.write("""
+#ifndef EPICS_VCS_VERSION
+  #define EPICS_VCS_VERSION "%s"
+#endif
+"""%package_version)
+        
+
 Distribution.x_errtable = None
 
 class Expand(Command):
@@ -302,7 +315,7 @@ def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
     MOD = DSO(
         name='epicscorelibs.lib.'+name,
         sources = srcs+src,
-        include_dirs = [os.path.join('epicscorelibs', 'include')] + inc,
+        include_dirs = [os.path.join('epicscorelibs', 'include')] + inc + ['.'],
         define_macros = defs,
         dsos = ['epicscorelibs.lib.'+D for D in deps],
         libraries = get_config_var('LDADD'),
