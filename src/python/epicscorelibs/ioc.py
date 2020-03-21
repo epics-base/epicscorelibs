@@ -1,6 +1,10 @@
+
+from __future__ import print_function
+
 import ctypes
 import code
 import argparse
+import sys
 import os
 
 from epicscorelibs import path
@@ -31,12 +35,27 @@ dbLoadRecords.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
 # iocInit()
 iocInit = dbCore.iocInit
 
-def start_ioc(database, macros):
+def start_ioc(database=None, macros=''):
+    def out(msg, *args):
+        sys.stderr.write(msg%args)
+        sys.stderr.flush()
+    out('IOC Starting w/ %s and %s\n', database, macros)
     dbd = os.path.join(path.base_path, "dbd", "softIoc.dbd")
-    dbLoadDatabase(dbd.encode(), None, None)
-    registerRecordDeviceDriver(pdbbase)
-    dbLoadRecords(database.encode(), macros.encode())
-    iocInit()
+    if dbLoadDatabase(dbd.encode(), None, None):
+        raise RuntimeError('Error loading '+dbd)
+    out('IOC dbd loaded\n')
+    if registerRecordDeviceDriver(pdbbase):
+        raise RuntimeError('Error registering')
+    out('IOC rRDD\n')
+    if database is not None:
+        if dbLoadRecords(database.encode(), macros.encode()):
+            raise RuntimeError('Error loading %s with %s'%(database, macros))
+        out('IOC db loaded\n')
+    else:
+        out('IOC no db loaded\n')
+    if iocInit():
+        raise RuntimeError('Error starting IOC')
+    out('IOC Running\n')
 
 
 def main():
