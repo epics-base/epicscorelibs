@@ -68,10 +68,11 @@ EOF
   type qemu-system-i386 || echo "Missing qemu"
 fi
 
-make -j2 $EXTRA
+make -j2 RTEMS_QEMU_FIXUPS=YES CMD_CFLAGS="${CMD_CFLAGS}" CMD_CXXFLAGS="${CMD_CXXFLAGS}" CMD_LDFLAGS="${CMD_LDFLAGS}"
 
 if [ "$TEST" != "NO" ]
 then
+   export EPICS_TEST_IMPRECISE_TIMING=YES
    make -j2 tapfiles
    make -s test-results
 fi

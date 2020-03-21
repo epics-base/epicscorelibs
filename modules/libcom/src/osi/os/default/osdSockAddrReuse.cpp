@@ -12,6 +12,9 @@
 /*
  * Author: Jeff Hill
  */
+#if defined(__rtems__)
+#  define __BSD_VISIBLE 1
+#endif
 
 #define epicsExportSharedSymbols
 #include "osiSock.h"
@@ -31,19 +34,26 @@ epicsShareFunc void epicsShareAPI
     }
 }
 
-/*
- * SO_REUSEPORT is not in POSIX
- */
-epicsShareFunc void epicsShareAPI 
-    epicsSocketEnableAddressUseForDatagramFanout ( SOCKET s )
+static
+void setfanout(SOCKET s, int opt, const char *optname)
 {
     int yes = true;
     int status;
-    status = setsockopt ( s, SOL_SOCKET, SO_REUSEADDR,
+    status = setsockopt ( s, SOL_SOCKET, opt,
         (char *) & yes, sizeof ( yes ) );
     if ( status < 0 ) {
         errlogPrintf (
             "epicsSocketEnablePortUseForDatagramFanout: "
-            "unable to set SO_REUSEADDR?\n");
+            "unable to set %s?\n", optname);
     }
+}
+
+void epicsShareAPI epicsSocketEnableAddressUseForDatagramFanout ( SOCKET s )
+{
+#define DOIT(sock, opt) setfanout(sock, opt, #opt)
+#ifdef SO_REUSEPORT
+    DOIT(s, SO_REUSEPORT);
+#endif
+    DOIT(s, SO_REUSEADDR);
+#undef DOIT
 }

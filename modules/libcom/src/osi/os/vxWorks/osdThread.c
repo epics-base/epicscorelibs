@@ -190,8 +190,8 @@ void epicsThreadOnce(epicsThreadOnceId *id, void (*func)(void *), void *arg)
 
 #ifdef EPICS_THREAD_CAN_JOIN
 
-/* This routine is not static so it appears in the back-trace
- * of a thread that is waiting to be joined.
+/* The next 2 routines are not static so they appear in the back-trace
+ * of the epicsThreads that have called them.
  */
 void epicsThreadAwaitingJoin(int tid)
 {
@@ -211,19 +211,23 @@ void epicsThreadAwaitingJoin(int tid)
     if (status)
         perror("epicsThreadAwaitingJoin");
 
-    semDelete(joinSem);
     taskSpareFieldSet(tid, joinField, 0);
+    semDelete(joinSem);
 }
   #define PREPARE_JOIN(tid, joinable) \
     taskSpareFieldSet(tid, joinField, \
         joinable ? (int) semBCreate(SEM_Q_FIFO, SEM_EMPTY) : 0)
-  #define AWAIT_JOIN(tid) epicsThreadAwaitingJoin(tid)
+  #define AWAIT_JOIN(tid) \
+    epicsThreadAwaitingJoin(tid)
+
 #else
+
   #define PREPARE_JOIN(tid, joinable)
   #define AWAIT_JOIN(tid)
+
 #endif
 
-static void createFunction(EPICSTHREADFUNC func, void *parm)
+void epicsThreadEntry(EPICSTHREADFUNC func, void *parm)
 {
     int tid = taskIdSelf();
 
@@ -270,7 +274,7 @@ epicsThreadId epicsThreadCreateOpt(const char * name,
 
     tid = taskCreate((char *)name,getOssPriorityValue(opts->priority),
         TASK_FLAGS, stackSize,
-        (FUNCPTR)createFunction, (int)funptr, (int)parm,
+        (FUNCPTR)epicsThreadEntry, (int)funptr, (int)parm,
         0,0,0,0,0,0,0,0);
     if (tid == ERROR) {
         errlogPrintf("epicsThreadCreate %s failure %s\n",
@@ -297,48 +301,34 @@ void epicsThreadMustJoin(epicsThreadId id)
 
     joinSem = (SEM_ID) taskSpareFieldGet(tid, joinField);
     if ((int) joinSem == ERROR) {
-        errlogPrintf("%s: Thread '%s' no longer exists.\n",
-            fn, taskName(tid));
+        errlogPrintf("%s: Thread %#x no longer exists.\n", fn, tid);
         return;
     }
 
     if (tid == taskIdSelf()) {
         if (joinSem) {
-            semDelete(joinSem);
             taskSpareFieldSet(tid, joinField, 0);
+            semDelete(joinSem);
         }
         else {
-            errlogPrintf("%s: Self-join of unjoinable thread '%s'\n",
-                fn, taskName(tid));
+            errlogPrintf("%s: Thread '%s' (%#x) can't self-join.\n",
+                fn, epicsThreadGetNameSelf(), tid);
         }
         return;
     }
 
     if (!joinSem) {
-        cantProceed("%s: Thread '%s' is not joinable.\n",
-            fn, taskName(tid));
+        cantProceed("%s: Thread '%s' (%#x) is not joinable.\n",
+            fn, taskName(tid), tid);
         return;
     }
 
     semGive(joinSem);   /* Rendezvous with thread */
 
-    status = taskWait(tid, JOIN_WARNING_TIMEOUT);
-    if (status && errno == S_objLib_OBJ_TIMEOUT) {
-        errlogPrintf("Warning: %s still waiting for thread '%s'\n",
-            fn, taskName(tid));
-        status = taskWait(tid, WAIT_FOREVER);
-    }
-    if (status) {
-        if (errno == S_taskLib_ILLEGAL_OPERATION) {
-            errlogPrintf("%s: This shouldn't happen!\n", fn);
-        }
-        else if (errno == S_objLib_OBJ_ID_ERROR) {
-            errlogPrintf("%s: %x is not a known thread\n", fn, tid);
-        }
-        else {
-            perror(fn);
-        }
-        cantProceed(fn);
+    status = taskWait(tid, WAIT_FOREVER);
+    if (status && errno != S_objLib_OBJ_ID_ERROR) {
+        perror(fn);
+        cantProceed("%s: ", fn);
     }
 #endif
 }

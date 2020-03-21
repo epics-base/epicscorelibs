@@ -12,7 +12,20 @@ The external PVA submodules each have their own separate set of release notes
 which should also be read to understand what has changed since an earlier
 release.
 
-# EPICS Release 7.0.3.1
+## EPICS Release 7.x.y.z
+
+### caRepeater /dev/null
+
+On *NIX targets caRepeater will now partially daemonize by redirecting
+stdin/out/err with /dev/null.  This prevents caRepeater from inheriting
+the stdin/out of a process, like caget, which has spawned it in the
+background.  This has been known to cause problems in some cases when
+caget is itself being run from a shell script.
+
+caRepeater will now understand the '-v' argument to retain stdin/out/err
+which may be necessary to see any error messages it may emit.
+
+## EPICS Release 7.0.3.1
 
 **IMPORTANT NOTE:** *Some record types in this release will not be compatible
 with device support binaries compiled against earlier versions of those record
@@ -205,7 +218,7 @@ necessary, all RTEMS targets should now link although the IOC won't be able to
 be used with the VME I/O on those systems (that we don't have VMEbus I/O
 support for in libCom).
 
-# EPICS Release 7.0.3
+## EPICS Release 7.0.3
 
 ### `epicsTimeGetCurrent()` optimization
 
@@ -225,7 +238,7 @@ This may result in slightly fewer, but larger frames being sent.
 Report NOBT as "precision" through the dbAccess API. This is not accessible
 through CA, but is planned to be used through QSRV.
 
-# EPICS Release 7.0.2.2
+## EPICS Release 7.0.2.2
 
 ### Build System changes
 
@@ -259,7 +272,7 @@ substantial than bug fixes.
 
 Turns out this is ~10x slower to query than `CLOCK_MONOTONIC`.
 
-# EPICS Release 7.0.2.1
+## EPICS Release 7.0.2.1
 
 ### Linking shared libraries on macOS
 
@@ -310,7 +323,7 @@ rewrite of the link address parser code in dbStaticLib. This release fixes that
 issue, although in some cases the output may be slightly different than it used
 to be.
 
-# EPICS Release 7.0.2
+## EPICS Release 7.0.2
 
 ### Launchpad Bugs
 
@@ -327,7 +340,7 @@ modules. The layout of the source files has not changed at all however, so the
 source code for libcom, ca and the database are still found separately under
 the module subdirectory.
 
-# EPICS Release 7.0.1.1
+## EPICS Release 7.0.1.1
 
 ### Changed SIML failure behavior
 
