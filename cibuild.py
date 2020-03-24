@@ -77,8 +77,8 @@ def build(args):
     call_py(['-m', 'nose', '-s', 'epicscorelibs'])
 
 def upload(args):
-    if 'APPVEYOR_PULL_REQUEST_NUMBER' in os.environ or 'TWINE_USERNAME' not in os.environ:
-        print("APPVEYOR is PR, skip upload attempt")
+    if 'TWINE_USERNAME' not in os.environ:
+        print("skip upload attempt")
         return
 
     files = []
