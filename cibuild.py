@@ -20,7 +20,7 @@ from glob import glob
 #  cp27-cp27m-manylinux1_x86_64
 #  cp35-none-win32
 #  cp34-none-win_amd64
-#  cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64
+#  cp35-cp35m-macosx_10_9_intel
 
 def is_pre():
     with open('setup.py', 'r') as F:
