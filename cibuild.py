@@ -86,7 +86,7 @@ def upload(args):
     if platform.system()!='Windows': # avoid potential EoL problems
         files.extend(glob('dist/*.tar.*'))
 
-    call_py(['-m', 'twine', 'upload', '--skip-existing']+files)
+    call_py(['-m', 'twine', 'upload', '--verbose', '--skip-existing']+files)
 
 actions = {
     'twine': twine,

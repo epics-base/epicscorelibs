@@ -145,8 +145,8 @@ matrix:
       language: generic
       env: PYTHON=python2 PYVER=2.7 URL=https://www.python.org/ftp/python/2.7.15/python-2.7.15-macosx10.9.pkg
       install:
-        - sudo $PYTHON cibuild.py twine
         - ./travis-osx.sh
+        - sudo $PYTHON cibuild.py twine
         - $PYTHON cibuild.py prepare
       script:
         - $PYTHON cibuild.py build macosx_10_9_intel
@@ -156,8 +156,8 @@ matrix:
       language: generic
       env: PYTHON=python3 PYVER=3.6 URL=https://www.python.org/ftp/python/3.6.7/python-3.6.7-macosx10.9.pkg
       install:
-        - sudo $PYTHON cibuild.py twine
         - ./travis-osx.sh
+        - sudo $PYTHON cibuild.py twine
         - $PYTHON cibuild.py prepare
       script:
         - $PYTHON cibuild.py build macosx_10_9_intel
@@ -166,8 +166,8 @@ matrix:
       language: generic
       env: PYTHON=python3 PYVER=3.7 URL=https://www.python.org/ftp/python/3.7.4/python-3.7.4-macosx10.9.pkg
       install:
-        - sudo $PYTHON cibuild.py twine
         - ./travis-osx.sh
+        - sudo $PYTHON cibuild.py twine
         - $PYTHON cibuild.py prepare
       script:
         - $PYTHON cibuild.py build macosx_10_9_intel
@@ -176,8 +176,8 @@ matrix:
       language: generic
       env: PYTHON=python3 PYVER=3.8 URL=https://www.python.org/ftp/python/3.8.0/python-3.8.0-macosx10.9.pkg
       install:
-        - sudo $PYTHON cibuild.py twine
         - ./travis-osx.sh
+        - sudo $PYTHON cibuild.py twine
         - $PYTHON cibuild.py prepare
       script:
         - $PYTHON cibuild.py build macosx_10_9_intel

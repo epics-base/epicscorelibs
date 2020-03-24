@@ -11,7 +11,7 @@ curl -L -o /tmp/get-pip.py https://bootstrap.pypa.io/get-pip.py
 
 sudo installer -pkg /tmp/Python.pkg -target /
 
-export PATH=$PATH:/Library/Frameworks/Python.framework/Versions/$PYVER/bin
+export PATH=/Library/Frameworks/Python.framework/Versions/$PYVER/bin:$PATH
 
 which $PYTHON
 
