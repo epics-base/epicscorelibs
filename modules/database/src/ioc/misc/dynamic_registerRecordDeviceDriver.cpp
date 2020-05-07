@@ -11,6 +11,8 @@
 
 #include <string.h>
 
+#define EPICS_PRIVATE_API
+
 #include <iocsh.h>
 
 #include <epicsStdio.h>
@@ -28,7 +30,7 @@
 namespace {
 
 struct compareLoc {
-    bool operator()(const recordTypeLocation& lhs, const recordTypeLocation& rhs)
+    bool operator()(const recordTypeLocation& lhs, const recordTypeLocation& rhs) const
     {
         if(lhs.prset<rhs.prset)
             return true;
@@ -48,7 +50,7 @@ const T& intern(std::set<T,Y>& coll, const T& val)
     return *coll.insert(val).first;
 }
 
-std::set<std::string> registrarsRun;
+std::set<void*> registrarsRun;
 
 // gcc circa 4.4 doesn't like iocshVarDef[2] as mapped_type
 struct varDef {
@@ -68,10 +70,32 @@ T lookupAs(const char* a, const char* b =0, const char* c =0, const char* d =0)
     if(d)
         name += d;
 
-    return (T)epicsFindSymbol(name.c_str());
+    T ret = (T)epicsFindSymbol(name.c_str());
+    if(!ret) {
+        fprintf(stderr, "Unable to find symbol '%s' : %s\n", name.c_str(), epicsLoadError());
+    // all pvar_* are pointers to the exported object
+    } else if(ret && !*ret) {
+        fprintf(stderr, "symbol '%s' holds NULL\n", name.c_str());
+    }
+    return ret;
 }
 
 } // namespace
+
+void runRegistrarOnce(void (*reg_func)(void))
+{
+    if(registrarsRun.find((void*)reg_func)!=registrarsRun.end())
+        return;
+
+    registrarsRun.insert((void*)reg_func);
+
+    reg_func();
+}
+
+void clearRegistrarOnce()
+{
+    registrarsRun.clear();
+}
 
 long
 dynamic_registerRecordDeviceDriver(DBBASE *pdbbase)
@@ -165,9 +189,6 @@ dynamic_registerRecordDeviceDriver(DBBASE *pdbbase)
         for(ELLNODE *cur = ellFirst(&pdbbase->registrarList); cur; cur = ellNext(cur)) {
             dbText& reg = *CONTAINER(cur, dbText, node);
 
-            if(registrarsRun.find(reg.text)!=registrarsRun.end())
-                continue;
-
             typedef void(*registrar)(void);
             registrar* ptr = lookupAs<registrar*>("pvar_func_", reg.text);
 
@@ -176,8 +197,7 @@ dynamic_registerRecordDeviceDriver(DBBASE *pdbbase)
                 return 1;
             }
 
-            (*ptr)();
-            registrarsRun.insert(reg.text);
+            runRegistrarOnce(*ptr);
         }
 
         // for each iocsh variable
