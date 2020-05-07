@@ -7,8 +7,17 @@
 #include "link.h"
 #include "epicsMutex.h"
 #include "ellLib.h"
+#include "devSup.h"
 #include "epicsTime.h"
 #include "callback.h"
+
+#ifndef stringoutPOST_NUM_CHOICES
+typedef enum {
+    stringoutPOST_OnChange          /* On Change */,
+    stringoutPOST_Always            /* Always */
+} stringoutPOST;
+#define stringoutPOST_NUM_CHOICES 2
+#endif
 
 #ifndef menuIvoa_NUM_CHOICES
 typedef enum {
@@ -17,14 +26,6 @@ typedef enum {
     menuIvoaSet_output_to_IVOV      /* Set output to IVOV */
 } menuIvoa;
 #define menuIvoa_NUM_CHOICES 3
-#endif
-
-#ifndef stringoutPOST_NUM_CHOICES
-typedef enum {
-    stringoutPOST_OnChange          /* On Change */,
-    stringoutPOST_Always            /* Always */
-} stringoutPOST;
-#define stringoutPOST_NUM_CHOICES 2
 #endif
 
 typedef struct stringoutRecord {
@@ -62,7 +63,7 @@ typedef struct stringoutRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    struct dset         *dset;      /* DSET address */
+    unambiguous_dset                *dset; /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */

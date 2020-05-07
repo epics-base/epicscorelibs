@@ -7,6 +7,7 @@
 #include "link.h"
 #include "epicsMutex.h"
 #include "ellLib.h"
+#include "devSup.h"
 #include "epicsTime.h"
 
 #ifndef dfanoutSELM_NUM_CHOICES
@@ -53,7 +54,7 @@ typedef struct dfanoutRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    struct dset         *dset;      /* DSET address */
+    unambiguous_dset                *dset; /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */

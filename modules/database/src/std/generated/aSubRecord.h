@@ -7,8 +7,17 @@
 #include "link.h"
 #include "epicsMutex.h"
 #include "ellLib.h"
+#include "devSup.h"
 #include "epicsTime.h"
 struct aSubRecord;
+
+#ifndef aSubLFLG_NUM_CHOICES
+typedef enum {
+    aSubLFLG_IGNORE                 /* IGNORE */,
+    aSubLFLG_READ                   /* READ */
+} aSubLFLG;
+#define aSubLFLG_NUM_CHOICES 2
+#endif
 
 #ifndef aSubEFLG_NUM_CHOICES
 typedef enum {
@@ -17,14 +26,6 @@ typedef enum {
     aSubEFLG_ALWAYS                 /* ALWAYS */
 } aSubEFLG;
 #define aSubEFLG_NUM_CHOICES 3
-#endif
-
-#ifndef aSubLFLG_NUM_CHOICES
-typedef enum {
-    aSubLFLG_IGNORE                 /* IGNORE */,
-    aSubLFLG_READ                   /* READ */
-} aSubLFLG;
-#define aSubLFLG_NUM_CHOICES 2
 #endif
 
 typedef struct aSubRecord {
@@ -62,7 +63,7 @@ typedef struct aSubRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    struct dset         *dset;      /* DSET address */
+    unambiguous_dset                *dset; /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */

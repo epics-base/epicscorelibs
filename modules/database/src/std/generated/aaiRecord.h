@@ -7,6 +7,7 @@
 #include "link.h"
 #include "epicsMutex.h"
 #include "ellLib.h"
+#include "devSup.h"
 #include "epicsTime.h"
 #include "callback.h"
 
@@ -16,6 +17,24 @@ typedef enum {
     aaiPOST_OnChange                /* On Change */
 } aaiPOST;
 #define aaiPOST_NUM_CHOICES 2
+#endif
+
+#ifndef menuFtype_NUM_CHOICES
+typedef enum {
+    menuFtypeSTRING                 /* STRING */,
+    menuFtypeCHAR                   /* CHAR */,
+    menuFtypeUCHAR                  /* UCHAR */,
+    menuFtypeSHORT                  /* SHORT */,
+    menuFtypeUSHORT                 /* USHORT */,
+    menuFtypeLONG                   /* LONG */,
+    menuFtypeULONG                  /* ULONG */,
+    menuFtypeINT64                  /* INT64 */,
+    menuFtypeUINT64                 /* UINT64 */,
+    menuFtypeFLOAT                  /* FLOAT */,
+    menuFtypeDOUBLE                 /* DOUBLE */,
+    menuFtypeENUM                   /* ENUM */
+} menuFtype;
+#define menuFtype_NUM_CHOICES 12
 #endif
 
 typedef struct aaiRecord {
@@ -53,7 +72,7 @@ typedef struct aaiRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    struct dset         *dset;      /* DSET address */
+    unambiguous_dset                *dset; /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */

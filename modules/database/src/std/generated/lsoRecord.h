@@ -7,6 +7,7 @@
 #include "link.h"
 #include "epicsMutex.h"
 #include "ellLib.h"
+#include "devSup.h"
 #include "epicsTime.h"
 #include "devSup.h"
 
@@ -21,6 +22,15 @@ typedef struct lsodset {
 } lsodset;
 
 #include "callback.h"
+
+#ifndef menuIvoa_NUM_CHOICES
+typedef enum {
+    menuIvoaContinue_normally       /* Continue normally */,
+    menuIvoaDon_t_drive_outputs     /* Don't drive outputs */,
+    menuIvoaSet_output_to_IVOV      /* Set output to IVOV */
+} menuIvoa;
+#define menuIvoa_NUM_CHOICES 3
+#endif
 
 typedef struct lsoRecord {
     char                name[61];   /* Record Name */
@@ -57,7 +67,7 @@ typedef struct lsoRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    struct dset         *dset;      /* DSET address */
+    unambiguous_dset                *dset; /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
