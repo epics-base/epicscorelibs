@@ -12,18 +12,53 @@ The external PVA submodules each have their own separate set of release notes
 which should also be read to understand what has changed since an earlier
 release.
 
-## EPICS Release 7.x.y.z
+## EPICS Release 7.0.3.2
+
+### IOCsh usage messages
+
+`help <cmd>` now prints a descriptive usage message
+for many internal IOCsh commands.  Try `help *` to
+see them all.
+
+External code which wishes to provide a usage message
+should do so through the new `iocshFuncDef::usage` member.
+
+### Variable names in RELEASE files
+
+`configure/RELEASE` files are parsed by both GNUmake and the `convertRelease.pl`
+script. While GNUmake is quite relaxed about what characters may be used in a
+RELEASE variable name, the `convertRelease.pl` script parser has only recognized
+variable names that match the Perl regular expression `\w+`, i.e. upper and
+lower-case letters, digits and underscore characters.
+
+The script has been modified so now RELEASE variable names must start with a
+letter or underscore, and be followed by any number of letters, digits,
+underscore or hyphen characters, matching the regular expression
+`[A-Za-z_][A-Za-z_0-9-]*`. The hyphen character `-` was not previously allowed
+and if used would have prevented a build from finding include files and
+libraries in any module using that in its RELEASE variable name.
+
+This change does disallow names that start with a digit which used to be
+allowed, but hopefully nobody has been relying on that ability. The regular
+expression used for names can be found in the file `src/tools/EPICS/Release.pm`
+and can be adjusted locally if necessary.
 
 ### caRepeater /dev/null
 
-On *NIX targets caRepeater will now partially daemonize by redirecting
-stdin/out/err with /dev/null.  This prevents caRepeater from inheriting
+On \*NIX targets caRepeater will now partially daemonize by redirecting
+stdin/out/err to /dev/null.  This prevents caRepeater from inheriting
 the stdin/out of a process, like caget, which has spawned it in the
 background.  This has been known to cause problems in some cases when
 caget is itself being run from a shell script.
 
 caRepeater will now understand the '-v' argument to retain stdin/out/err
 which may be necessary to see any error messages it may emit.
+
+### `state` record deprecated
+
+IOCs now emit a warning when a database file containing the `state` record is
+loaded. This record has been deprecated for a while and will be removed
+beginning with EPICS 7.1. Consider using the `stringin` record instead.
 
 ## EPICS Release 7.0.3.1
 
@@ -175,7 +210,7 @@ set to their default values.
     void startitup(void) {
         epicsThreadOpts opts = EPICS_THREAD_OPTS_INIT;
         epicsThreadId tid;
-    
+
         opts.priority = epicsThreadPriorityMedium;
         tid = epicsThreadCreateOpt("my thread", &threadMain, NULL, &opts);
     }
@@ -642,14 +677,14 @@ number instead, like this:
 
 ```
     #include <epicsVersion.h>
-    
+
     #ifndef VERSION_INT
     #  define VERSION_INT(V,R,M,P) ( ((V)<<24) | ((R)<<16) | ((M)<<8) | (P))
     #endif
     #ifndef EPICS_VERSION_INT
     #  define EPICS_VERSION_INT VERSION_INT(EPICS_VERSION, EPICS_REVISION, EPICS_MODIFICATION, EPICS_PATCH_LEVEL)
     #endif
-    
+
     #if EPICS_VERSION_INT >= VERSION_INT(3,16,1,0)
         /* Code where Base has INT64 support */
     #else
@@ -975,7 +1010,7 @@ excerpts from a database file:
     record(ai, math:pi) {
         field(INP, {const: 3.14159265358979})   # Correct
         field(SIOL, "{const: 3.142857}")        # Wrong
-        
+
         info(autosave, {            # White-space and comments are allowed
             fields:[DESC, SIMM],
             pass0:[VAL]
@@ -1123,7 +1158,7 @@ this:
 
 ```
     #include "epicsTime.h"
-    
+
     #ifndef M_time
       /* S_time_... status values were not provided before Base 3.16 */
       #define S_time_unsynchronized epicsTimeERROR
@@ -1148,9 +1183,71 @@ Added a new macro `callbackGetPriority(prio, callback)` to the callback.h
 header and removed the need for dbScan.c to reach into the internals of its
 `CALLBACK` objects.
 
+
 ## Changes from the 3.15 branch since 3.15.7
 
-> None.
+### Improvements to the self-test build targets
+
+This release contains changes that make it possible to integrate another test
+running and reporting system (such as Google's gtest) into the EPICS build
+system. The built-in test-runner and reporting system will continue to be used
+by the test programs inside Base however.
+
+These GNUmake `tapfiles` and `test-results` build targets now collect a list of
+the directories that experienced test failures and display those at the end of
+running and/or reporting all of the tests. The GNUmake process will also only
+exit with an error status after running and/or reporting all of the test
+results; previously the `-k` flag to make was needed and even that didn't always
+work.
+
+Continuous Integration systems are recommended to run `make tapfiles` (or if
+they can read junittest output instead of TAP `make junitests`) followed by
+`make -s test-results` to display the results of the tests. If multiple CPUs are
+available the `-j` flag can be used to run tests in parallel, giving the maximum
+jobs that should be allowed so `make -j4 tapfiles` for a system with 4 CPUs say.
+Running many more jobs than you have CPUs is likely to be slower and is not
+recommended.
+
+### epicsThread: Main thread defaults to allow blocking I/O
+
+VxWorks IOCs (and potentially RTEMS IOCs running GeSys) have had problems with
+garbled error messages from dbStaticLib routines for some time &mdash; messages
+printed before `iocInit` were being queued through the errlog thread instead of
+being output immediately. This has been fixed by initializing the main thread
+with its `OkToBlock` flag set instead of cleared. IOCs running on other
+operating systems that use iocsh to execute the startup script previously had
+that set anyway in iocsh so were not affected, but this change might cause other
+programs that don't use iocsh to change their behavior slightly if they use
+`errlogPrintf()`, `epicsPrintf()` or `errPrintf()`.
+
+### catools: Handle data type changes in camonitor
+
+The camonitor program didn't properly cope if subscribed to a channel whose data
+type changed when its IOC was rebooted without restarting the camonitor program.
+This has now been fixed.
+
+### More Record Reference Documentation
+
+The remaining record types have had their reference pages moved from the Wiki,
+and some new reference pages have been written to cover the analog array and
+long string input and output record types plus the printf recor type, none of
+which were previously documented. The wiki reference pages covering the fields
+common to all, input, and output record types have also been added, thanks to
+Rolf Keitel. The POD conversion scripts have also been improved and they now
+properly support linking to subsections in a different document, although the
+POD changes to add the cross-links that appeared in the original wiki pages
+still needs to be done in most cases.
+
+### Fix build issues with newer MinGW versions
+
+The `clock_gettime()` routine is no longer used under MinGW since newer versions
+don't provide it any more.
+
+### Fix race for port in RSRV when multiple IOCs start simultaneously
+
+If multiple IOCs were started at the same time, by systemd say, they could race
+to obtain the Channel Access TCP port number 5064. This issue has been fixed.
+
 
 ## Changes made between 3.15.6 and 3.15.7
 
@@ -1867,4 +1964,3 @@ Simpler versions of the `epicsTime_gmtime()` and `epicsTime_localtime()`
 routines have been included in the Windows implementations, and a new test
 program added. The original versions do not report DST status properly. Fixes
 [Launchpad bug 1528284](https://bugs.launchpad.net/bugs/1528284).
-

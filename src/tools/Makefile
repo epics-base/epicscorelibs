@@ -16,6 +16,8 @@ PERL_MODULES += EPICS/Path.pm
 PERL_MODULES += EPICS/Release.pm
 PERL_MODULES += EPICS/Readfile.pm
 PERL_MODULES += EPICS/Getopts.pm
+PERL_MODULES += EPICS/PodHtml.pm
+PERL_MODULES += EPICS/PodXHtml.pm
 
 # This goes into lib/perl, not bin/<host>
 PERL_MODULES += EpicsHostArch.pl
@@ -37,6 +39,7 @@ PERL_SCRIPTS += podToHtml.pl
 PERL_SCRIPTS += podRemove.pl
 PERL_SCRIPTS += replaceVAR.pl
 PERL_SCRIPTS += tap-to-junit-xml.pl
+PERL_SCRIPTS += testFailures.pl
 PERL_SCRIPTS += useManifestTool.pl
 PERL_SCRIPTS += genVersionHeader.pl
 

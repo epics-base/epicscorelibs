@@ -5,15 +5,21 @@
 \*************************************************************************/
 /* osi/os/WIN32/osdFindSymbol.c */
 
-/* avoid need to link against psapi.dll
- * requires windows 7 or later
+/* Avoid need to link against psapi.dll. requires windows 7 or later.
+ * MinGW doesn't provide wrappers until 6.0, so fallback to psapi.dll
  */
-#define NTDDI_VERSION NTDDI_WIN7
+#ifdef _MSC_VER
+#  define PSAPI_VERSION 2
+#  define epicsEnumProcessModules K32EnumProcessModules
+#else
+#  define epicsEnumProcessModules EnumProcessModules
+#endif
 
 #include <windows.h>
 #include <psapi.h>
 
 #define epicsExportSharedSymbols
+#include "epicsStdio.h"
 #include "epicsFindSymbol.h"
 
 #ifdef _MSC_VER
@@ -25,7 +31,7 @@
 #endif
 
 STORE
-int epicsLoadErrorCode = 0;
+DWORD epicsLoadErrorCode = 0;
 
 epicsShareFunc void * epicsLoadLibrary(const char *name)
 {
@@ -33,46 +39,78 @@ epicsShareFunc void * epicsLoadLibrary(const char *name)
 
     epicsLoadErrorCode = 0;
     lib = LoadLibrary(name);
-    if (lib == NULL)
-    {
-        epicsLoadErrorCode = GetLastError();
-    }
+    epicsLoadErrorCode = lib ? 0 : GetLastError();
     return lib;
 }
 
 epicsShareFunc const char *epicsLoadError(void)
 {
     STORE char buffer[100];
+    DWORD n;
 
-    FormatMessage(
-        FORMAT_MESSAGE_FROM_SYSTEM,
+    n = FormatMessage(
+        FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS,
         NULL,
         epicsLoadErrorCode,
         0,
         buffer,
         sizeof(buffer)-1, NULL );
+
+    if(n) {
+        /* n - number of chars stored excluding nil.
+         *
+         * Some messages include a trailing newline, which we strip.
+         */
+        for(; n>=1 && (buffer[n-1]=='\n' || buffer[n-1]=='\r'); n--)
+            buffer[n-1] = '\0';
+    } else {
+         epicsSnprintf(buffer, sizeof(buffer),
+                       "Unable to format WIN32 error code %lu",
+                       (unsigned long)epicsLoadErrorCode);
+         buffer[sizeof(buffer)-1] = '\0';
+
+    }
+
     return buffer;
 }
 
 epicsShareFunc void * epicsShareAPI epicsFindSymbol(const char *name)
 {
-    HMODULE dlls[128];
-    DWORD ndlls=0u, i;
+    HANDLE proc = GetCurrentProcess();
+    HMODULE *dlls=NULL;
+    DWORD nalloc=0u, needed=0u;
     void* ret = NULL;
 
     /* As a handle returned by LoadLibrary() isn't available to us,
      * try all loaded modules in arbitrary order.
      */
-    if(K32EnumProcessModules(GetCurrentProcess(), dlls, sizeof(dlls), &ndlls)) {
-        for(i=0; !ret && i<ndlls; i++) {
+
+    if(!epicsEnumProcessModules(proc, NULL, 0, &needed)) {
+        epicsLoadErrorCode = GetLastError();
+        return ret;
+    }
+
+    if(!(dlls = malloc(nalloc = needed))) {
+        epicsLoadErrorCode = ERROR_NOT_ENOUGH_MEMORY;
+        return ret;
+    }
+
+    if(epicsEnumProcessModules(proc, dlls, nalloc, &needed)) {
+        DWORD i, ndlls;
+
+        /* settle potential races w/o retry by iterating smaller of nalloc or needed */
+        if(nalloc > needed)
+            nalloc = needed;
+
+        for(i=0, ndlls = nalloc/sizeof(*dlls); !ret && i<ndlls; i++) {
             ret = GetProcAddress(dlls[i], name);
+            if(!ret && GetLastError()!=ERROR_PROC_NOT_FOUND) {
+                break;
+            }
         }
     }
-    if(!ret) {
-        /* only capturing the last error code,
-         * but what else to do?
-         */
-        epicsLoadErrorCode = GetLastError();
-    }
+
+    epicsLoadErrorCode = ret ? 0 : GetLastError();
+    free(dlls);
     return ret;
 }
