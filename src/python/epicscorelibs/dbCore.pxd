@@ -40,7 +40,7 @@ cdef extern from "<dbStaticLib.h>" nogil:
     long dbFindField(DBENTRY *pdbentry, const char *pfieldName)
     long dbEntryToAddr(const DBENTRY *pdbentry, dbAddr *paddr)
 
-cdef extern from "<dbAccessDefs.h>" nogil:
+cdef extern from "<dbAccess.h>" nogil:
     int dbLoadDatabase(const char *filename, const char *path, const char *substitutions)
     int dbLoadRecords (const char* filename,                   const char* substitutions)
 
@@ -55,6 +55,8 @@ cdef extern from "<dbAccessDefs.h>" nogil:
 
     long dbProcess(dbCommon *precord)
 
+    void dbInitEntryFromRecord(dbCommon* prec, DBENTRY* pdbentry)
+
 cdef extern from "<dbLoadTemplate.h>" nogil:
     int dbLoadTemplate(const char *sub_file, const char *cmd_collect)
 
@@ -65,8 +67,6 @@ cdef extern from "<dbCommon.h>" nogil:
         Com.epicsUInt8     pact
         void*              dpvt
         # ... and sooo many more
-
-    void dbInitEntryFromRecord(dbCommon* prec, DBENTRY* pdbentry)
 
 cdef extern from "<dbLock.h>" nogil:
     void dbScanLock(dbCommon *prec)
@@ -82,6 +82,30 @@ cdef extern from "<dbAddr.h>" nogil:
         short   field_size
         short   special
         short   dbr_field_type
+
+cdef extern from "<dbChannel.h>" nogil:
+    struct dbChannel:
+        const char *name
+        dbAddr addr
+        long  final_no_elements
+        short final_field_size
+        short final_type
+        # otherwise opaque
+
+    const char* dbChannelName(dbChannel*)
+    dbCommon* dbChannelRecord(dbChannel*)
+    dbFldDes* dbChannelFldDes(dbChannel*)
+    long dbChannelElements(dbChannel*)
+    short dbChannelFieldType(dbChannel*)
+    short dbChannelExportType(dbChannel*)
+    short dbChannelExportCAType(dbChannel*)
+    short dbChannelFieldSize(dbChannel*)
+    long dbChannelFinalElements(dbChannel*)
+    short dbChannelFinalFieldType(dbChannel*)
+    short dbChannelFinalCAType(dbChannel*)
+    short dbChannelFinalFieldSize(dbChannel*)
+    short dbChannelSpecial(dbChannel*)
+    void* dbChannelField(dbChannel*)
 
 cdef extern from "<registryFunction.h>" nogil:
     ctypedef void (*REGISTRYFUNCTION)()
@@ -171,3 +195,29 @@ cdef extern from "<devSup.h>" nogil:
 
     link* dbGetDevLink(dbCommon* prec)
     void devExtend(dsxt *pdsxt)
+
+cdef extern from "<dbNotify.h>" nogil:
+    enum notifyRequestType:
+        processRequest
+        putProcessRequest
+        processGetRequest
+        putProcessGetRequest
+    enum _notifyPutType:
+        putDisabledType
+        putFieldType
+        putType
+    ctypedef _notifyPutType notifyPutType
+    enum _notifyGetType:
+        getFieldType
+        getType
+    ctypedef _notifyGetType notifyGetType
+    struct processNotify:
+        notifyRequestType requestType
+        dbChannel *chan
+        int              (*putCallback)(processNotify *,notifyPutType type)
+        void             (*getCallback)(processNotify *,notifyGetType type)
+        void             (*doneCallback)(processNotify *)
+        void             *usrPvt
+
+    void dbProcessNotify(processNotify *pprocessNotify)
+    void dbNotifyCancel(processNotify *pprocessNotify)
