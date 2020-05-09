@@ -58,7 +58,7 @@ def _makeconf():
         elif machine.startswith('arm'):
             HA = 'linux-arm'
         elif machine.endswith('86'):
-            HA = 'linux-x64'
+            HA = 'linux-x86'
         else:
             raise RuntimeError("Unsupported Linkage")
 
