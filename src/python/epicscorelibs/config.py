@@ -104,6 +104,11 @@ def _makebuild():
         #build['LDFLAGS'] += ['-Wl,--no-undefined', '-Wl,--no-allow-shlib-undefined']
         build['LDADD'] += ['m', 'rt', 'dl']
 
+        if not sysconfig.get_config_var('Py_DEBUG'):
+            # don't include debug information in non-debug builds
+            build['CFLAGS'] += ['-g0']
+            build['CXXFLAGS'] += ['-g0']
+
     if OS_CLASS=='Darwin':
         build['CPPFLAGS'] += [('darwin', None)]
         build['CXXFLAGS'] += ['-mmacosx-version-min=10.7','-std=c++11', '-stdlib=libc++']
