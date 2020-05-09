@@ -1,0 +1,3 @@
+src/ioc/pv/syncChannelFind.h
+src/ioc/pv/iocshelper.h
+src/ioc/pv/iocreftrack.h

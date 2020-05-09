@@ -262,11 +262,15 @@ class InstallHeaders(Command):
             self.mkpath(pkgdir)
 
             for fname in files:
+                if isinstance(fname, str):
+                    fout = fname
+                else:
+                    fout, fname = fname
                 if not os.path.isfile(fname):
                     fname = os.path.join(self.build_temp, fname)
 
                 self.copy_file(fname,
-                               os.path.join(pkgdir, os.path.basename(fname)))
+                               os.path.join(pkgdir, os.path.basename(fout)))
 
 Distribution.x_headers = None
 
@@ -352,6 +356,13 @@ build_module('pvAccess', 'modules/pvAccess',
 build_module('pvAccessCA', 'modules/pvAccess',
              deps=['pvAccess', 'pvData', 'ca', 'Com'],
 )
+build_module('pvAccessIOC', 'modules/pvAccess',
+             deps=['pvAccess', 'pvData', 'dbRecStd', 'dbCore', 'ca', 'Com'],
+)
+build_module('qsrv', 'modules/pva2pva',
+             defs=[('QSRV_API_BUILDING',None)],
+             deps=['pvAccess', 'pvData', 'dbRecStd', 'dbCore', 'ca', 'Com'],
+)
 
 assert len(headers)>0
 
@@ -379,7 +390,9 @@ headers['epicscorelibs.dbd'] = [] \
     + glob('modules/database/src/ioc/*/*.dbd') \
     + glob('modules/database/src/std/*/*.dbd') \
     + glob('modules/database/src/ioc/generated/*.dbd') \
-    + glob('modules/database/src/std/generated/*.dbd')
+    + glob('modules/database/src/std/generated/*.dbd') \
+    + glob('modules/pvAccess/src/ioc/*.dbd') \
+    + [('qsrv.dbd', 'modules/pva2pva/pdbApp/qsrv-new.dbd')]
 
 # a dummy extension so that bdist_wheel will recognise this package
 # as containing binaries.
@@ -440,6 +453,8 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
          ['modules/pvData/configure/CONFIG_PVDATA_VERSION']),
         ('modules/pvAccess/src/pva/pvaVersionNum.h@', 'modules/pvAccess/src/pva/pv/pvaVersionNum.h',
          ['modules/pvAccess/configure/CONFIG_PVACCESS_VERSION']),
+        ('modules/pva2pva/pdbApp/pv/qsrvVersionNum.h@', 'modules/pva2pva/pdbApp/pv/qsrvVersionNum.h',
+         ['modules/pva2pva/configure/CONFIG_QSRV_VERSION']),
     ],
     x_errtable = [
         "modules/libcom/src/osi/devLib.h",
