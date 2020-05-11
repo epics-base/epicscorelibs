@@ -40,8 +40,8 @@ def start_ioc(database=None, macros=''):
         sys.stderr.write(msg%args)
         sys.stderr.flush()
     out('IOC Starting w/ %s and %s\n', database, macros)
-    dbd = os.path.join(path.base_path, "dbd", "softIoc.dbd")
-    if dbLoadDatabase(dbd.encode(), None, None):
+    dbd = os.path.join(path.base_path, "dbd")
+    if dbLoadDatabase(b"base.dbd", dbd.encode(), None):
         raise RuntimeError('Error loading '+dbd)
     out('IOC dbd loaded\n')
     if registerRecordDeviceDriver(pdbbase):
