@@ -1,7 +1,8 @@
-"""This package holds the non-python libraries which consitute
-a part of EPICS Base.
+"""This package holds the non-python libraries which consitute EPICS Base.
 
 https://epics.anl.gov/
+
+See epicscorelibs.license for terms
 """
 
 license = """
