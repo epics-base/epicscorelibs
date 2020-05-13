@@ -399,6 +399,9 @@ headers['epicscorelibs.dbd'] = [] \
 ext = Extension(
     name='epicscorelibs._base',
     sources = ['src/python/epicscorelibs/base.cpp'],
+    define_macros = get_config_var('CPPFLAGS'),
+    extra_compile_args = get_config_var('CXXFLAGS'),
+    extra_link_args = get_config_var('LDFLAGS'),
 )
 
 setup(
@@ -413,7 +416,7 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     author_email='mdavidsaver@gmail.com',
     license='EPICS',
     classifiers = [
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'License :: Freely Distributable',
@@ -421,6 +424,9 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
         'Topic :: Scientific/Engineering',
         'Topic :: Software Development :: Libraries',
         'Topic :: System :: Distributed Computing',
+        'Operating System :: POSIX :: Linux',
+        'Operating System :: MacOS',
+        'Operating System :: Microsoft :: Windows',
     ],
     keywords='epics scada',
     project_urls = {
