@@ -123,7 +123,7 @@ matrix:
     - os: osx
       osx_image: xcode11
       language: generic
-      env: PYTHON=python2 PYVER=2.7 URL=https://www.python.org/ftp/python/2.7.15/python-2.7.15-macosx10.9.pkg
+      env: PYTHON=python2 PYVER=2.7 URL=https://www.python.org/ftp/python/2.7.18/python-2.7.18-macosx10.9.pkg
       install:
         - ./travis-osx.sh
         - sudo $PYTHON cibuild.py twine
@@ -134,7 +134,7 @@ matrix:
     - os: osx
       osx_image: xcode11
       language: generic
-      env: PYTHON=python3 PYVER=3.6 URL=https://www.python.org/ftp/python/3.6.7/python-3.6.7-macosx10.9.pkg
+      env: PYTHON=python3 PYVER=3.6 URL=https://www.python.org/ftp/python/3.6.8/python-3.6.8-macosx10.6.pkg
       install:
         - ./travis-osx.sh
         - sudo $PYTHON cibuild.py twine
@@ -143,6 +143,7 @@ matrix:
         - $PYTHON cibuild.py build macosx_10_9_intel
 
     - os: osx
+      osx_image: xcode11
       language: generic
       env: PYTHON=python3 PYVER=3.7 URL=https://www.python.org/ftp/python/3.7.4/python-3.7.4-macosx10.9.pkg
       install:
@@ -153,8 +154,9 @@ matrix:
         - $PYTHON cibuild.py build macosx_10_9_intel
 
     - os: osx
+      osx_image: xcode11
       language: generic
-      env: PYTHON=python3 PYVER=3.8 URL=https://www.python.org/ftp/python/3.8.0/python-3.8.0-macosx10.9.pkg
+      env: PYTHON=python3 PYVER=3.8 URL=https://www.python.org/ftp/python/3.8.2/python-3.8.2-macosx10.9.pkg
       install:
         - ./travis-osx.sh
         - sudo $PYTHON cibuild.py twine
