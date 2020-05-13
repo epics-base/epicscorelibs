@@ -408,7 +408,7 @@ setup(
     long_description="""The EPICS (Experimental Physics and Industrial Control System) core libraries
 for use by python modules.  Either dynamically with ctypes or statically by compiled extension.
 """,
-    url='https://github.com/mdavidsaver/epics-base/tree/pipi',
+    url='https://github.com/mdavidsaver/epicscorelibs',
     author='Michael Davidsaver',
     author_email='mdavidsaver@gmail.com',
     license='EPICS',
