@@ -60,7 +60,7 @@ def _makeconf():
         elif machine.endswith('86'):
             HA = 'linux-x86'
         else:
-            raise RuntimeError("Unsupported Linkage")
+            raise RuntimeError("Unsupported Linkage: " + machine)
 
     elif osname=='Darwin':
         if machine=='ppc':
