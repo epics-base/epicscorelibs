@@ -1,4 +1,4 @@
-name: P4P
+name: epicscorelibs
 
 on: [push, pull_request]
 
