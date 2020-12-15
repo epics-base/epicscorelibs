@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* histogramRecord.c - Record Support Routines for Histogram records */
@@ -87,17 +88,6 @@ epicsExportAddress(rset,histogramRSET);
 int histogramSDELprecision = 2;
 epicsExportAddress(int, histogramSDELprecision);
 
-struct histogramdset { /* histogram input dset */
-     long          number;
-     DEVSUPFUN     dev_report;
-     DEVSUPFUN     init;
-     DEVSUPFUN     init_record; /*returns: (-1,0)=>(failure,success)*/
-     DEVSUPFUN     get_ioint_info;
-     DEVSUPFUN     read_histogram;/*(0,2)=> success and add_count, don't add_count)*/
-               /* if add_count then sgnl added to array */
-     DEVSUPFUN     special_linconv;
-};
-
 /* control block for callback*/
 typedef struct myCallback {
     epicsCallback callback;
@@ -160,7 +150,7 @@ static void wdogInit(histogramRecord *prec)
 static long init_record(struct dbCommon *pcommon, int pass)
 {
     struct histogramRecord *prec = (struct histogramRecord *)pcommon;
-    struct histogramdset *pdset;
+    histogramdset *pdset;
 
     if (pass == 0) {
         /* allocate space for histogram array */
@@ -181,21 +171,21 @@ static long init_record(struct dbCommon *pcommon, int pass)
     recGblInitConstantLink(&prec->siol, DBF_DOUBLE, &prec->sval);
 
     /* must have device support defined */
-    pdset = (struct histogramdset *) prec->dset;
+    pdset = (histogramdset *) prec->dset;
     if (!pdset) {
         recGblRecordError(S_dev_noDSET, prec, "histogram: init_record");
         return S_dev_noDSET;
     }
 
     /* must have read_histogram function defined */
-    if (pdset->number < 6 || !pdset->read_histogram) {
+    if (pdset->common.number < 6 || !pdset->read_histogram) {
         recGblRecordError(S_dev_missingSup, prec, "histogram: init_record");
         return S_dev_missingSup;
     }
 
     /* call device support init_record */
-    if (pdset->init_record) {
-        long status = pdset->init_record(prec);
+    if (pdset->common.init_record) {
+        long status = pdset->common.init_record(pcommon);
 
         if (status)
             return status;
@@ -206,7 +196,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct histogramRecord *prec = (struct histogramRecord *)pcommon;
-    struct histogramdset  *pdset = (struct histogramdset *) prec->dset;
+    histogramdset  *pdset = (histogramdset *) prec->dset;
     int pact = prec->pact;
     long status;
 
@@ -375,7 +365,7 @@ static long clear_histogram(histogramRecord *prec)
 
 static long readValue(histogramRecord *prec)
 {
-    struct histogramdset *pdset = (struct histogramdset *) prec->dset;
+    histogramdset *pdset = (histogramdset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {

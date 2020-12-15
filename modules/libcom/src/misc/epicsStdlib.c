@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* Authors: Eric Norum & Andrew Johnson */
 
@@ -13,7 +14,6 @@
 #include <errno.h>
 #include <float.h>
 
-#define epicsExportSharedSymbols
 #include "epicsMath.h"
 #include "epicsStdlib.h"
 #include "epicsString.h"
@@ -22,7 +22,7 @@
 
 /* These are the conversion primitives */
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseLong(const char *str, long *to, int base, char **units)
 {
     int c;
@@ -53,7 +53,7 @@ epicsParseLong(const char *str, long *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseULong(const char *str, unsigned long *to, int base, char **units)
 {
     int c;
@@ -84,7 +84,7 @@ epicsParseULong(const char *str, unsigned long *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseLLong(const char *str, long long *to, int base, char **units)
 {
     int c;
@@ -115,7 +115,7 @@ epicsParseLLong(const char *str, long long *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseULLong(const char *str, unsigned long long *to, int base, char **units)
 {
     int c;
@@ -146,7 +146,7 @@ epicsParseULLong(const char *str, unsigned long long *to, int base, char **units
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseDouble(const char *str, double *to, char **units)
 {
     int c;
@@ -178,7 +178,7 @@ epicsParseDouble(const char *str, double *to, char **units)
 
 /* These call the primitives */
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseInt8(const char *str, epicsInt8 *to, int base, char **units)
 {
     long value;
@@ -194,7 +194,7 @@ epicsParseInt8(const char *str, epicsInt8 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseUInt8(const char *str, epicsUInt8 *to, int base, char **units)
 {
     unsigned long value;
@@ -210,7 +210,7 @@ epicsParseUInt8(const char *str, epicsUInt8 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseInt16(const char *str, epicsInt16 *to, int base, char **units)
 {
     long value;
@@ -226,7 +226,7 @@ epicsParseInt16(const char *str, epicsInt16 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseUInt16(const char *str, epicsUInt16 *to, int base, char **units)
 {
     unsigned long value;
@@ -242,7 +242,7 @@ epicsParseUInt16(const char *str, epicsUInt16 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseInt32(const char *str, epicsInt32 *to, int base, char **units)
 {
     long value;
@@ -260,7 +260,7 @@ epicsParseInt32(const char *str, epicsInt32 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseUInt32(const char *str, epicsUInt32 *to, int base, char **units)
 {
     unsigned long value;
@@ -278,7 +278,7 @@ epicsParseUInt32(const char *str, epicsUInt32 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseInt64(const char *str, epicsInt64 *to, int base, char **units)
 {
 #if (LONG_MAX == 0x7fffffffffffffffLL)
@@ -296,7 +296,7 @@ epicsParseInt64(const char *str, epicsInt64 *to, int base, char **units)
     return 0;
 }
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseUInt64(const char *str, epicsUInt64 *to, int base, char **units)
 {
 #if (ULONG_MAX == 0xffffffffffffffffULL)
@@ -315,7 +315,7 @@ epicsParseUInt64(const char *str, epicsUInt64 *to, int base, char **units)
 }
 
 
-epicsShareFunc int
+LIBCOM_API int
 epicsParseFloat(const char *str, float *to, char **units)
 {
     double value, abs;
@@ -339,11 +339,11 @@ epicsParseFloat(const char *str, float *to, char **units)
  *   #define epicsStrtod strtod
  *
  * If strtod() is broken, osdStrtod.h defines this prototype:
- *   epicsShareFunc double epicsStrtod(const char *str, char **endp);
+ *   LIBCOM_API double epicsStrtod(const char *str, char **endp);
  */
 
 #ifndef epicsStrtod
-epicsShareFunc double
+LIBCOM_API double
 epicsStrtod(const char *str, char **endp)
 {
     const char *cp = str;

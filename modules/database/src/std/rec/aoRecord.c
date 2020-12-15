@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* aoRecord.c - Record Support Routines for Analog Output records */
@@ -64,36 +65,26 @@ static long get_control_double(DBADDR *, struct dbr_ctrlDouble *);
 static long get_alarm_double(DBADDR *, struct dbr_alDouble *);
 
 rset aoRSET={
-	RSETNUMBER,
-	report,
-	initialize,
-	init_record,
-	process,
-	special,
-	get_value,
-	cvt_dbaddr,
-	get_array_info,
-	put_array_info,
-	get_units,
-	get_precision,
-	get_enum_str,
-	get_enum_strs,
-	put_enum_str,
-	get_graphic_double,
-	get_control_double,
-	get_alarm_double };
-
-struct aodset { /* analog input dset */
-	long		number;
-	DEVSUPFUN	dev_report;
-	DEVSUPFUN	init;
-	DEVSUPFUN	init_record; /*returns: (0,2)=>(success,success no convert)*/
-	DEVSUPFUN	get_ioint_info;
-	DEVSUPFUN	write_ao;/*(0)=>(success ) */
-	DEVSUPFUN	special_linconv;
+    RSETNUMBER,
+    report,
+    initialize,
+    init_record,
+    process,
+    special,
+    get_value,
+    cvt_dbaddr,
+    get_array_info,
+    put_array_info,
+    get_units,
+    get_precision,
+    get_enum_str,
+    get_enum_strs,
+    put_enum_str,
+    get_graphic_double,
+    get_control_double,
+    get_alarm_double
 };
 epicsExportAddress(rset,aoRSET);
-
 
 static void checkAlarms(aoRecord *);
 static long fetch_value(aoRecord *, double *);
@@ -104,62 +95,62 @@ static long writeValue(aoRecord *);
 static long init_record(struct dbCommon *pcommon, int pass)
 {
     struct aoRecord *prec = (struct aoRecord *)pcommon;
-    struct aodset  *pdset;
-    double 	eoff = prec->eoff, eslo = prec->eslo;
-    double	value;
-    long    status = 0;
+    aodset *pdset;
+    double          eoff = prec->eoff, eslo = prec->eslo;
+    double          value;
+    long            status = 0;
 
     if (pass == 0) return 0;
 
     recGblInitSimm(pcommon, &prec->sscn, &prec->oldsimm, &prec->simm, &prec->siml);
 
-    if(!(pdset = (struct aodset *)(prec->dset))) {
-	recGblRecordError(S_dev_noDSET,(void *)prec,"ao: init_record");
-	return(S_dev_noDSET);
+    if(!(pdset = (aodset *)(prec->dset))) {
+        recGblRecordError(S_dev_noDSET,(void *)prec,"ao: init_record");
+        return(S_dev_noDSET);
     }
     /* get the initial value if dol is a constant*/
     if (recGblInitConstantLink(&prec->dol,DBF_DOUBLE,&prec->val))
         prec->udf = isnan(prec->val);
 
     /* must have write_ao function defined */
-    if ((pdset->number < 6) || (pdset->write_ao ==NULL)) {
-	recGblRecordError(S_dev_missingSup,(void *)prec,"ao: init_record");
-	return(S_dev_missingSup);
+    if ((pdset->common.number < 6) || (pdset->write_ao ==NULL)) {
+        recGblRecordError(S_dev_missingSup,(void *)prec,"ao: init_record");
+        return(S_dev_missingSup);
     }
     prec->init = TRUE;
     /*The following is for old device support that doesnt know about eoff*/
     if ((prec->eslo==1.0) && (prec->eoff==0.0)) {
-	prec->eoff = prec->egul;
+        prec->eoff = prec->egul;
     }
 
-    if (pdset->init_record) {
-        status = (*pdset->init_record)(prec);
-	if (prec->linr == menuConvertSLOPE) {
-	    prec->eoff = eoff;
-	    prec->eslo = eslo;
-	}
+    if (pdset->common.init_record) {
+        status = pdset->common.init_record(pcommon);
+        if (prec->linr == menuConvertSLOPE) {
+            prec->eoff = eoff;
+            prec->eslo = eslo;
+        }
         switch(status){
         case(0): /* convert */
-	    value = (double)prec->rval + (double)prec->roff;
-	    if(prec->aslo!=0.0) value *= prec->aslo;
-	    value += prec->aoff;
+            value = (double)prec->rval + (double)prec->roff;
+            if(prec->aslo!=0.0) value *= prec->aslo;
+            value += prec->aoff;
             if (prec->linr == menuConvertNO_CONVERSION){
-		; /*do nothing*/
+                ; /*do nothing*/
             } else if ((prec->linr == menuConvertLINEAR) ||
-		      (prec->linr == menuConvertSLOPE)) {
+                      (prec->linr == menuConvertSLOPE)) {
                 value = value*prec->eslo + prec->eoff;
             }else{
                 if(cvtRawToEngBpt(&value,prec->linr,prec->init,
-			(void *)&prec->pbrk,&prec->lbrk)!=0) break;
+                        (void *)&prec->pbrk,&prec->lbrk)!=0) break;
             }
-	    prec->val = value;
-	    prec->udf = isnan(value);
+            prec->val = value;
+            prec->udf = isnan(value);
         break;
         case(2): /* no convert */
         break;
         default:
-	     recGblRecordError(S_dev_badInitRet,(void *)prec,"ao: init_record");
-	     return(S_dev_badInitRet);
+             recGblRecordError(S_dev_badInitRet,(void *)prec,"ao: init_record");
+             return(S_dev_badInitRet);
         }
     }
     prec->oval = prec->pval = prec->val;
@@ -174,19 +165,19 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct aoRecord *prec = (struct aoRecord *)pcommon;
-    struct aodset  *pdset = (struct aodset *)(prec->dset);
-	long		 status=0;
-	unsigned char    pact=prec->pact;
-	double		value;
+    aodset      *pdset = (aodset *)(prec->dset);
+    long            status=0;
+    unsigned char   pact=prec->pact;
+    double          value;
 
-	if ((pdset==NULL) || (pdset->write_ao==NULL)) {
-		prec->pact=TRUE;
-		recGblRecordError(S_dev_missingSup,(void *)prec,"write_ao");
-		return(S_dev_missingSup);
-	}
+    if ((pdset==NULL) || (pdset->write_ao==NULL)) {
+        prec->pact=TRUE;
+        recGblRecordError(S_dev_missingSup,(void *)prec,"write_ao");
+        return(S_dev_missingSup);
+    }
 
-	/* fetch value and convert*/
-	if (prec->pact == FALSE) {
+    /* fetch value and convert*/
+    if (prec->pact == FALSE) {
                 if (!dbLinkIsConstant(&prec->dol) &&
                     prec->omsl == menuOmslclosed_loop) {
                     status = fetch_value(prec, &value);
@@ -194,80 +185,86 @@ static long process(struct dbCommon *pcommon)
                 else {
                     value = prec->val;
                 }
-		if(!status) convert(prec, value);
-		prec->udf = isnan(prec->val);
-	}
+        if(!status) convert(prec, value);
+        prec->udf = isnan(prec->val);
+        /* Update the timestamp before writing output values so it
+         * will be uptodate if any downstream records fetch it via TSEL */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
 
-	/* check for alarms */
-	checkAlarms(prec);
+    /* check for alarms */
+    checkAlarms(prec);
 
-	if (prec->nsev < INVALID_ALARM )
-		status=writeValue(prec); /* write the new value */
-	else {
-    		switch (prec->ivoa) {
-		    case (menuIvoaContinue_normally) :
-			status=writeValue(prec); /* write the new value */
-		        break;
-		    case (menuIvoaDon_t_drive_outputs) :
-			break;
-		    case (menuIvoaSet_output_to_IVOV) :
-	                if(prec->pact == FALSE){
-			 	prec->val=prec->ivov;
-			 	value=prec->ivov;
-				convert(prec,value);
-                        }
-			status=writeValue(prec); /* write the new value */
-		        break;
-		    default :
-			status=-1;
-		        recGblRecordError(S_db_badField,(void *)prec,
-		                "ao:process Illegal IVOA field");
-		}
-	}
+    if (prec->nsev < INVALID_ALARM )
+        status=writeValue(prec); /* write the new value */
+    else {
+        switch (prec->ivoa) {
+            case (menuIvoaContinue_normally) :
+                status=writeValue(prec); /* write the new value */
+                break;
+            case (menuIvoaDon_t_drive_outputs) :
+            break;
+            case (menuIvoaSet_output_to_IVOV) :
+                if(prec->pact == FALSE){
+                    prec->val=prec->ivov;
+                    value=prec->ivov;
+                    convert(prec,value);
+                }
+                status=writeValue(prec); /* write the new value */
+                break;
+            default :
+                status=-1;
+                recGblRecordError(S_db_badField,(void *)prec,
+                        "ao:process Illegal IVOA field");
+        }
+    }
 
-	/* check if device support set pact */
-	if ( !pact && prec->pact ) return(0);
-	prec->pact = TRUE;
+    /* check if device support set pact */
+    if ( !pact && prec->pact ) return(0);
+    prec->pact = TRUE;
 
-    recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    if ( pact ) {
+        /* Update timestamp again for asynchronous devices */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
 
-	/* check event list */
-	monitor(prec);
+    /* check event list */
+    monitor(prec);
 
-	/* process the forward scan link record */
+    /* process the forward scan link record */
         recGblFwdLink(prec);
 
-	prec->init=FALSE;
-	prec->pact=FALSE;
-	return(status);
+    prec->init=FALSE;
+    prec->pact=FALSE;
+    return(status);
 }
 
 static long special(DBADDR *paddr, int after)
 {
     aoRecord     *prec = (aoRecord *)(paddr->precord);
-    struct aodset       *pdset = (struct aodset *) (prec->dset);
+    aodset       *pdset = (aodset *) (prec->dset);
     int                 special_type = paddr->special;
 
     switch(special_type) {
     case(SPC_LINCONV):
-        if(pdset->number<6 ) {
+        if(pdset->common.number<6 ) {
             recGblDbaddrError(S_db_noMod,paddr,"ao: special");
             return(S_db_noMod);
         }
-	prec->init=TRUE;
+        prec->init=TRUE;
         if ((prec->linr == menuConvertLINEAR) && pdset->special_linconv) {
-	    double eoff = prec->eoff;
-	    double eslo = prec->eslo;
-	    long status;
-	    prec->eoff = prec->egul;
-	    status = (*pdset->special_linconv)(prec,after);
-	    if (eoff != prec->eoff)
-		db_post_events(prec, &prec->eoff, DBE_VALUE|DBE_LOG);
+            double eoff = prec->eoff;
+            double eslo = prec->eslo;
+            long status;
+            prec->eoff = prec->egul;
+            status = (*pdset->special_linconv)(prec,after);
+            if (eoff != prec->eoff)
+                db_post_events(prec, &prec->eoff, DBE_VALUE|DBE_LOG);
             if (eslo != prec->eslo)
-		db_post_events(prec, &prec->eslo, DBE_VALUE|DBE_LOG);
-	    return (status);
-	}
-	return (0);
+                db_post_events(prec, &prec->eslo, DBE_VALUE|DBE_LOG);
+            return (status);
+        }
+        return (0);
     case(SPC_MOD):
         if (dbGetFieldIndex(paddr) == aoRecordSIMM) {
             if (!after)
@@ -286,7 +283,7 @@ static long special(DBADDR *paddr, int after)
 
 static long get_units(DBADDR * paddr,char *units)
 {
-    aoRecord	*prec=(aoRecord *)paddr->precord;
+    aoRecord    *prec=(aoRecord *)paddr->precord;
 
     if(paddr->pfldDes->field_type == DBF_DOUBLE) {
         switch (dbGetFieldIndex(paddr)) {
@@ -302,7 +299,7 @@ static long get_units(DBADDR * paddr,char *units)
 
 static long get_precision(const DBADDR *paddr,long *precision)
 {
-    aoRecord	*prec=(aoRecord *)paddr->precord;
+    aoRecord    *prec=(aoRecord *)paddr->precord;
 
     *precision = prec->prec;
     switch (dbGetFieldIndex(paddr)) {
@@ -318,7 +315,7 @@ static long get_precision(const DBADDR *paddr,long *precision)
 
 static long get_graphic_double(DBADDR *paddr,struct dbr_grDouble *pgd)
 {
-    aoRecord	*prec=(aoRecord *)paddr->precord;
+    aoRecord    *prec=(aoRecord *)paddr->precord;
 
     switch (dbGetFieldIndex(paddr)) {
         case indexof(VAL):
@@ -343,7 +340,7 @@ static long get_graphic_double(DBADDR *paddr,struct dbr_grDouble *pgd)
 
 static long get_control_double(DBADDR *paddr, struct dbr_ctrlDouble *pcd)
 {
-    aoRecord	*prec=(aoRecord *)paddr->precord;
+    aoRecord    *prec=(aoRecord *)paddr->precord;
 
     switch (dbGetFieldIndex(paddr)) {
         case indexof(VAL):
@@ -366,7 +363,7 @@ static long get_control_double(DBADDR *paddr, struct dbr_ctrlDouble *pcd)
 }
 static long get_alarm_double(DBADDR *paddr, struct dbr_alDouble *pad)
 {
-    aoRecord	*prec=(aoRecord *)paddr->precord;
+    aoRecord    *prec=(aoRecord *)paddr->precord;
 
     if(dbGetFieldIndex(paddr) == indexof(VAL)){
         pad->upper_alarm_limit = prec->hhsv ? prec->hihi : epicsNAN;
@@ -435,27 +432,27 @@ static void checkAlarms(aoRecord *prec)
 
 static long fetch_value(aoRecord *prec,double *pvalue)
 {
-	short		save_pact;
-	long		status;
+    short       save_pact;
+    long        status;
 
-	save_pact = prec->pact;
-	prec->pact = TRUE;
+    save_pact = prec->pact;
+    prec->pact = TRUE;
 
-	/* don't allow dbputs to val field */
-	prec->val=prec->pval;
+    /* don't allow dbputs to val field */
+    prec->val=prec->pval;
 
-        status = dbGetLink(&prec->dol,DBR_DOUBLE,pvalue,0,0);
-        prec->pact = save_pact;
+    status = dbGetLink(&prec->dol,DBR_DOUBLE,pvalue,0,0);
+    prec->pact = save_pact;
 
-	if (status) {
-           recGblSetSevr(prec,LINK_ALARM,INVALID_ALARM);
-           return(status);
-	}
+    if (status) {
+       recGblSetSevr(prec,LINK_ALARM,INVALID_ALARM);
+       return(status);
+    }
 
-        if (prec->oif == aoOIF_Incremental)
-           *pvalue += prec->val;
+    if (prec->oif == aoOIF_Incremental)
+        *pvalue += prec->val;
 
-	return(0);
+    return(0);
 }
 
 static void convert(aoRecord *prec, double value)
@@ -487,19 +484,19 @@ static void convert(aoRecord *prec, double value)
 
     /* convert */
     switch (prec->linr) {
-    case menuConvertNO_CONVERSION:
-        break; /* do nothing*/
-    case menuConvertLINEAR:
-    case menuConvertSLOPE:
-        if (prec->eslo == 0.0) value = 0;
-        else value = (value - prec->eoff) / prec->eslo;
-        break;
-    default:
-        if (cvtEngToRawBpt(&value, prec->linr, prec->init,
-            (void *)&prec->pbrk, &prec->lbrk) != 0) {
-            recGblSetSevr(prec, SOFT_ALARM, MAJOR_ALARM);
-            return;
-        }
+        case menuConvertNO_CONVERSION:
+            break; /* do nothing*/
+        case menuConvertLINEAR:
+        case menuConvertSLOPE:
+            if (prec->eslo == 0.0) value = 0;
+            else value = (value - prec->eoff) / prec->eslo;
+            break;
+        default:
+            if (cvtEngToRawBpt(&value, prec->linr, prec->init,
+                (void *)&prec->pbrk, &prec->lbrk) != 0) {
+                recGblSetSevr(prec, SOFT_ALARM, MAJOR_ALARM);
+                return;
+            }
     }
     value -= prec->aoff;
     if (prec->aslo != 0) value /= prec->aslo;
@@ -535,27 +532,27 @@ static void monitor(aoRecord *prec)
         db_post_events(prec,&prec->val,monitor_mask);
     }
 
-	if(prec->omod) monitor_mask |= (DBE_VALUE|DBE_LOG);
-	if(monitor_mask) {
-		prec->omod = FALSE;
-		db_post_events(prec,&prec->oval,monitor_mask);
-		if(prec->oraw != prec->rval) {
-                	db_post_events(prec,&prec->rval,
-			    monitor_mask|DBE_VALUE|DBE_LOG);
-			prec->oraw = prec->rval;
-		}
-		if(prec->orbv != prec->rbv) {
-                	db_post_events(prec,&prec->rbv,
-			    monitor_mask|DBE_VALUE|DBE_LOG);
-			prec->orbv = prec->rbv;
-		}
-	}
-	return;
+    if(prec->omod) monitor_mask |= (DBE_VALUE|DBE_LOG);
+    if(monitor_mask) {
+        prec->omod = FALSE;
+        db_post_events(prec,&prec->oval,monitor_mask);
+        if(prec->oraw != prec->rval) {
+            db_post_events(prec,&prec->rval,
+                monitor_mask|DBE_VALUE|DBE_LOG);
+            prec->oraw = prec->rval;
+        }
+        if(prec->orbv != prec->rbv) {
+            db_post_events(prec,&prec->rbv,
+                monitor_mask|DBE_VALUE|DBE_LOG);
+            prec->orbv = prec->rbv;
+        }
+    }
+    return;
 }
 
 static long writeValue(aoRecord *prec)
 {
-    struct aodset *pdset = (struct aodset *) prec->dset;
+    aodset *pdset = (aodset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {

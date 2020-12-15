@@ -6,6 +6,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -113,7 +114,6 @@ static long cvt_dbaddr(DBADDR *paddr)
 {
     arrRecord *prec = (arrRecord *) paddr->precord;
 
-    paddr->pfield = prec->bptr;
     paddr->no_elements = prec->nelm;
     paddr->field_type = prec->ftvl;
     paddr->field_size = dbValueSize(prec->ftvl);
@@ -126,6 +126,7 @@ static long get_array_info(DBADDR *paddr, long *no_elements, long *offset)
 {
     arrRecord *prec = (arrRecord *) paddr->precord;
 
+    paddr->pfield = prec->bptr;
     *no_elements = prec->nord;
     *offset = prec->off;
 

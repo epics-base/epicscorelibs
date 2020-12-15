@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* Author:  Marty Kraimer Date:    04JAN99 */
@@ -14,13 +14,12 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#define epicsExportSharedSymbols
 #include "errlog.h"
 #include "cantProceed.h"
 #include "epicsThread.h"
 #include "epicsStackTrace.h"
 
-epicsShareFunc void * callocMustSucceed(size_t count, size_t size, const char *msg)
+LIBCOM_API void * callocMustSucceed(size_t count, size_t size, const char *msg)
 {
     void * mem = NULL;
     if (count > 0 && size > 0) {
@@ -36,7 +35,7 @@ epicsShareFunc void * callocMustSucceed(size_t count, size_t size, const char *m
     return mem;
 }
 
-epicsShareFunc void * mallocMustSucceed(size_t size, const char *msg)
+LIBCOM_API void * mallocMustSucceed(size_t size, const char *msg)
 {
     void * mem = NULL;
     if (size > 0) {
@@ -52,21 +51,21 @@ epicsShareFunc void * mallocMustSucceed(size_t size, const char *msg)
     return mem;
 }
 
-epicsShareFunc void cantProceed(const char *msg, ...)
+LIBCOM_API void cantProceed(const char *msg, ...)
 {
     va_list pvar;
     va_start(pvar, msg);
     if (msg)
         errlogVprintf(msg, pvar);
     va_end(pvar);
-    
+
     errlogPrintf("Thread %s (%p) can't proceed, suspending.\n",
             epicsThreadGetNameSelf(), (void *)epicsThreadGetIdSelf());
 
     epicsStackTrace();
 
     errlogFlush();
-    
+
     epicsThreadSleep(1.0);
     while (1)
         epicsThreadSuspendSelf();

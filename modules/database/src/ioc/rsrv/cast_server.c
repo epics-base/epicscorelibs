@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *  Author: Jeffrey O. Hill
@@ -16,7 +17,7 @@
  *  ------------
  *  .01
  *  Dont send channel found message unless there is memory, a task slot,
- *  and a TCP socket available. Send a diagnostic instead. 
+ *  and a TCP socket available. Send a diagnostic instead.
  *  Or ... make the timeout shorter? This is only a problem if
  *  they persist in trying to make a connection after getting no
  *  response.
@@ -48,7 +49,7 @@
 #define epicsExportSharedSymbols
 #include "rsrv.h"
 #include "server.h"
-    
+
 #define TIMEOUT 60.0 /* sec */
 
 /*
@@ -68,7 +69,7 @@ static void clean_addrq(struct client *client)
     epicsTimeGetCurrent ( &current );
 
     epicsMutexMustLock ( client->chanListLock );
-    pnextciu = (struct channel_in_use *) 
+    pnextciu = (struct channel_in_use *)
             client->chanList.node.next;
 
     while( (pciu = pnextciu) ) {
@@ -111,7 +112,7 @@ static void clean_addrq(struct client *client)
  * CAST_SERVER
  *
  * service UDP messages
- * 
+ *
  */
 void cast_server(void *pParm)
 {
@@ -169,12 +170,12 @@ void cast_server(void *pParm)
             client->recv.buf,
             client->recv.maxstk,
             0,
-            (struct sockaddr *)&new_recv_addr, 
+            (struct sockaddr *)&new_recv_addr,
             &recv_addr_size);
         if (status < 0) {
             if (SOCKERRNO != SOCK_EINTR) {
                 char sockErrBuf[64];
-                epicsSocketConvertErrnoToString ( 
+                epicsSocketConvertErrnoToString (
                     sockErrBuf, sizeof ( sockErrBuf ) );
                 epicsPrintf ("CAS: UDP recv error: %s\n",
                         sockErrBuf);
@@ -201,16 +202,16 @@ void cast_server(void *pParm)
             client->seqNoOfReq = 0;
 
             /*
-             * If we are talking to a new client flush to the old one 
-             * in case we are holding UDP messages waiting to 
+             * If we are talking to a new client flush to the old one
+             * in case we are holding UDP messages waiting to
              * see if the next message is for this same client.
              */
             if (client->send.stk>sizeof(caHdr)) {
                 status = memcmp(&client->addr,
                     &new_recv_addr, recv_addr_size);
-                if(status){     
-                    /* 
-                     * if the address is different 
+                if(status){
+                    /*
+                     * if the address is different
                      */
                     cas_send_dg_msg(client);
                     client->addr = new_recv_addr;
@@ -222,9 +223,9 @@ void cast_server(void *pParm)
 
             if (CASDEBUG>1) {
                 char    buf[40];
-    
+
                 ipAddrToDottedIP (&client->addr, buf, sizeof(buf));
-                errlogPrintf ("CAS: cast server msg of %d bytes from addr %s\n", 
+                errlogPrintf ("CAS: cast server msg of %d bytes from addr %s\n",
                     client->recv.cnt, buf);
             }
 

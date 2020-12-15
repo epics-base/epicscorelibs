@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2014 Brookhaven Science Associates, as Operator of
 *     Brookhaven National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -9,7 +10,6 @@
 #include <string.h>
 #include <errno.h>
 
-#define epicsExportSharedSymbols
 
 #include "dbDefs.h"
 #include "errlog.h"

@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -21,7 +22,6 @@
 // The following is required for Solaris builds
 #undef __EXTENSIONS__
 
-#define epicsExportSharedSymbols
 #include "epicsAlgorithm.h"
 #include "epicsTime.h"
 #include "epicsThread.h"
@@ -31,7 +31,7 @@
 
 using namespace std;
 
-epicsThreadId epicsShareAPI epicsThreadCreate (
+epicsThreadId epicsStdCall epicsThreadCreate (
     const char * name, unsigned int priority, unsigned int stackSize,
     EPICSTHREADFUNC funptr,void * parm )
 {
@@ -356,7 +356,7 @@ extern "C" {
         okToBlockPrivate = epicsThreadPrivateCreate();
     }
 
-    int epicsShareAPI epicsThreadIsOkToBlock(void)
+    int epicsStdCall epicsThreadIsOkToBlock(void)
     {
         const int *pokToBlock;
         epicsThreadOnce(&okToBlockOnce, epicsThreadOnceIdInit, NULL);
@@ -364,7 +364,7 @@ extern "C" {
         return (pokToBlock ? *pokToBlock : 0);
     }
 
-    void epicsShareAPI epicsThreadSetOkToBlock(int isOkToBlock)
+    void epicsStdCall epicsThreadSetOkToBlock(int isOkToBlock)
     {
         const int *pokToBlock;
         epicsThreadOnce(&okToBlockOnce, epicsThreadOnceIdInit, NULL);
@@ -372,7 +372,7 @@ extern "C" {
         epicsThreadPrivateSet(okToBlockPrivate, (void *)pokToBlock);
     }
 
-    epicsThreadId epicsShareAPI epicsThreadMustCreate (
+    epicsThreadId epicsStdCall epicsThreadMustCreate (
         const char *name, unsigned int priority, unsigned int stackSize,
         EPICSTHREADFUNC funptr,void *parm)
     {

@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2002 Southeastern Universities Research Association, as
 *     Operator of Thomas Jefferson National Accelerator Facility.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -90,22 +91,13 @@ rset aaoRSET={
 };
 epicsExportAddress(rset,aaoRSET);
 
-struct aaodset { /* aao dset */
-    long      number;
-    DEVSUPFUN dev_report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record; /*returns: (-1,0)=>(failure,success)*/
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN write_aao; /*returns: (-1,0)=>(failure,success)*/
-};
-
 static void monitor(aaoRecord *);
 static long writeValue(aaoRecord *);
 
 static long init_record(struct dbCommon *pcommon, int pass)
 {
     struct aaoRecord *prec = (struct aaoRecord *)pcommon;
-    struct aaodset *pdset = (struct aaodset *)(prec->dset);
+    aaodset *pdset = (aaodset *)(prec->dset);
     long status;
 
     /* must have dset defined */
@@ -130,9 +122,9 @@ static long init_record(struct dbCommon *pcommon, int pass)
            not change after links are established before pass 1
         */
 
-        if (pdset->init_record) {
+        if (pdset->common.init_record) {
             /* init_record may set the bptr to point to the data */
-            if ((status = pdset->init_record(prec)))
+            if ((status = pdset->common.init_record(pcommon)))
                 return status;
         }
         if (!prec->bptr) {
@@ -146,7 +138,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
     recGblInitSimm(pcommon, &prec->sscn, &prec->oldsimm, &prec->simm, &prec->siml);
 
     /* must have write_aao function defined */
-    if (pdset->number < 5 || pdset->write_aao == NULL) {
+    if (pdset->common.number < 5 || pdset->write_aao == NULL) {
         recGblRecordError(S_dev_missingSup, prec, "aao: init_record");
         return S_dev_missingSup;
     }
@@ -156,7 +148,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct aaoRecord *prec = (struct aaoRecord *)pcommon;
-    struct aaodset *pdset = (struct aaodset *)(prec->dset);
+    aaodset *pdset = (aaodset *)(prec->dset);
     long status;
     unsigned char pact = prec->pact;
 
@@ -166,12 +158,22 @@ static long process(struct dbCommon *pcommon)
         return S_dev_missingSup;
     }
 
+    if ( !pact ) {
+        prec->udf = FALSE;
+
+        /* Update the timestamp before writing output values so it
+         * will be uptodate if any downstream records fetch it via TSEL */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
+
     status = writeValue(prec); /* write the data */
     if (!pact && prec->pact) return 0;
     prec->pact = TRUE;
 
-    prec->udf = FALSE;
-    recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    if ( pact ) {
+        /* Update timestamp again for asynchronous devices */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
 
     monitor(prec);
     /* process the forward scan link record */
@@ -339,7 +341,7 @@ static void monitor(aaoRecord *prec)
 
 static long writeValue(aaoRecord *prec)
 {
-    struct aaodset *pdset = (struct aaodset *) prec->dset;
+    aaodset *pdset = (aaodset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {

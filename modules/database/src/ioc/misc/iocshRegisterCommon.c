@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -25,14 +26,14 @@
 #define quote(v) #v
 #define str(v) quote(v)
 
-/* dynamic_registerRecordDeviceDriver */
+/* registerAllRecordDeviceDrivers */
 static const iocshArg rrddArg0 = {"pdbbase", iocshArgPdbbase};
 static const iocshArg *rrddArgs[] = {&rrddArg0};
 static const iocshFuncDef rrddFuncDef =
-    {"dynamic_registerRecordDeviceDriver", 1, rrddArgs};
+    {"registerAllRecordDeviceDrivers", 1, rrddArgs};
 static void rrddCallFunc(const iocshArgBuf *args)
 {
-    iocshSetError(dynamic_registerRecordDeviceDriver(*iocshPpdbbase));
+    iocshSetError(registerAllRecordDeviceDrivers(*iocshPpdbbase));
 }
 
 void iocshRegisterCommon(void)

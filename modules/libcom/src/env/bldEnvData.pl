@@ -4,6 +4,7 @@
 #     National Laboratory.
 # Copyright (c) 2002 The Regents of the University of California, as
 #     Operator of Los Alamos National Laboratory.
+# SPDX-License-Identifier: EPICS
 # EPICS BASE is distributed subject to a Software License Agreement found
 # in file LICENSE that is included with this distribution.
 #*************************************************************************
@@ -44,7 +45,7 @@ open SRC, '<', $env_defs
 
 my @vars;
 while (<SRC>) {
-    if (m/epicsShareExtern\s+const\s+ENV_PARAM\s+([A-Za-z_]\w*)\s*;/) {
+    if (m/LIBCOM_API\s+extern\s+const\s+ENV_PARAM\s+([A-Za-z_]\w*)\s*;/) {
         push @vars, $1;
     }
 }
@@ -113,14 +114,14 @@ foreach my $var (@vars) {
         $default = '';
     }
 
-    print OUT "epicsShareDef const ENV_PARAM $var =\n",
+    print OUT "const ENV_PARAM $var =\n",
               "    {\"$var\", \"$default\"};\n";
 }
 
 # Also provide a list of all defined parameters
 #
 print OUT "\n",
-    "epicsShareDef const ENV_PARAM* env_param_list[] = {\n",
+    "const ENV_PARAM* env_param_list[] = {\n",
     wrap('    ', '    ', join(', ', map("&$_", @vars), 'NULL')),
     "\n};\n";
 close OUT;

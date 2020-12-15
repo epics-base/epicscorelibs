@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -38,7 +39,7 @@
 #include "recGbl.h"
 #include "recSup.h"
 #include "special.h"
- 
+
 
 /*
  *  In the following functions:
@@ -1045,7 +1046,7 @@ static long cvt_f_st(
    long precision = 6;
 
    if(paddr) prset = dbGetRset(paddr);
- 
+
    if (prset && prset->get_precision)
      status = (*prset->get_precision)(paddr, &precision);
    cvtFloatToString(*from, to, (unsigned short)precision);
@@ -1140,7 +1141,7 @@ static long cvt_d_st(
    long precision = 6;
 
    if(paddr) prset = dbGetRset(paddr);
- 
+
    if (prset && prset->get_precision)
      status = (*prset->get_precision)(paddr, &precision);
    cvtDoubleToString(*from, to, (unsigned short)precision);
@@ -1313,7 +1314,7 @@ static long cvt_e_st_get(
    long status;
 
    if(paddr) prset = dbGetRset(paddr);
- 
+
    if (prset && prset->get_enum_str)
        return (*prset->get_enum_str)(paddr, to);
 
@@ -1335,20 +1336,20 @@ static long cvt_menu_st(
      epicsEnum16 *from,
      char *to,
      const dbAddr *paddr)
- { 
-   dbFldDes		*pdbFldDes;
-   dbMenu		*pdbMenu;
-   char			**papChoiceValue;
-   char			*pchoice;
+ {
+   dbFldDes             *pdbFldDes;
+   dbMenu               *pdbMenu;
+   char                 **papChoiceValue;
+   char                 *pchoice;
 
-    if(! paddr 
+    if(! paddr
     || !(pdbFldDes = paddr->pfldDes)
     || !(pdbMenu = (dbMenu *)pdbFldDes->ftPvt)
     || *from>=pdbMenu->nChoice
     || !(papChoiceValue = pdbMenu->papChoiceValue)
     || !(pchoice=papChoiceValue[*from])) {
-	recGblDbaddrError(S_db_badChoice,paddr,"dbFastLinkConv(cvt_menu_st)");
-	return(S_db_badChoice);
+        recGblDbaddrError(S_db_badChoice,paddr,"dbFastLinkConv(cvt_menu_st)");
+        return(S_db_badChoice);
     }
     strncpy(to,pchoice,MAX_STRING_SIZE);
     return(0);
@@ -1360,20 +1361,20 @@ static long cvt_device_st(
      epicsEnum16 *from,
      char *to,
      const dbAddr *paddr)
- { 
-   dbFldDes		*pdbFldDes;
-   dbDeviceMenu		*pdbDeviceMenu;
-   char			**papChoice;
-   char			*pchoice;
+ {
+   dbFldDes             *pdbFldDes;
+   dbDeviceMenu         *pdbDeviceMenu;
+   char                 **papChoice;
+   char                 *pchoice;
 
-    if(!paddr 
+    if(!paddr
     || !(pdbFldDes = paddr->pfldDes)
     || !(pdbDeviceMenu = (dbDeviceMenu *)pdbFldDes->ftPvt)
     || *from>=pdbDeviceMenu->nChoice
     || !(papChoice= pdbDeviceMenu->papChoice)
     || !(pchoice=papChoice[*from])) {
-	recGblDbaddrError(S_db_badChoice,paddr,"dbFastLinkConv(cvt_device_st)");
-	return(S_db_badChoice);
+        recGblDbaddrError(S_db_badChoice,paddr,"dbFastLinkConv(cvt_device_st)");
+        return(S_db_badChoice);
     }
     strncpy(to,pchoice,MAX_STRING_SIZE);
     return(0);
@@ -1390,7 +1391,7 @@ static long cvt_device_st(
  *  NULL implies the conversion is not supported.
  */
 
-epicsShareDef long (*dbFastGetConvertRoutine[DBF_DEVICE+1][DBR_ENUM+1])() = {
+long (*dbFastGetConvertRoutine[DBF_DEVICE+1][DBR_ENUM+1])() = {
 
  /* Convert DBF_STRING to ... */
 { cvt_st_st, cvt_st_c, cvt_st_uc, cvt_st_s, cvt_st_us, cvt_st_l, cvt_st_ul, cvt_st_q, cvt_st_uq, cvt_st_f, cvt_st_d, cvt_st_e },
@@ -1446,7 +1447,7 @@ epicsShareDef long (*dbFastGetConvertRoutine[DBF_DEVICE+1][DBR_ENUM+1])() = {
  *  NULL implies the conversion is not supported.
  */
 
-epicsShareDef long (*dbFastPutConvertRoutine[DBR_ENUM+1][DBF_DEVICE+1])() = {
+long (*dbFastPutConvertRoutine[DBR_ENUM+1][DBF_DEVICE+1])() = {
 
  /* Convert DBR_STRING to ... */
 { cvt_st_st, cvt_st_c, cvt_st_uc, cvt_st_s, cvt_st_us, cvt_st_l, cvt_st_ul, cvt_st_q, cvt_st_uq, cvt_st_f, cvt_st_d, cvt_st_e, cvt_st_menu, cvt_st_device},

@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2008 UChicago Argonne LLC, as Operator of Argonne
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -226,6 +227,7 @@ static long process(struct dbCommon *pcommon)
         return 0;
 
     prec->pact = TRUE;
+    recGblGetTimeStamp(prec);
 
     /* Push the output link values */
     if (!status) {
@@ -236,7 +238,6 @@ static long process(struct dbCommon *pcommon)
                 (&prec->neva)[i]);
     }
 
-    recGblGetTimeStamp(prec);
     monitor(prec);
     recGblFwdLink(prec);
     prec->pact = FALSE;
@@ -277,10 +278,9 @@ static long fetch_values(aSubRecord *prec)
         long nRequest = (&prec->noa)[i];
         status = dbGetLink(&(&prec->inpa)[i], (&prec->fta)[i], (&prec->a)[i], 0,
             &nRequest);
-        if (nRequest > 0)
-            (&prec->nea)[i] = nRequest;
         if (status)
             return status;
+        (&prec->nea)[i] = nRequest;
     }
     return 0;
 }
@@ -348,7 +348,7 @@ static long get_graphic_double(DBADDR *paddr, struct dbr_grDouble *pgd)
     aSubRecord *prec = (aSubRecord *)paddr->precord;
     int fieldIndex = dbGetFieldIndex(paddr);
     int linkNumber;
-    
+
     linkNumber = get_inlinkNumber(fieldIndex);
     if (linkNumber >= 0) {
         dbGetGraphicLimits(&prec->inpa + linkNumber,

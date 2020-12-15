@@ -3,13 +3,13 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*  dbStaticPvt.h */
 /*
- *	Author:		Marty Kraimer
+ *      Author:         Marty Kraimer
  *      Date:           06Jun95
  */
 
@@ -79,8 +79,8 @@ epicsShareFunc void dbFreeLinkInfo(dbLinkInfo *pinfo);
 
 /* The following is for path */
 typedef struct dbPathNode {
-	ELLNODE		node;
-	char		*directory;
+    ELLNODE     node;
+    char        *directory;
 } dbPathNode;
 
 /* Element of the global gui group list */
@@ -93,13 +93,13 @@ typedef struct dbGuiGroup {
 /*The following are in dbPvdLib.c*/
 /*directory*/
 typedef struct{
-	ELLNODE		node;
-	dbRecordType	*precordType;
-	dbRecordNode	*precnode;
+    ELLNODE         node;
+    dbRecordType    *precordType;
+    dbRecordNode    *precnode;
 }PVDENTRY;
 epicsShareFunc int dbPvdTableSize(int size);
 extern int dbStaticDebug;
-void	dbPvdInitPvt(DBBASE *pdbbase);
+void dbPvdInitPvt(DBBASE *pdbbase);
 PVDENTRY *dbPvdFind(DBBASE *pdbbase,const char *name,size_t lenname);
 PVDENTRY *dbPvdAdd(DBBASE *pdbbase,dbRecordType *precordType,dbRecordNode *precnode);
 void dbPvdDelete(DBBASE *pdbbase,dbRecordNode *precnode);

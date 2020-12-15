@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -26,32 +27,22 @@
 #include "epicsExport.h"
 
 /* Create the dset for devWfSoft */
-static long init_record(waveformRecord *prec);
+static long init_record(dbCommon *pcommon);
 static long read_wf(waveformRecord *prec);
 
-struct {
-    long      number;
-    DEVSUPFUN report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record;
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN read_wf;
-} devWfSoft = {
-    5,
-    NULL,
-    NULL,
-    init_record,
-    NULL,
+wfdset devWfSoft = {
+    {5, NULL, NULL, init_record, NULL},
     read_wf
 };
 epicsExportAddress(dset, devWfSoft);
 
-static long init_record(waveformRecord *prec)
+static long init_record(dbCommon *pcommon)
 {
+    waveformRecord *prec = (waveformRecord *)pcommon;
     long nelm = prec->nelm;
     long status = dbLoadLinkArray(&prec->inp, prec->ftvl, prec->bptr, &nelm);
 
-    if (!status && nelm > 0) {
+    if (!status) {
         prec->nord = nelm;
         prec->udf = FALSE;
     }
@@ -87,11 +78,14 @@ static long read_wf(waveformRecord *prec)
     rt.ptime = (dbLinkIsConstant(&prec->tsel) &&
         prec->tse == epicsTimeEventDeviceTime) ? &prec->time : NULL;
 
+    if (dbLinkIsConstant(&prec->inp))
+        return 0;
+
     status = dbLinkDoLocked(&prec->inp, readLocked, &rt);
     if (status == S_db_noLSET)
         status = readLocked(&prec->inp, &rt);
 
-    if (!status && rt.nRequest > 0) {
+    if (!status) {
         prec->nord = rt.nRequest;
         prec->udf = FALSE;
         if (nord != prec->nord)

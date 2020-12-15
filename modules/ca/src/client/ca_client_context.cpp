@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -17,9 +18,9 @@
  *  Copyright, 1986, The Regents of the University of California.
  *
  *
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
 #ifdef _MSC_VER
@@ -34,12 +35,11 @@
 #include "errlog.h"
 #include "locationException.h"
 
-#define epicsExportSharedSymbols
 #include "iocinf.h"
 #include "oldAccess.h"
 #include "cac.h"
 
-epicsShareDef epicsThreadPrivateId caClientCallbackThreadId;
+epicsThreadPrivateId caClientCallbackThreadId;
 
 static epicsThreadOnceId cacOnce = EPICS_THREAD_ONCE_INIT;
 
@@ -153,13 +153,13 @@ ca_client_context::ca_client_context ( bool enablePreemptiveCallback ) :
         this->localPort = htons ( tmpAddr.ia.sin_port );
     }
 
-    std::auto_ptr < CallbackGuard > pCBGuard;
+    ca::auto_ptr < CallbackGuard > pCBGuard;
     if ( ! enablePreemptiveCallback ) {
         pCBGuard.reset ( new CallbackGuard ( this->cbMutex ) );
     }
 
     // multiple steps ensure exception safety
-    this->pCallbackGuard = pCBGuard;
+    this->pCallbackGuard = PTRMOVE(pCBGuard);
 }
 
 ca_client_context::~ca_client_context ()
@@ -736,12 +736,12 @@ void ca_client_context::installDefaultService ( cacService & service )
     ca_client_context::pDefaultService = & service;
 }
 
-void epicsShareAPI caInstallDefaultService ( cacService & service )
+void epicsStdCall caInstallDefaultService ( cacService & service )
 {
     ca_client_context::installDefaultService ( service );
 }
 
-epicsShareFunc int epicsShareAPI ca_clear_subscription ( evid pMon )
+LIBCA_API int epicsStdCall ca_clear_subscription ( evid pMon )
 {
     oldChannelNotify & chan = pMon->channel ();
     ca_client_context & cac = chan.getClientCtx ();

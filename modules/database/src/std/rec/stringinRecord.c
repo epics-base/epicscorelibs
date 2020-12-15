@@ -3,14 +3,15 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* recStringin.c - Record Support Routines for Stringin records */
 /*
- *      Author: 	Janet Anderson
- *      Date:   	4/23/91
+ *      Author:     Janet Anderson
+ *      Date:       4/23/91
  */
 
 
@@ -59,35 +60,27 @@ static long special(DBADDR *, int);
 #define get_alarm_double NULL
 
 rset stringinRSET={
-	RSETNUMBER,
-	report,
-	initialize,
-	init_record,
-	process,
-	special,
-	get_value,
-	cvt_dbaddr,
-	get_array_info,
-	put_array_info,
-	get_units,
-	get_precision,
-	get_enum_str,
-	get_enum_strs,
-	put_enum_str,
-	get_graphic_double,
-	get_control_double,
-	get_alarm_double
+    RSETNUMBER,
+    report,
+    initialize,
+    init_record,
+    process,
+    special,
+    get_value,
+    cvt_dbaddr,
+    get_array_info,
+    put_array_info,
+    get_units,
+    get_precision,
+    get_enum_str,
+    get_enum_strs,
+    put_enum_str,
+    get_graphic_double,
+    get_control_double,
+    get_alarm_double
 };
 epicsExportAddress(rset,stringinRSET);
 
-struct stringindset { /* stringin input dset */
-	long		number;
-	DEVSUPFUN	dev_report;
-	DEVSUPFUN	init;
-	DEVSUPFUN	init_record; /*returns: (-1,0)=>(failure,success)*/
-	DEVSUPFUN	get_ioint_info;
-	DEVSUPFUN	read_stringin; /*returns: (-1,0)=>(failure,success)*/
-};
 static void monitor(stringinRecord *);
 static long readValue(stringinRecord *);
 
@@ -97,7 +90,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
     struct stringinRecord *prec = (struct stringinRecord *)pcommon;
     STATIC_ASSERT(sizeof(prec->oval)==sizeof(prec->val));
     STATIC_ASSERT(sizeof(prec->sval)==sizeof(prec->val));
-    struct stringindset *pdset = (struct stringindset *) prec->dset;
+    stringindset *pdset = (stringindset *) prec->dset;
 
     if (pass == 0) return 0;
 
@@ -110,13 +103,13 @@ static long init_record(struct dbCommon *pcommon, int pass)
     }
 
     /* must have read_stringin function defined */
-    if ((pdset->number < 5) || (pdset->read_stringin == NULL)) {
+    if ((pdset->common.number < 5) || (pdset->read_stringin == NULL)) {
         recGblRecordError(S_dev_missingSup, prec, "stringin: init_record");
         return S_dev_missingSup;
     }
 
-    if (pdset->init_record) {
-        long status = pdset->init_record(prec);
+    if (pdset->common.init_record) {
+        long status = pdset->common.init_record(pcommon);
 
         if (status)
             return status;
@@ -130,30 +123,30 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct stringinRecord *prec = (struct stringinRecord *)pcommon;
-    struct stringindset  *pdset = (struct stringindset *)(prec->dset);
-	long		 status;
-	unsigned char    pact=prec->pact;
+    stringindset  *pdset = (stringindset *)(prec->dset);
+    long             status;
+    unsigned char    pact=prec->pact;
 
-	if( (pdset==NULL) || (pdset->read_stringin==NULL) ) {
-		prec->pact=TRUE;
-		recGblRecordError(S_dev_missingSup,(void *)prec,"read_stringin");
-		return(S_dev_missingSup);
-	}
+    if( (pdset==NULL) || (pdset->read_stringin==NULL) ) {
+        prec->pact=TRUE;
+        recGblRecordError(S_dev_missingSup,(void *)prec,"read_stringin");
+        return(S_dev_missingSup);
+    }
 
-	status=readValue(prec); /* read the new value */
-	/* check if device support set pact */
-	if ( !pact && prec->pact ) return(0);
+    status=readValue(prec); /* read the new value */
+    /* check if device support set pact */
+    if ( !pact && prec->pact ) return(0);
 
     prec->pact = TRUE;
     recGblGetTimeStampSimm(prec, prec->simm, &prec->siol);
 
-	/* check event list */
-	monitor(prec);
-	/* process the forward scan link record */
-	recGblFwdLink(prec);
+    /* check event list */
+    monitor(prec);
+    /* process the forward scan link record */
+    recGblFwdLink(prec);
 
-	prec->pact=FALSE;
-	return(status);
+    prec->pact=FALSE;
+    return(status);
 }
 
 static long special(DBADDR *paddr, int after)
@@ -196,7 +189,7 @@ static void monitor(stringinRecord *prec)
 
 static long readValue(stringinRecord *prec)
 {
-    struct stringindset *pdset = (struct stringindset *) prec->dset;
+    stringindset *pdset = (stringindset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {

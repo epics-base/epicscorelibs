@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
@@ -19,7 +19,6 @@
 #include <stdexcept>
 #include <stdio.h>
 
-#define epicsExportSharedSymbols
 #include "epicsGuard.h"
 #include "timerPrivate.h"
 #include "errlog.h"
@@ -36,7 +35,7 @@ template class tsFreeList < timer, 0x20 >;
 #endif
 
 timer::timer ( timerQueue & queueIn ) :
-    queue ( queueIn ), curState ( stateLimbo ), pNotify ( 0 ) 
+    queue ( queueIn ), curState ( stateLimbo ), pNotify ( 0 )
 {
 }
 
@@ -45,7 +44,7 @@ timer::~timer ()
     this->cancel ();
 }
 
-void timer::destroy () 
+void timer::destroy ()
 {
     timerQueue & queueTmp = this->queue;
     this->~timer ();
@@ -76,7 +75,7 @@ void timer::privateStart ( epicsTimerNotify & notify, const epicsTime & expire )
     }
     else if ( this->curState == statePending ) {
         this->queue.timerList.remove ( *this );
-        if ( this->queue.timerList.first() == this && 
+        if ( this->queue.timerList.first() == this &&
                 this->queue.timerList.count() > 0 ) {
             reschedualNeeded = true;
         }
@@ -121,14 +120,14 @@ void timer::privateStart ( epicsTimerNotify & notify, const epicsTime & expire )
     if ( reschedualNeeded ) {
         this->queue.notify.reschedule ();
     }
-    
+
 #   if defined(DEBUG) && 0
         this->show ( 10u );
         this->queue.show ( 10u );
 #   endif
 
-    debugPrintf ( ("Start of \"%s\" with delay %f at %p preempting %u\n", 
-        typeid ( this->notify ).name (), 
+    debugPrintf ( ("Start of \"%s\" with delay %f at %p preempting %u\n",
+        typeid ( this->notify ).name (),
         expire - epicsTime::getCurrent (), 
         this, preemptCount ) );
 }
@@ -143,7 +142,7 @@ void timer::cancel ()
         if ( this->curState == statePending ) {
             this->queue.timerList.remove ( *this );
             this->curState = stateLimbo;
-            if ( this->queue.timerList.first() == this && 
+            if ( this->queue.timerList.first() == this &&
                     this->queue.timerList.count() > 0 ) {
                 reschedual = true;
             }
@@ -154,7 +153,7 @@ void timer::cancel ()
             if ( this->queue.processThread != epicsThreadGetIdSelf() ) {
                 // make certain timer expire() does not run after cancel () returns,
                 // but dont require that lock is applied while calling expire()
-                while ( this->queue.cancelPending && 
+                while ( this->queue.cancelPending &&
                         this->queue.pExpireTmr == this ) {
                     epicsGuardRelease < epicsMutex > autoRelease ( locker );
                     this->queue.cancelBlockingEvent.wait ();
@@ -174,7 +173,7 @@ void timer::cancel ()
 
 epicsTimer::expireInfo timer::getExpireInfo () const
 {
-    // taking a lock here guarantees that users will not 
+    // taking a lock here guarantees that users will not
     // see brief intervals when a timer isnt active because
     // it is is canceled when start is called
     epicsGuard < epicsMutex > locker ( this->queue.mutex );

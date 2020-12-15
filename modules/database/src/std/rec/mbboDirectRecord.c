@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -81,16 +82,6 @@ rset mbboDirectRSET = {
 };
 epicsExportAddress(rset, mbboDirectRSET);
 
-struct mbbodset { /* multi bit binary output dset */
-    long number;
-    DEVSUPFUN dev_report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record;  /*returns: (0, 2)=>(success, success no convert)*/
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN write_mbbo;   /*returns: (0, 2)=>(success, success no convert)*/
-};
-
-
 static void convert(mbboDirectRecord *);
 static void monitor(mbboDirectRecord *);
 static long writeValue(mbboDirectRecord *);
@@ -100,7 +91,7 @@ static long writeValue(mbboDirectRecord *);
 static long init_record(struct dbCommon *pcommon, int pass)
 {
     struct mbboDirectRecord *prec = (struct mbboDirectRecord *)pcommon;
-    struct mbbodset *pdset = (struct mbbodset *) prec->dset;
+    mbbodirectdset *pdset = (mbbodirectdset *) prec->dset;
     long status = 0;
 
     if (pass == 0) return 0;
@@ -110,7 +101,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
         return S_dev_noDSET;
     }
 
-    if ((pdset->number < 5) || (pdset->write_mbbo == NULL)) {
+    if ((pdset->common.number < 5) || (pdset->write_mbbo == NULL)) {
         recGblRecordError(S_dev_missingSup, prec, "mbboDirect: init_record");
         return S_dev_missingSup;
     }
@@ -124,8 +115,8 @@ static long init_record(struct dbCommon *pcommon, int pass)
     if (prec->mask == 0 && prec->nobt <= 32)
         prec->mask = ((epicsUInt64) 1u << prec->nobt) - 1;
 
-    if (pdset->init_record) {
-        status = pdset->init_record(prec);
+    if (pdset->common.init_record) {
+        status = pdset->common.init_record(pcommon);
         if (status == 0) {
             /* Convert initial read-back */
             epicsUInt32 rval = prec->rval;
@@ -162,7 +153,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct mbboDirectRecord *prec = (struct mbboDirectRecord *)pcommon;
-    struct mbbodset *pdset = (struct mbbodset *)(prec->dset);
+    mbbodirectdset *pdset = (mbbodirectdset *)(prec->dset);
     long status = 0;
     int pact = prec->pact;
 
@@ -203,6 +194,10 @@ static long process(struct dbCommon *pcommon)
         prec->udf = FALSE;
         /* Convert VAL to RVAL */
         convert(prec);
+
+        /* Update the timestamp before writing output values so it
+         * will be uptodate if any downstream records fetch it via TSEL */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
     }
 
 CONTINUE:
@@ -233,7 +228,11 @@ CONTINUE:
         return 0;
 
     prec->pact = TRUE;
-    recGblGetTimeStampSimm(prec, prec->simm, NULL);
+
+    if ( pact ) {
+        /* Update timestamp again for asynchronous devices */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
 
     monitor(prec);
 
@@ -315,7 +314,7 @@ static long special(DBADDR *paddr, int after)
 
 static long get_precision(const DBADDR *paddr,long *precision)
 {
-    mbboDirectRecord	*prec=(mbboDirectRecord *)paddr->precord;
+    mbboDirectRecord    *prec=(mbboDirectRecord *)paddr->precord;
     if(dbGetFieldIndex(paddr)==mbboDirectRecordVAL)
         *precision = prec->nobt;
     else
@@ -356,7 +355,7 @@ static void convert(mbboDirectRecord *prec)
 
 static long writeValue(mbboDirectRecord *prec)
 {
-    struct mbbodset *pdset = (struct mbbodset *) prec->dset;
+    mbbodirectdset *pdset = (mbbodirectdset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {

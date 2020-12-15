@@ -3,18 +3,18 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* String names for alarm status and severity values */
 
-#define epicsExportSharedSymbols
 #include "alarm.h"
 
 /* ALARM SEVERITIES - must match menuAlarmSevr.dbd and alarm.h */
 
-epicsShareDef const char * epicsAlarmSeverityStrings[ALARM_NSEV] = {
+const char * epicsAlarmSeverityStrings[ALARM_NSEV] = {
     "NO_ALARM",
     "MINOR",
     "MAJOR",
@@ -24,7 +24,7 @@ epicsShareDef const char * epicsAlarmSeverityStrings[ALARM_NSEV] = {
 
 /* ALARM STATUS - must match menuAlarmStat.dbd and alarm.h */
 
-epicsShareDef const char * epicsAlarmConditionStrings[ALARM_NSTATUS] = {
+const char * epicsAlarmConditionStrings[ALARM_NSTATUS] = {
     "NO_ALARM",
     "READ",
     "WRITE",

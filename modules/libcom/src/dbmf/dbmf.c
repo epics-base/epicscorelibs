@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  * Author: Jim Kowalkowski and Marty Kraimer
@@ -28,7 +29,6 @@
 #define REDZONE 0
 #endif
 
-#define epicsExportSharedSymbols
 #include "cantProceed.h"
 #include "epicsMutex.h"
 #include "ellLib.h"
@@ -39,8 +39,8 @@
 #ifndef DBMF_FREELIST_DEBUG
 
 /*Default values for dblfInit */
-#define DBMF_SIZE		64
-#define DBMF_INITIAL_ITEMS	10
+#define DBMF_SIZE               64
+#define DBMF_INITIAL_ITEMS      10
 
 typedef struct chunkNode {/*control block for each set of chunkItems*/
     ELLNODE    node;
@@ -206,34 +206,34 @@ void dbmfFree(void* mem)
 int dbmfShow(int level)
 {
     if(pdbmfPvt==NULL) {
-	printf("Never initialized\n");
-	return(0);
+        printf("Never initialized\n");
+        return(0);
     }
     printf("size %lu allocSize %lu chunkItems %d ",
-	(unsigned long)pdbmfPvt->size,
-	(unsigned long)pdbmfPvt->allocSize,pdbmfPvt->chunkItems);
+        (unsigned long)pdbmfPvt->size,
+        (unsigned long)pdbmfPvt->allocSize,pdbmfPvt->chunkItems);
     printf("nAlloc %d nFree %d nChunks %d nGtSize %d\n",
-	pdbmfPvt->nAlloc,pdbmfPvt->nFree,
-	ellCount(&pdbmfPvt->chunkList),pdbmfPvt->nGtSize);
+        pdbmfPvt->nAlloc,pdbmfPvt->nFree,
+        ellCount(&pdbmfPvt->chunkList),pdbmfPvt->nGtSize);
     if(level>0) {
         chunkNode  *pchunkNode;
 
         pchunkNode = (chunkNode *)ellFirst(&pdbmfPvt->chunkList);
         while(pchunkNode) {
-	    printf("pchunkNode %p nNotFree %d\n",
-		(void*)pchunkNode,pchunkNode->nNotFree);
-	    pchunkNode = (chunkNode *)ellNext(&pchunkNode->node);
-	}
+            printf("pchunkNode %p nNotFree %d\n",
+                (void*)pchunkNode,pchunkNode->nNotFree);
+            pchunkNode = (chunkNode *)ellNext(&pchunkNode->node);
+        }
     }
     if(level>1) {
-	void **pnextFree;;
+        void **pnextFree;;
 
         epicsMutexMustLock(pdbmfPvt->lock);
-	pnextFree = (void**)pdbmfPvt->freeList;
-	while(pnextFree) {
-	    printf("%p\n",*pnextFree);
-	    pnextFree = (void**)*pnextFree;
-	}
+        pnextFree = (void**)pdbmfPvt->freeList;
+        while(pnextFree) {
+            printf("%p\n",*pnextFree);
+            pnextFree = (void**)*pnextFree;
+        }
         epicsMutexUnlock(pdbmfPvt->lock);
     }
     return(0);
@@ -289,11 +289,11 @@ void dbmfFreeChunks(void) {}
 
 char * dbmfStrcat3(const char *lhs, const char *mid, const char *rhs)
 {
-	size_t len = strlen(lhs) + strlen(mid) + strlen(rhs) + 1;
-	char *buf = dbmfMalloc(len);
-	strcpy(buf, lhs);
-	strcat(buf, mid);
-	strcat(buf, rhs);
-	return buf;
+        size_t len = strlen(lhs) + strlen(mid) + strlen(rhs) + 1;
+        char *buf = dbmfMalloc(len);
+        strcpy(buf, lhs);
+        strcat(buf, mid);
+        strcat(buf, rhs);
+        return buf;
 }
 

@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* This is needed for vxWorks 6.8 to prevent an obnoxious compiler warning */
@@ -22,7 +23,6 @@
 
 #include "errlog.h"
 
-#define epicsExportSharedSymbols
 #include "osiSock.h"
 
 int osiSockAttach()
@@ -34,7 +34,7 @@ void osiSockRelease()
 {
 }
 
-epicsShareFunc SOCKET epicsShareAPI epicsSocketCreate ( 
+LIBCOM_API SOCKET epicsStdCall epicsSocketCreate ( 
     int domain, int type, int protocol )
 {
     SOCKET sock = socket ( domain, type, protocol );
@@ -44,7 +44,7 @@ epicsShareFunc SOCKET epicsShareAPI epicsSocketCreate (
     return sock;
 }
 
-epicsShareFunc int epicsShareAPI epicsSocketAccept ( 
+LIBCOM_API int epicsStdCall epicsSocketAccept ( 
     int sock, struct sockaddr * pAddr, osiSocklen_t * addrlen )
 {
     int newSock = accept ( sock, pAddr, addrlen );
@@ -54,13 +54,13 @@ epicsShareFunc int epicsShareAPI epicsSocketAccept (
     return newSock;
 }
 
-epicsShareFunc void epicsShareAPI epicsSocketDestroy ( SOCKET s )
+LIBCOM_API void epicsStdCall epicsSocketDestroy ( SOCKET s )
 {
     int status = close ( s );
     if ( status < 0 ) {
         char buf [ 64 ];
         epicsSocketConvertErrnoToString (  buf, sizeof ( buf ) );
-        errlogPrintf ( 
+        errlogPrintf (
             "epicsSocketDestroy: failed to "
             "close a socket because \"%s\"\n",
             buf );
@@ -70,20 +70,20 @@ epicsShareFunc void epicsShareAPI epicsSocketDestroy ( SOCKET s )
 /*
  * ipAddrToHostName
  */
-epicsShareFunc unsigned epicsShareAPI ipAddrToHostName 
+LIBCOM_API unsigned epicsStdCall ipAddrToHostName 
             (const struct in_addr *pAddr, char *pBuf, unsigned bufSize)
 {
-	int				status;
-	int				errnoCopy = errno;
+    int             status;
+    int             errnoCopy = errno;
     unsigned        len;
 
-	if (bufSize<1) {
-		return 0;
-	}
+    if (bufSize<1) {
+        return 0;
+    }
 
     if (bufSize>MAXHOSTNAMELEN) {
-	    status = hostGetByAddr ((int)pAddr->s_addr, pBuf);
-	    if (status==OK) {
+        status = hostGetByAddr ((int)pAddr->s_addr, pBuf);
+        if (status==OK) {
             pBuf[MAXHOSTNAMELEN] = '\0';
             len = strlen (pBuf);
         }
@@ -92,19 +92,19 @@ epicsShareFunc unsigned epicsShareAPI ipAddrToHostName
         }
     }
     else {
-	    char name[MAXHOSTNAMELEN+1];
-	    status = hostGetByAddr (pAddr->s_addr, name);
-	    if (status==OK) {
+        char name[MAXHOSTNAMELEN+1];
+        status = hostGetByAddr (pAddr->s_addr, name);
+        if (status==OK) {
             strncpy (pBuf, name, bufSize);
             pBuf[bufSize-1] = '\0';
             len = strlen (pBuf);
-	    }
+        }
         else {
             len = 0;
         }
     }
 
-	errno = errnoCopy;
+    errno = errnoCopy;
 
     return len;
 }
@@ -112,7 +112,7 @@ epicsShareFunc unsigned epicsShareAPI ipAddrToHostName
 /*
  * hostToIPAddr ()
  */
-epicsShareFunc int epicsShareAPI
+LIBCOM_API int epicsStdCall
 hostToIPAddr(const char *pHostName, struct in_addr *pIPA)
 {
     int addr = hostGetByName ( (char *) pHostName );

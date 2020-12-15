@@ -4,13 +4,13 @@
 * Copyright (c) 2002 The University of Saskatchewan
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 #include <stdlib.h>
 
-#define epicsExportSharedSymbols
 #include "iocsh.h"
 #include "asLib.h"
 #include "epicsStdioRedirect.h"
@@ -216,7 +216,7 @@ static void errlogInitCallFunc(const iocshArgBuf *args)
 /* errlogInit2 */
 static const iocshArg errlogInit2Arg0 = { "bufSize",iocshArgInt};
 static const iocshArg errlogInit2Arg1 = { "maxMsgSize",iocshArgInt};
-static const iocshArg * const errlogInit2Args[] = 
+static const iocshArg * const errlogInit2Args[] =
     {&errlogInit2Arg0, &errlogInit2Arg1};
 static const iocshFuncDef errlogInit2FuncDef =
     {"errlogInit2", 2, errlogInit2Args};
@@ -396,7 +396,7 @@ static void installLastResortEventProviderCallFunc(const iocshArgBuf *args)
 
 static iocshVarDef asCheckClientIPDef[] = { { "asCheckClientIP", iocshArgInt, 0 }, { NULL, iocshArgInt, NULL } };
 
-void epicsShareAPI libComRegister(void)
+void epicsStdCall libComRegister(void)
 {
     iocshRegister(&dateFuncDef, dateCallFunc);
     iocshRegister(&echoFuncDef, echoCallFunc);
@@ -425,7 +425,7 @@ void epicsShareAPI libComRegister(void)
     iocshRegister(&epicsMutexShowAllFuncDef,epicsMutexShowAllCallFunc);
     iocshRegister(&epicsThreadSleepFuncDef,epicsThreadSleepCallFunc);
     iocshRegister(&epicsThreadResumeFuncDef,epicsThreadResumeCallFunc);
-    
+
     iocshRegister(&generalTimeReportFuncDef,generalTimeReportCallFunc);
     iocshRegister(&installLastResortEventProviderFuncDef, installLastResortEventProviderCallFunc);
 

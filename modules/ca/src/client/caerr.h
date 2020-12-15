@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *
@@ -17,23 +17,15 @@
  *
  *  Author: Jeffrey O. Hill
  *
- */ 
+ */
 
 
-#ifndef INCLcaerrh
-#define INCLcaerrh
+#ifndef INC_caerr_H
+#define INC_caerr_H
 
-#ifdef epicsExportSharedSymbols
-#   define INCLcaerrh_accessh_epicsExportSharedSymbols
-#   undef epicsExportSharedSymbols
-#endif
+#include "epicsTypes.h"
 
-#   include "epicsTypes.h"
-
-#ifdef INCLcaerrh_accessh_epicsExportSharedSymbols
-#   define epicsExportSharedSymbols
-#   include "shareLib.h"
-#endif
+#include "libCaAPI.h"
 
 /*  CA Status Code Definitions   */
 
@@ -78,9 +70,9 @@
 (CA_INSERT_MSG_NO(NUMBER) | CA_INSERT_SEVERITY(SEVERITY))
 
 /*
- * In the lines below "defunct" indicates that current release 
+ * In the lines below "defunct" indicates that current release
  * servers and client library will not return this error code, but
- * servers on earlier releases that communicate with current clients 
+ * servers on earlier releases that communicate with current clients
  * might still generate exceptions with these error constants
  */
 #define ECA_NORMAL          DEFMSG(CA_K_SUCCESS,    0) /* success */
@@ -89,10 +81,10 @@
 #define ECA_UKNSERV         DEFMSG(CA_K_ERROR,      3) /* defunct */
 #define ECA_SOCK            DEFMSG(CA_K_ERROR,      4) /* defunct */
 #define ECA_CONN            DEFMSG(CA_K_WARNING,    5) /* defunct */
-#define ECA_ALLOCMEM        DEFMSG(CA_K_WARNING,    6) 
+#define ECA_ALLOCMEM        DEFMSG(CA_K_WARNING,    6)
 #define ECA_UKNCHAN         DEFMSG(CA_K_WARNING,    7) /* defunct */
 #define ECA_UKNFIELD        DEFMSG(CA_K_WARNING,    8) /* defunct */
-#define ECA_TOLARGE         DEFMSG(CA_K_WARNING,    9) 
+#define ECA_TOLARGE         DEFMSG(CA_K_WARNING,    9)
 #define ECA_TIMEOUT         DEFMSG(CA_K_WARNING,   10)
 #define ECA_NOSUPPORT       DEFMSG(CA_K_WARNING,   11) /* defunct */
 #define ECA_STRTOBIG        DEFMSG(CA_K_WARNING,   12) /* defunct */
@@ -149,9 +141,9 @@
 extern "C" {
 #endif
 
-epicsShareFunc const char * epicsShareAPI ca_message(long ca_status);
+LIBCA_API const char * epicsStdCall ca_message(long ca_status);
 
-epicsShareExtern const char * ca_message_text [];
+LIBCA_API extern const char * ca_message_text [];
 
 #ifdef __cplusplus
 }

@@ -1,8 +1,8 @@
 /*************************************************************************\
 * Copyright (c) 2002 The University of Saskatchewan
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
@@ -16,7 +16,7 @@ extern "C" {
 /*
  * epicsStrtod() for systems with broken strtod() routine
  */
-epicsShareFunc double epicsStrtod(const char *str, char **endp); 
+LIBCOM_API double epicsStrtod(const char *str, char **endp); 
 
 #ifdef __cplusplus
 }

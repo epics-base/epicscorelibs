@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -19,17 +20,14 @@
 #include "mbboDirectRecord.h"
 #include "epicsExport.h"
 
-static long write_mbbo(mbboDirectRecord	*prec)
+static long write_mbbo(mbboDirectRecord *prec)
 {
     dbPutLink(&prec->out, DBR_ULONG, &prec->val, 1);
     return 0;
 }
 
 /* Create the dset for devMbboDirectSoft */
-struct {
-    dset common;
-    DEVSUPFUN write;
-} devMbboDirectSoft = {
+mbbodirectdset devMbboDirectSoft = {
     {5, NULL, NULL, NULL, NULL},
     write_mbbo
 };

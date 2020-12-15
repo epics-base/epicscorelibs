@@ -1,5 +1,6 @@
 /*************************************************************************\
 * Copyright (c) 2015 Michael Davidsaver
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -7,7 +8,6 @@
 #include <mach/mach.h>
 #include <mach/mach_time.h>
 
-#define epicsExportSharedSymbols
 #define EPICS_EXPOSE_LIBCOM_MONOTONIC_PRIVATE
 #include "dbDefs.h"
 #include "errlog.h"

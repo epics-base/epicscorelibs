@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *      File descriptor management C++ class library
@@ -19,7 +19,7 @@
 #ifndef fdManagerH_included
 #define fdManagerH_included
 
-#include "shareLib.h" // reset share lib defines
+#include "libComAPI.h" // reset share lib defines
 #include "tsDLList.h"
 #include "resourceLib.h"
 #include "epicsTime.h"
@@ -33,7 +33,7 @@ enum fdRegType {fdrRead, fdrWrite, fdrException, fdrNEnums};
 //
 // file descriptor interest id
 //
-class epicsShareClass fdRegId
+class LIBCOM_API fdRegId
 {
 public:
 
@@ -77,12 +77,12 @@ public:
     //
     class fdInterestSubscriptionAlreadyExits {};
 
-    epicsShareFunc fdManager ();
-    epicsShareFunc virtual ~fdManager ();
-    epicsShareFunc void process ( double delay ); // delay parameter is in seconds
+    LIBCOM_API fdManager ();
+    LIBCOM_API virtual ~fdManager ();
+    LIBCOM_API void process ( double delay ); // delay parameter is in seconds
 
     // returns NULL if the fd is unknown
-    epicsShareFunc class fdReg *lookUpFD (const SOCKET fd, const fdRegType type);
+    LIBCOM_API class fdReg *lookUpFD (const SOCKET fd, const fdRegType type);
 
     epicsTimer & createTimer ();
 
@@ -99,7 +99,7 @@ private:
     // Set to fdreg when in call back
     // and nill otherwise
     //
-    fdReg * pCBReg; 
+    fdReg * pCBReg;
     void reschedule ();
     double quantum ();
     void installReg (fdReg &reg);
@@ -113,31 +113,31 @@ private:
 //
 // default file descriptor manager
 //
-epicsShareExtern fdManager fileDescriptorManager;
+LIBCOM_API extern fdManager fileDescriptorManager;
 
 //
 // fdReg
 //
 // file descriptor registration
 //
-class epicsShareClass fdReg :
+class LIBCOM_API fdReg :
     public fdRegId, public tsDLNode<fdReg>, public tsSLNode<fdReg> {
     friend class fdManager;
 
 public:
 
-    fdReg (const SOCKET fdIn, const fdRegType type, 
+    fdReg (const SOCKET fdIn, const fdRegType type,
         const bool onceOnly=false, fdManager &manager = fileDescriptorManager);
     virtual ~fdReg ();
 
     virtual void show (unsigned level) const;
-    
+
     //
     // Called by the file descriptor manager:
-    // 1) If the fdManager is deleted and there are still 
+    // 1) If the fdManager is deleted and there are still
     // fdReg objects attached
     // 2) Immediately after calling "callBack()" if
-    // the constructor specified "onceOnly" 
+    // the constructor specified "onceOnly"
     //
     // fdReg::destroy() does a "delete this"
     //
@@ -171,10 +171,10 @@ inline resTableIndex fdRegId::hash () const
     const unsigned fdManagerHashTableMinIndexBits = 8;
     const unsigned fdManagerHashTableMaxIndexBits = sizeof(SOCKET)*CHAR_BIT;
     resTableIndex hashid;
-        
-    hashid = integerHash ( fdManagerHashTableMinIndexBits, 
+
+    hashid = integerHash ( fdManagerHashTableMinIndexBits,
         fdManagerHashTableMaxIndexBits, this->fd );
- 
+
     //
     // also evenly distribute based on the type of fdRegType
     //
@@ -187,18 +187,18 @@ inline resTableIndex fdRegId::hash () const
     return hashid;
 }
 
-inline void fdManager::lazyInitTimerQueue () 
+inline void fdManager::lazyInitTimerQueue ()
 {
     if ( ! this->pTimerQueue ) {
         this->pTimerQueue = & epicsTimerQueuePassive::create ( *this );
     }
 }
 
-inline epicsTimer & fdManager::createTimer () 
+inline epicsTimer & fdManager::createTimer ()
 {
     this->lazyInitTimerQueue ();
     return this->pTimerQueue->createTimer ();
 }
 
 #endif // fdManagerH_included
- 
+

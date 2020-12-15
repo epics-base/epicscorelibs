@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *      Author  Jeffrey O. Hill
@@ -15,7 +16,6 @@
 #include <stdio.h>
 #include <float.h>
 
-#define epicsExportSharedSymbols
 #include "epicsGuard.h"
 #include "timerPrivate.h"
 #include "errlog.h"
@@ -26,10 +26,10 @@ epicsTimerQueue::~epicsTimerQueue () {}
 
 timerQueue::timerQueue ( epicsTimerQueueNotify & notifyIn ) :
     mutex(__FILE__, __LINE__),
-    notify ( notifyIn ), 
-    pExpireTmr ( 0 ),  
-    processThread ( 0 ), 
-    exceptMsgTimeStamp ( 
+    notify ( notifyIn ),
+    pExpireTmr ( 0 ),
+    processThread ( 0 ),
+    exceptMsgTimeStamp (
         epicsTime :: getCurrent () - exceptMsgMinPeriod ),
     cancelPending ( false )
 {
@@ -38,7 +38,7 @@ timerQueue::timerQueue ( epicsTimerQueueNotify & notifyIn ) :
 timerQueue::~timerQueue ()
 {
     timer *pTmr;
-    while ( ( pTmr = this->timerList.get () ) ) {    
+    while ( ( pTmr = this->timerList.get () ) ) {
         pTmr->curState = timer::stateLimbo;
     }
 }
@@ -51,7 +51,7 @@ void timerQueue ::
     try {
         epicsTime cur = epicsTime :: getCurrent ();
         delay = cur - this->exceptMsgTimeStamp;
-        cur.strftime ( date, sizeof ( date ), 
+        cur.strftime ( date, sizeof ( date ),
                         "%a %b %d %Y %H:%M:%S.%f" );
         if ( delay >= exceptMsgMinPeriod ) {
             this->exceptMsgTimeStamp = cur;
@@ -63,21 +63,21 @@ void timerQueue ::
     }
     if ( delay >= exceptMsgMinPeriod ) {
         // we dont touch the typeid for the timer expiration
-        // notify interface here because they might have 
+        // notify interface here because they might have
         // destroyed the timer during its callback
-        errlogPrintf ( 
+        errlogPrintf (
             "timerQueue: Unexpected C++ exception \"%s\" "
             "with type \"%s\" during timer expiration "
             "callback at %s\n",
-            pName, 
-            type.name (), 
+            pName,
+            type.name (),
             date );
         errlogFlush ();
     }
 }
 
 double timerQueue::process ( const epicsTime & currentTime )
-{  
+{
     epicsGuard < epicsMutex > guard ( this->mutex );
 
     if ( this->pExpireTmr ) {
@@ -103,12 +103,12 @@ double timerQueue::process ( const epicsTime & currentTime )
     if ( this->timerList.first () ) {
         if ( currentTime >= this->timerList.first ()->exp ) {
             this->pExpireTmr = this->timerList.first ();
-            this->timerList.remove ( *this->pExpireTmr ); 
+            this->timerList.remove ( *this->pExpireTmr );
             this->pExpireTmr->curState = timer::stateActive;
             this->processThread = epicsThreadGetIdSelf ();
 #           ifdef DEBUG
                 this->pExpireTmr->show ( 0u );
-#           endif 
+#           endif
         }
         else {
             double delay = this->timerList.first ()->exp - currentTime;
@@ -133,8 +133,8 @@ double timerQueue::process ( const epicsTime & currentTime )
         {
             epicsGuardRelease < epicsMutex > unguard ( guard );
 
-            debugPrintf ( ( "%5u expired \"%s\" with error %f sec\n", 
-                N++, typeid ( this->pExpireTmr->notify ).name (), 
+            debugPrintf ( ( "%5u expired \"%s\" with error %f sec\n",
+                N++, typeid ( this->pExpireTmr->notify ).name (),
                 currentTime - this->pExpireTmr->exp ) );
             try {
                 expStat = pTmpNotify->expire ( currentTime );
@@ -152,11 +152,11 @@ double timerQueue::process ( const epicsTime & currentTime )
         // while the call back was running
         //
         if ( this->cancelPending ) {
-            // 1) if another thread is canceling then cancel() waits for 
+            // 1) if another thread is canceling then cancel() waits for
             // the event below
             // 2) if this thread is canceling in the timer callback then
-            // dont touch timer or notify here because the cancel might 
-            // have occurred because they destroyed the timer in the 
+            // dont touch timer or notify here because the cancel might
+            // have occurred because they destroyed the timer in the
             // callback
             this->cancelPending = false;
             this->cancelBlockingEvent.signal ();
@@ -165,14 +165,14 @@ double timerQueue::process ( const epicsTime & currentTime )
             this->pExpireTmr->curState = timer::stateLimbo;
             if ( this->pExpireTmr->pNotify ) {
                 // pNotify was cleared above so if it is valid now we know that
-                // someone has started the timer from another thread and that 
+                // someone has started the timer from another thread and that
                 // predominates over the restart parameters from expire.
-                this->pExpireTmr->privateStart ( 
+                this->pExpireTmr->privateStart (
                     *this->pExpireTmr->pNotify, this->pExpireTmr->exp );
             }
             else if ( expStat.restart() ) {
                 // restart as nec
-                this->pExpireTmr->privateStart ( 
+                this->pExpireTmr->privateStart (
                     *pTmpNotify, currentTime + expStat.expirationDelay() );
             }
         }
@@ -181,11 +181,11 @@ double timerQueue::process ( const epicsTime & currentTime )
         if ( this->timerList.first () ) {
             if ( currentTime >= this->timerList.first ()->exp ) {
                 this->pExpireTmr = this->timerList.first ();
-                this->timerList.remove ( *this->pExpireTmr ); 
+                this->timerList.remove ( *this->pExpireTmr );
                 this->pExpireTmr->curState = timer::stateActive;
 #               ifdef DEBUG
                     this->pExpireTmr->show ( 0u );
-#               endif 
+#               endif
             }
             else {
                 delay = this->timerList.first ()->exp - currentTime;
@@ -218,7 +218,7 @@ void timerQueue::show ( unsigned level ) const
     printf ( "epicsTimerQueue with %u items pending\n", this->timerList.count () );
     if ( level >= 1u ) {
         tsDLIterConst < timer > iter = this->timerList.firstIter ();
-        while ( iter.valid () ) {   
+        while ( iter.valid () ) {
             iter->show ( level - 1u );
             ++iter;
         }

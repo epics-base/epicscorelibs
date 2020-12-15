@@ -22,7 +22,3 @@
     path = modules/pva2pva
     url = https://github.com/epics-base/pva2pva
     branch = master
-[submodule ".ci"]
-    path = .ci
-    url = https://github.com/epics-base/ci-scripts
-    branch = master

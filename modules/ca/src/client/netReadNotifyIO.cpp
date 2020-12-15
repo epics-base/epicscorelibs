@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *
@@ -29,8 +29,8 @@
 #include "nciu.h"
 #include "cac.h"
 
-netReadNotifyIO::netReadNotifyIO ( 
-    privateInterfaceForIO & ioComplIntfIn, 
+netReadNotifyIO::netReadNotifyIO (
+    privateInterfaceForIO & ioComplIntfIn,
         cacReadNotify & notify ) :
     notify ( notify ), privateChanForIO ( ioComplIntfIn )
 {
@@ -42,26 +42,26 @@ netReadNotifyIO::~netReadNotifyIO ()
 
 void netReadNotifyIO::show ( unsigned /* level */ ) const
 {
-    ::printf ( "netReadNotifyIO at %p\n", 
+    ::printf ( "netReadNotifyIO at %p\n",
         static_cast < const void * > ( this ) );
 }
 
-void netReadNotifyIO::show ( 
+void netReadNotifyIO::show (
     epicsGuard < epicsMutex > &, unsigned level ) const
 {
     this->show ( level );
 }
 
-void netReadNotifyIO::destroy ( 
+void netReadNotifyIO::destroy (
     epicsGuard < epicsMutex > & guard, cacRecycle & recycle )
 {
     this->~netReadNotifyIO ();
     recycle.recycleReadNotifyIO ( guard, *this );
 }
 
-void netReadNotifyIO::completion ( 
-    epicsGuard < epicsMutex > & guard, 
-    cacRecycle & recycle, unsigned type, 
+void netReadNotifyIO::completion (
+    epicsGuard < epicsMutex > & guard,
+    cacRecycle & recycle, unsigned type,
     arrayElementCount count, const void * pData )
 {
     //guard.assertIdenticalMutex ( this->mutex );
@@ -82,28 +82,28 @@ void netReadNotifyIO::completion (
     recycle.recycleReadNotifyIO ( guard, *this );
 }
 
-void netReadNotifyIO::exception ( 
-    epicsGuard < epicsMutex > & guard, 
+void netReadNotifyIO::exception (
+    epicsGuard < epicsMutex > & guard,
     cacRecycle & recycle,
     int status, const char *pContext )
 {
     //guard.assertIdenticalMutex ( this->mutex );
     this->privateChanForIO.ioCompletionNotify ( guard, *this );
-    this->notify.exception ( 
+    this->notify.exception (
         guard, status, pContext, UINT_MAX, 0u );
     this->~netReadNotifyIO ();
     recycle.recycleReadNotifyIO ( guard, *this );
 }
 
-void netReadNotifyIO::exception ( 
-    epicsGuard < epicsMutex > & guard, 
+void netReadNotifyIO::exception (
+    epicsGuard < epicsMutex > & guard,
     cacRecycle & recycle,
-    int status, const char *pContext, 
+    int status, const char *pContext,
     unsigned type, arrayElementCount count )
 {
     //guard.assertIdenticalMutex ( this->mutex )
     this->privateChanForIO.ioCompletionNotify ( guard, *this );
-    this->notify.exception ( 
+    this->notify.exception (
         guard, status, pContext, type, count );
     this->~netReadNotifyIO ();
     recycle.recycleReadNotifyIO ( guard, *this );

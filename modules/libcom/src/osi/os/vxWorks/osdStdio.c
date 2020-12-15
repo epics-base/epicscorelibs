@@ -4,6 +4,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -23,7 +24,7 @@ static STATUS outRoutine(char *buffer, size_t nchars, int outarg) {
     struct outStr_s *poutStr = (struct outStr_s *) outarg;
     size_t free = poutStr->free;
     size_t len;
-    
+
     if (free < 1) { /*let fioFormatV continue to count length*/
         return OK;
     } else if (free > 1) {
@@ -39,7 +40,7 @@ static STATUS outRoutine(char *buffer, size_t nchars, int outarg) {
 
 int epicsVsnprintf(char *str, size_t size, const char *format, va_list ap) {
     struct outStr_s outStr;
-    
+
     outStr.str = str;
     outStr.free = size;
     return fioFormatV(format, ap, outRoutine, (int) &outStr);

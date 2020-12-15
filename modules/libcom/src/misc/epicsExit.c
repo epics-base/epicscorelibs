@@ -3,20 +3,21 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*epicsExit.c*/
-/* 
- * Author: Marty Kraimer 
+/*
+ * Author: Marty Kraimer
  * Date: 23AUG2004
  * Thread exit revisions: Jeff Hill
  * Date: 06Dec2006
  *
- * Note that epicsExitCallAtThreadExits is currently called directly from the 
- * thread entry wrapper in OS dependent code. That approach might not work 
+ * Note that epicsExitCallAtThreadExits is currently called directly from the
+ * thread entry wrapper in OS dependent code. That approach might not work
  * correctly if the thread exits indirectly instead of just returning from
- * the function specified to epicsThreadCreate. For example the thread might 
+ * the function specified to epicsThreadCreate. For example the thread might
  * exit via the exit() call. There might be OS dependent solutions for that
  * weakness.
  *
@@ -27,7 +28,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define epicsExportSharedSymbols
 #include "ellLib.h"
 #include "errlog.h"
 #include "epicsThread.h"
@@ -100,7 +100,7 @@ static void epicsExitCallAtExitsPvt(exitPvt *pep)
     }
 }
 
-epicsShareFunc void epicsExitCallAtExits(void)
+LIBCOM_API void epicsExitCallAtExits(void)
 {
     exitPvt * pep = 0;
 
@@ -119,7 +119,7 @@ epicsShareFunc void epicsExitCallAtExits(void)
     epicsMutexCleanup();
 }
 
-epicsShareFunc void epicsExitCallAtThreadExits(void)
+LIBCOM_API void epicsExitCallAtThreadExits(void)
 {
     exitPvt * pep;
 
@@ -148,7 +148,7 @@ static int epicsAtExitPvt(exitPvt *pep, epicsExitFunc func, void *arg, const cha
     return status;
 }
 
-epicsShareFunc int epicsAtThreadExit(epicsExitFunc func, void *arg)
+LIBCOM_API int epicsAtThreadExit(epicsExitFunc func, void *arg)
 {
     exitPvt * pep;
 
@@ -164,7 +164,7 @@ epicsShareFunc int epicsAtThreadExit(epicsExitFunc func, void *arg)
     return epicsAtExitPvt ( pep, func, arg, NULL );
 }
 
-epicsShareFunc int epicsAtExit3(epicsExitFunc func, void *arg, const char* name)
+LIBCOM_API int epicsAtExit3(epicsExitFunc func, void *arg, const char* name)
 {
     int status = -1;
 
@@ -180,7 +180,7 @@ epicsShareFunc int epicsAtExit3(epicsExitFunc func, void *arg, const char* name)
     return status;
 }
 
-epicsShareFunc void epicsExit(int status)
+LIBCOM_API void epicsExit(int status)
 {
     epicsExitCallAtExits();
     epicsThreadSleep(0.1);
@@ -202,7 +202,7 @@ static void exitLaterOnceFunc(void *raw)
                       &exitNow, NULL);
 }
 
-epicsShareFunc void epicsExitLater(int status)
+LIBCOM_API void epicsExitLater(int status)
 {
     epicsThreadOnce(&exitLaterOnce, &exitLaterOnceFunc, &status);
 }

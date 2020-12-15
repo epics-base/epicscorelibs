@@ -4,6 +4,7 @@
 * Copyright (c) 2010 Brookhaven National Laboratory.
 * Copyright (c) 2010 Helmholtz-Zentrum Berlin
 *     fuer Materialien und Energie GmbH.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -16,6 +17,8 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <string.h>
+
+#define EPICS_PRIVATE_API
 
 #include "cantProceed.h"
 #include "epicsAssert.h"
@@ -67,6 +70,7 @@ void dbChannelInit (void)
     freeListInitPvt(&dbChannelFreeList,  sizeof(dbChannel), 128);
     freeListInitPvt(&chFilterFreeList,  sizeof(chFilter), 64);
     freeListInitPvt(&dbchStringFreeList, sizeof(epicsOldString), 128);
+    db_init_event_freelists();
 }
 
 static void chf_value(parseContext *parser, parse_result *presult)
@@ -603,6 +607,10 @@ long dbChannelOpen(dbChannel *chan)
     probe.no_elements = dbChannelElements(chan);
     probe.field_size  = dbChannelFieldSize(chan);
     probe.sevr = NO_ALARM;
+    probe.stat = NO_ALARM;
+    probe.time.secPastEpoch = 0;
+    probe.time.nsec = 0;
+
     p = probe;
 
     /*

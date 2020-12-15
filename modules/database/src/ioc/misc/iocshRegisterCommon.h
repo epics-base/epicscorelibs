@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* iocshRegisterCommon.h */
 /* Author:  Marty Kraimer Date: 27APR2000 */
@@ -23,9 +24,19 @@ struct dbBase;
 /* register many useful commands */
 epicsShareFunc void iocshRegisterCommon(void);
 
+#define HAS_registerAllRecordDeviceDrivers
+
 epicsShareFunc
 long
-dynamic_registerRecordDeviceDriver(struct dbBase *pdbbase);
+registerAllRecordDeviceDrivers(struct dbBase *pdbbase);
+
+epicsShareFunc
+void runRegistrarOnce(void (*reg_func)(void));
+
+#ifdef EPICS_PRIVATE_API
+epicsShareFunc
+void clearRegistrarOnce(void);
+#endif
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2012 UChicago Argonne LLC, as Operator of Argonne
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -17,8 +18,9 @@
 #include "lsiRecord.h"
 #include "epicsExport.h"
 
-static long init_record(lsiRecord *prec)
+static long init_record(dbCommon *common)
 {
+    lsiRecord *prec = (lsiRecord *)common;
     dbLoadLinkLS(&prec->inp, prec->val, prec->sizv, &prec->len);
 
     return 0;
@@ -49,6 +51,6 @@ static long read_string(lsiRecord *prec)
 }
 
 lsidset devLsiSoft = {
-    5, NULL, NULL, init_record, NULL, read_string
+    { 5, NULL, NULL, init_record, NULL }, read_string
 };
 epicsExportAddress(dset, devLsiSoft);

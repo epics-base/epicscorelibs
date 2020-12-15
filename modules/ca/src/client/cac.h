@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -19,13 +20,8 @@
  *
  */
 
-#ifndef cach
-#define cach
-
-#ifdef epicsExportSharedSymbols
-#   define cach_restore_epicsExportSharedSymbols
-#   undef epicsExportSharedSymbols
-#endif
+#ifndef INC_cac_H
+#define INC_cac_H
 
 #include "compilerDependencies.h"
 #include "ipAddrToAsciiAsynchronous.h"
@@ -35,11 +31,7 @@
 #include "freeList.h"
 #include "localHostName.h"
 
-#ifdef cach_restore_epicsExportSharedSymbols
-#   define epicsExportSharedSymbols
-#   include "shareLib.h"
-#endif
-
+#include "libCaAPI.h"
 #include "nciu.h"
 #include "comBuf.h"
 #include "bhe.h"
@@ -81,8 +73,8 @@ public:
     void release ( void * );
 private:
     tsFreeList < comBuf, 0x20 > freeList;
-	cacComBufMemoryManager ( const cacComBufMemoryManager & );
-	cacComBufMemoryManager & operator = ( const cacComBufMemoryManager & );
+    cacComBufMemoryManager ( const cacComBufMemoryManager & );
+    cacComBufMemoryManager & operator = ( const cacComBufMemoryManager & );
 };
 
 class notifyGuard {
@@ -348,8 +340,8 @@ private:
                     const char *pCtx, unsigned status );
     static const pExcepProtoStubTCP tcpExcepJumpTableCAC [];
 
-	cac ( const cac & );
-	cac & operator = ( const cac & );
+        cac ( const cac & );
+        cac & operator = ( const cac & );
 
     friend class tcpiiu;
 };
@@ -432,4 +424,4 @@ inline double cac ::
     return this->connTMO;
 }
 
-#endif // ifdef cach
+#endif // ifndef INC_cac_H

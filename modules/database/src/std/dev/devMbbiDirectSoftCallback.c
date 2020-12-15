@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -151,8 +152,10 @@ static long init(int pass)
     return 0;
 }
 
-static long init_record(mbbiDirectRecord *prec)
+static long init_record(dbCommon *pcommon)
 {
+	mbbiDirectRecord *prec = (mbbiDirectRecord *)pcommon;
+
     if (recGblInitConstantLink(&prec->inp, DBR_ULONG, &prec->val))
         prec->udf = FALSE;
 
@@ -204,10 +207,7 @@ static long read_mbbiDirect(mbbiDirectRecord *prec)
 }
 
 /* Create the dset for devMbbiDirectSoftCallback */
-struct {
-    dset common;
-    DEVSUPFUN read_mbbiDirect;
-} devMbbiDirectSoftCallback = {
+mbbidirectdset devMbbiDirectSoftCallback = {
     {5, NULL, init, init_record, NULL},
     read_mbbiDirect
 };

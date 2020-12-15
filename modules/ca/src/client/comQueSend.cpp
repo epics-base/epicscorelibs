@@ -3,23 +3,23 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
+/*
  *
- *                              
+ *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
  *               Los Alamos, New Mexico 87545
- *                                  
+ *
  *  Copyright, 1986, The Regents of the University of California.
- *                                  
- *           
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
+ *
+ *
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
  */
 
 //
@@ -35,7 +35,7 @@
 // a connection dropped.
 // 4) Do not allocate too much memory in exception situatons (such as
 // after a circuit disconnect).
-// 5) Avoid allocating more memory than is absolutely necessary to meet 
+// 5) Avoid allocating more memory than is absolutely necessary to meet
 // the above requirements.
 // 6) Message fragments must never be sent to the IOC when there isnt
 // enough memory to queue part of a message (we also must not force
@@ -44,7 +44,7 @@
 // protocol stream.
 //
 // Implementation:
-// 1) When queuing a complete message, first test to see if a flush is 
+// 1) When queuing a complete message, first test to see if a flush is
 // required. If it is a receive thread scheduals the flush with the
 // send thread, and otherwise directly execute the system call. The
 // send thread must run at a higher priority than the receive thread
@@ -52,14 +52,14 @@
 // 2) Preallocate space for the entire message prior to copying in the
 // message so that message fragments are not flushed out just prior
 // to detecting that memory is unavailable.
-// 3) Return a special error constant when the following situations 
+// 3) Return a special error constant when the following situations
 // are detected when the user is attempting to queue a request
 // from within a user callback executed by a receive thread:
-//      a) A user is queuing more requests that demand a response from a 
+//      a) A user is queuing more requests that demand a response from a
 //      callback than are removed by the response that initiated the
 //      callback, and this situation persists for many callbacks until
 //      all buffering in the system is exausted.
-//      b) A user is queuing many requests that demand a response from one 
+//      b) A user is queuing many requests that demand a response from one
 //      callback until all buffering in the system is exausted.
 //      c) Some combination of both (a) nad (b).
 //
@@ -67,21 +67,20 @@
 
 #define epicsAssertAuthor "Jeff Hill johill@lanl.gov"
 
-#define epicsExportSharedSymbols
 #include "iocinf.h"
 #include "virtualCircuit.h"
 #include "db_access.h" // for dbr_short_t etc
 
 // nill message alignment pad bytes
-const char cacNillBytes [] = 
-{ 
+const char cacNillBytes [] =
+{
     0, 0, 0, 0,
     0, 0, 0, 0
 };
 
-comQueSend::comQueSend ( wireSendAdapter & wireIn, 
+comQueSend::comQueSend ( wireSendAdapter & wireIn,
     comBufMemoryManager & comBufMemMgrIn ):
-        comBufMemMgr ( comBufMemMgrIn ), wire ( wireIn ), 
+        comBufMemMgr ( comBufMemMgrIn ), wire ( wireIn ),
             nBytesPending ( 0u )
 {
 }
@@ -91,7 +90,7 @@ comQueSend::~comQueSend ()
     this->clear ();
 }
 
-void comQueSend::clear () 
+void comQueSend::clear ()
 {
     comBuf *pBuf;
 
@@ -181,32 +180,32 @@ const comQueSend::copyScalarFunc_t comQueSend::dbrCopyScalar [39] = {
     &comQueSend::copy_dbr_invalid  // DBR_CLASS_NAME
 };
 
-void comQueSend::copy_dbr_string ( const void *pValue, unsigned nElem ) 
+void comQueSend::copy_dbr_string ( const void *pValue, unsigned nElem )
 {
     this->push ( static_cast < const char * > ( pValue ), nElem * MAX_STRING_SIZE );
 }
 
-void comQueSend::copy_dbr_short ( const void *pValue, unsigned nElem ) 
+void comQueSend::copy_dbr_short ( const void *pValue, unsigned nElem )
 {
     this->push ( static_cast <const dbr_short_t *> ( pValue ), nElem );
 }
 
-void comQueSend::copy_dbr_float ( const void *pValue, unsigned nElem ) 
+void comQueSend::copy_dbr_float ( const void *pValue, unsigned nElem )
 {
     this->push ( static_cast <const dbr_float_t *> ( pValue ), nElem );
 }
 
-void comQueSend::copy_dbr_char ( const void *pValue, unsigned nElem ) 
+void comQueSend::copy_dbr_char ( const void *pValue, unsigned nElem )
 {
     this->push ( static_cast <const dbr_char_t *> ( pValue ), nElem );
 }
 
-void comQueSend::copy_dbr_long ( const void *pValue, unsigned nElem ) 
+void comQueSend::copy_dbr_long ( const void *pValue, unsigned nElem )
 {
     this->push ( static_cast <const dbr_long_t *> ( pValue ), nElem );
 }
 
-void comQueSend::copy_dbr_double ( const void *pValue, unsigned nElem ) 
+void comQueSend::copy_dbr_double ( const void *pValue, unsigned nElem )
 {
     this->push ( static_cast <const dbr_double_t *> ( pValue ), nElem );
 }
@@ -258,7 +257,7 @@ const comQueSend::copyVectorFunc_t comQueSend::dbrCopyVector [39] = {
     &comQueSend::copy_dbr_invalid  // DBR_CLASS_NAME
 };
 
-comBuf * comQueSend::popNextComBufToSend () 
+comBuf * comQueSend::popNextComBufToSend ()
 {
     comBuf *pBuf = this->bufs.get ();
     if ( pBuf ) {
@@ -279,9 +278,9 @@ comBuf * comQueSend::popNextComBufToSend ()
 }
 
 void comQueSend::insertRequestHeader (
-    ca_uint16_t request, ca_uint32_t payloadSize, 
-    ca_uint16_t dataType, ca_uint32_t nElem, ca_uint32_t cid, 
-    ca_uint32_t requestDependent, bool v49Ok ) 
+    ca_uint16_t request, ca_uint32_t payloadSize,
+    ca_uint16_t dataType, ca_uint32_t nElem, ca_uint32_t cid,
+    ca_uint32_t requestDependent, bool v49Ok )
 {
     if ( payloadSize < 0xffff && nElem < 0xffff ) {
         comBuf * pComBuf = this->bufs.last ();
@@ -289,12 +288,12 @@ void comQueSend::insertRequestHeader (
             pComBuf = newComBuf ();
             this->pushComBuf ( *pComBuf );
         }
-        pComBuf->push ( request ); 
-        pComBuf->push ( static_cast < ca_uint16_t > ( payloadSize ) ); 
-        pComBuf->push ( dataType ); 
-        pComBuf->push ( static_cast < ca_uint16_t > ( nElem ) ); 
-        pComBuf->push ( cid ); 
-        pComBuf->push ( requestDependent );  
+        pComBuf->push ( request );
+        pComBuf->push ( static_cast < ca_uint16_t > ( payloadSize ) );
+        pComBuf->push ( dataType );
+        pComBuf->push ( static_cast < ca_uint16_t > ( nElem ) );
+        pComBuf->push ( cid );
+        pComBuf->push ( requestDependent );
     }
     else if ( v49Ok ) {
         comBuf * pComBuf = this->bufs.last ();
@@ -302,14 +301,14 @@ void comQueSend::insertRequestHeader (
             pComBuf = newComBuf ();
             this->pushComBuf ( *pComBuf );
         }
-        pComBuf->push ( request ); 
-        pComBuf->push ( static_cast < ca_uint16_t > ( 0xffff ) ); 
-        pComBuf->push ( dataType ); 
-        pComBuf->push ( static_cast < ca_uint16_t > ( 0u ) ); 
-        pComBuf->push ( cid ); 
-        pComBuf->push ( requestDependent );  
-        pComBuf->push ( payloadSize ); 
-        pComBuf->push ( nElem ); 
+        pComBuf->push ( request );
+        pComBuf->push ( static_cast < ca_uint16_t > ( 0xffff ) );
+        pComBuf->push ( dataType );
+        pComBuf->push ( static_cast < ca_uint16_t > ( 0u ) );
+        pComBuf->push ( cid );
+        pComBuf->push ( requestDependent );
+        pComBuf->push ( payloadSize );
+        pComBuf->push ( nElem );
     }
     else {
         throw cacChannel::outOfBounds ();
@@ -317,9 +316,9 @@ void comQueSend::insertRequestHeader (
 }
 
 void comQueSend::insertRequestWithPayLoad (
-    ca_uint16_t request, unsigned dataType, arrayElementCount nElem, 
-    ca_uint32_t cid, ca_uint32_t requestDependent, 
-    const void * pPayload, bool v49Ok ) 
+    ca_uint16_t request, unsigned dataType, arrayElementCount nElem,
+    ca_uint32_t cid, ca_uint32_t requestDependent,
+    const void * pPayload, bool v49Ok )
 {
     if ( INVALID_DB_REQ ( dataType ) ) {
         throw cacChannel::badType ();
@@ -337,16 +336,16 @@ void comQueSend::insertRequestWithPayLoad (
                 throw cacChannel::outOfBounds();
             }
             payloadSize = CA_MESSAGE_ALIGN ( size );
-            this->insertRequestHeader ( request, payloadSize, 
-                static_cast <ca_uint16_t> ( dataType ), 
+            this->insertRequestHeader ( request, payloadSize,
+                static_cast <ca_uint16_t> ( dataType ),
                 nElem, cid, requestDependent, v49Ok );
-            this->pushString ( pStr, size );  
+            this->pushString ( pStr, size );
         }
         else {
             size = dbr_size[dataType];
             payloadSize = CA_MESSAGE_ALIGN ( size );
-            this->insertRequestHeader ( request, payloadSize, 
-                static_cast <ca_uint16_t> ( dataType ), 
+            this->insertRequestHeader ( request, payloadSize,
+                static_cast <ca_uint16_t> ( dataType ),
                 nElem, cid, requestDependent, v49Ok );
             ( this->*dbrCopyScalar [dataType] ) ( pPayload );
         }
@@ -357,22 +356,22 @@ void comQueSend::insertRequestWithPayLoad (
             maxBytes = 0xffffffff;
         }
         else {
-            maxBytes = MAX_TCP - sizeof ( caHdr ); 
+            maxBytes = MAX_TCP - sizeof ( caHdr );
         }
-        arrayElementCount maxElem = 
-            ( maxBytes - sizeof (dbr_double_t) - dbr_size[dataType] ) / 
+        arrayElementCount maxElem =
+            ( maxBytes - sizeof (dbr_double_t) - dbr_size[dataType] ) /
                 dbr_value_size[dataType];
         if ( nElem >= maxElem ) {
             throw cacChannel::outOfBounds();
         }
         // the above checks verify that the total size
         // is lest that 0xffffffff
-        size = static_cast < ca_uint32_t > 
+        size = static_cast < ca_uint32_t >
             ( dbr_size_n ( dataType, nElem ) );
         payloadSize = CA_MESSAGE_ALIGN ( size );
-        this->insertRequestHeader ( request, payloadSize, 
-            static_cast <ca_uint16_t> ( dataType ), 
-            static_cast < ca_uint32_t > ( nElem ), 
+        this->insertRequestHeader ( request, payloadSize,
+            static_cast <ca_uint16_t> ( dataType ),
+            static_cast < ca_uint32_t > ( nElem ),
             cid, requestDependent, v49Ok );
         ( this->*dbrCopyVector [dataType] ) ( pPayload, nElem );
     }
@@ -383,7 +382,7 @@ void comQueSend::insertRequestWithPayLoad (
     }
 }
 
-void comQueSend::commitMsg () 
+void comQueSend::commitMsg ()
 {
     while ( this->pFirstUncommited.valid() ) {
         this->nBytesPending += this->pFirstUncommited->uncommittedBytes ();

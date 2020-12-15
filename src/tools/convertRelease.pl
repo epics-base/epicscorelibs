@@ -4,6 +4,7 @@
 #     National Laboratory.
 # Copyright (c) 2002 The Regents of the University of California, as
 #     Operator of Los Alamos National Laboratory.
+# SPDX-License-Identifier: EPICS
 # EPICS BASE is distributed subject to a Software License Agreement found
 # in file LICENSE that is included with this distribution.
 #*************************************************************************
@@ -19,7 +20,7 @@ use Getopt::Std;
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 
 use FindBin qw($Bin);
-use lib ("$Bin/../../lib/perl");
+use lib ("$Bin/../../lib/perl", $Bin);
 
 use EPICS::Path;
 use EPICS::Release;

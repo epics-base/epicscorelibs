@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 #ifndef INC_errSymTbl_H
@@ -12,7 +13,7 @@
 
 #include <stddef.h>
 
-#include "shareLib.h"
+#include "libComAPI.h"
 #include "epicsTypes.h"
 
 /* ERRSYMBOL - entry in symbol table */
@@ -34,14 +35,14 @@ typedef ERRSYMTAB *ERRSYMTAB_ID;
 extern "C" {
 #endif
 
-epicsShareFunc void errSymLookup(long status, char *pBuf, size_t bufLength);
-epicsShareFunc const char* errSymMsg(long status);
-epicsShareFunc void errSymTest(epicsUInt16 modnum, epicsUInt16 begErrNum,
+LIBCOM_API void errSymLookup(long status, char *pBuf, size_t bufLength);
+LIBCOM_API const char* errSymMsg(long status);
+LIBCOM_API void errSymTest(epicsUInt16 modnum, epicsUInt16 begErrNum,
     epicsUInt16 endErrNum);
-epicsShareFunc void errSymTestPrint(long errNum);
-epicsShareFunc int errSymBld(void);
-epicsShareFunc int errSymbolAdd(long errNum, const char *name);
-epicsShareFunc void errSymDump(void);
+LIBCOM_API void errSymTestPrint(long errNum);
+LIBCOM_API int errSymBld(void);
+LIBCOM_API int errSymbolAdd(long errNum, const char *name);
+LIBCOM_API void errSymDump(void);
 
 #ifdef __cplusplus
 }

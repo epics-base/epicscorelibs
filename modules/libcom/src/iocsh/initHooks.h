@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *      Authors:        Benjamin Franksen (BESY) and Marty Kraimer
@@ -15,7 +16,7 @@
 #ifndef INC_initHooks_H
 #define INC_initHooks_H
 
-#include "shareLib.h"
+#include "libComAPI.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -64,10 +65,10 @@ typedef enum {
 } initHookState;
 
 typedef void (*initHookFunction)(initHookState state);
-epicsShareFunc int initHookRegister(initHookFunction func);
-epicsShareFunc void initHookAnnounce(initHookState state);
-epicsShareFunc const char *initHookName(int state);
-epicsShareFunc void initHookFree(void);
+LIBCOM_API int initHookRegister(initHookFunction func);
+LIBCOM_API void initHookAnnounce(initHookState state);
+LIBCOM_API const char *initHookName(int state);
+LIBCOM_API void initHookFree(void);
 
 #ifdef __cplusplus
 }

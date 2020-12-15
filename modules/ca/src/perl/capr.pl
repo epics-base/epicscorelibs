@@ -1,4 +1,11 @@
 #!/usr/bin/env perl
+#*************************************************************************
+# Copyright (c) 2005 UChicago Argonne LLC, as Operator of Argonne
+#     National Laboratory.
+# SPDX-License-Identifier: EPICS
+# EPICS BASE is distributed subject to a Software License Agreement found
+# in file LICENSE that is included with this distribution.
+#*************************************************************************
 
 #######################################################################
 #
@@ -35,9 +42,11 @@ my %fieldType = (
     DBF_DOUBLE   => 'DBF_FLOAT',
     DBF_FLOAT    => 'DBF_FLOAT',
     DBF_LONG     => 'DBF_LONG',
+    DBF_INT64    => 'DBF_FLOAT',
     DBF_SHORT    => 'DBF_LONG',
     DBF_ULONG    => 'DBF_LONG',
     DBF_USHORT   => 'DBF_LONG',
+    DBF_UINT64   => 'DBF_FLOAT',
     DBF_DEVICE   => 'DBF_STRING',
     DBF_ENUM     => 'DBF_STRING',
     DBF_FWDLINK  => 'DBF_STRING',
@@ -86,7 +95,7 @@ if (@ARGV) {
     printRecord($_, @ARGV);
 } else {
     if (m/^ \s* ([]+:;<>0-9A-Za-z[-]+) (?:\. \w+)? \s* , \s* (\d+) \s* $/x) {
-        # Recognizes ",n" as an interest leve, drops any ".FIELD" part
+        # Recognizes ",n" as an interest level, drops any ".FIELD" part
         printRecord($1, $2);
     } else {
         # Drop any ".FIELD" part
@@ -235,8 +244,9 @@ sub printField {
         $outStr = sprintf('%-5s %.8f', $field, $fieldData);
     } elsif ( $dataType eq 'DBF_CHAR' ) {
         $outStr = sprintf('%-5s %d', $field, ord($fieldData));
-    }else {
-        # DBF_LONG, DBF_SHORT, DBF_UCHAR, DBF_ULONG, DBF_USHORT
+    } else {
+        # DBF_INT64, DBF_LONG, DBF_SHORT,
+        # DBF_UINT64, DBF_ULONG, DBF_USHORT, DBF_UCHAR,
         $outStr = sprintf('%-5s %d', $field, $fieldData);
     }
 
@@ -270,17 +280,18 @@ sub printField {
 sub caget {
     my @chans = map { CA->new($_); } @_;
 
-    #clear results;
+    #clear any previous results;
     %callback_data = ();
     %timed_out = ();
 
     eval { CA->pend_io($opt_w); };
     if ($@) {
         if ($@ =~ m/^ECA_TIMEOUT/) {
-            my $err = (@chans > 1) ? 'some PV(s)' : '"' . $chans[0]->name . '"';
+            my $name = $chans[0]->name;
+            my $err = (@chans > 1) ? 'some fields' : "'$name'";
             print "Channel connect timed out: $err not found.\n";
             foreach my $chan (@chans) {
-                $timed_out{$chan->name} = $chan->is_connected;
+                $timed_out{$chan->name} = !$chan->is_connected;
             }
             @chans = grep { $_->is_connected } @chans;
         } else {
@@ -289,14 +300,12 @@ sub caget {
     }
 
     map {
-        my $type;
-        $type = $_->field_type;
-        $_->get_callback(\&caget_callback, $type);
+        $_->get_callback(\&caget_callback, $_->field_type);
     } @chans;
 
-    my $fields_read = @chans;
-    $callback_incomplete = @chans;
-    CA->pend_event(0.1) while $callback_incomplete;
+    my $fields_read = $callback_incomplete = @chans;
+    CA->pend_event(0.1)
+        while $callback_incomplete;
     return $fields_read;
 }
 
@@ -325,9 +334,10 @@ sub printRecord {
     my @bases = ();     #bases, from parser
     foreach my $field (sort keys %{$record{$recType}}) {
         # Skip DTYP field if this rec type doesn't have device support defined
-        if ($field eq 'DTYP' && !(exists($device{$recType}))) { next; }
+        next if $field eq 'DTYP' && !exists($device{$recType});
 
         my ($fType, $fInterest, $base) = getFieldParams($recType, $field);
+        # FIXME: Support waveform.VAL fields etc.
         unless( $fType eq 'DBF_NOACCESS' ) {
             if ($interest >= $fInterest ) {
                 my $fToGet = "$name.$field";
@@ -346,15 +356,10 @@ sub printRecord {
         my $field  = $fields_pr[$i];
         my $fToGet = $readlist[$i];
         my ($fType, $data, $base);
-        if ($timed_out{$fToGet}) {
-            $fType = $fieldType{DBF_STRING};
-            $data  = '<timeout>';
-        }
-        else {
-            $fType  = $ftypes[$i];
-            $base   = $bases[$i];
-            $data   = $callback_data{$fToGet};
-        }
+        next if $timed_out{$fToGet};
+        $fType  = $ftypes[$i];
+        $base   = $bases[$i];
+        $data   = $callback_data{$fToGet};
         $col = printField($field, $data, $fType, $base, $col);
     }
     print("\n");  # Final newline
@@ -387,8 +392,8 @@ sub printRecordList {
     if (exists($record{$type}) ) {
         print("Record type - $type\n");
         foreach my $fkey (sort keys %{$record{$type}}) {
-            printf('%-4s', $fkey);
-            printf("    interest = $record{$type}{$fkey}[$iIdx]");
+            printf('%-8s', $fkey);
+            printf("  interest = $record{$type}{$fkey}[$iIdx]");
             printf("    type = %-12s ",$record{$type}{$fkey}[$tIdx]);
             print ("    base = $record{$type}{$fkey}[$bIdx]\n");
         }

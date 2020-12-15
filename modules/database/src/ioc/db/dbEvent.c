@@ -6,6 +6,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -156,7 +157,7 @@ int dbel ( const char *pname, unsigned level )
     if ( ! pname ) return DB_EVENT_OK;
     status = dbNameToAddr ( pname, &addr );
     if ( status != 0 ) {
-	    errMessage ( status, " dbNameToAddr failed" );
+        errMessage ( status, " dbNameToAddr failed" );
         return DB_EVENT_ERROR;
     }
 
@@ -165,7 +166,7 @@ int dbel ( const char *pname, unsigned level )
     pevent = (struct evSubscrip *) ellFirst ( &addr.precord->mlis );
 
     if ( ! pevent ) {
-	    printf ( "\"%s\": No PV event subscriptions ( monitors ).\n", pname );
+        printf ( "\"%s\": No PV event subscriptions ( monitors ).\n", pname );
         UNLOCKREC (addr.precord);
         return DB_EVENT_OK;
     }
@@ -177,14 +178,14 @@ int dbel ( const char *pname, unsigned level )
         pdbFldDes = dbChannelFldDes(pevent->chan);
 
         if ( level > 0 ) {
-	        printf ( "%4.4s", pdbFldDes->name );
+            printf ( "%4.4s", pdbFldDes->name );
 
-	        printf ( " { " );
-                if ( pevent->select & DBE_VALUE ) printf( "VALUE " );
-                if ( pevent->select & DBE_LOG ) printf( "LOG " );
-                if ( pevent->select & DBE_ALARM ) printf( "ALARM " );
-                if ( pevent->select & DBE_PROPERTY ) printf( "PROPERTY " );
-	        printf ( "}" );
+            printf ( " { " );
+            if ( pevent->select & DBE_VALUE ) printf( "VALUE " );
+            if ( pevent->select & DBE_LOG ) printf( "LOG " );
+            if ( pevent->select & DBE_ALARM ) printf( "ALARM " );
+            if ( pevent->select & DBE_PROPERTY ) printf( "PROPERTY " );
+            printf ( "}" );
 
             if ( pevent->npend ) {
                 printf ( " undelivered=%ld", pevent->npend );
@@ -239,7 +240,7 @@ int dbel ( const char *pname, unsigned level )
                     ( void * ) pevent->ev_que->evUser );
             }
 
-	        printf( "\n" );
+            printf( "\n" );
         }
 
             pevent = (struct evSubscrip *) ellNext ( &pevent->node );
@@ -251,18 +252,15 @@ int dbel ( const char *pname, unsigned level )
 }
 
 /*
- * DB_INIT_EVENTS()
+ * DB_INIT_EVENT_FREELISTS()
  *
  *
- * Initialize the event facility for this task. Must be called at least once
- * by each task which uses the db event facility
+ * Initialize the free lists used by the event facility.
+ * Safe to be called multiple times.
  *
- * returns: ptr to event user block or NULL if memory can't be allocated
  */
-dbEventCtx db_init_events (void)
+void db_init_event_freelists (void)
 {
-    struct event_user * evUser;
-
     if (!dbevEventUserFreeList) {
         freeListInitPvt(&dbevEventUserFreeList,
             sizeof(struct event_user),8);
@@ -279,6 +277,22 @@ dbEventCtx db_init_events (void)
         freeListInitPvt(&dbevFieldLogFreeList,
             sizeof(struct db_field_log),2048);
     }
+}
+
+/*
+ * DB_INIT_EVENTS()
+ *
+ *
+ * Initialize the event facility for this task. Must be called at least once
+ * by each task which uses the db event facility
+ *
+ * returns: ptr to event user block or NULL if memory can't be allocated
+ */
+dbEventCtx db_init_events (void)
+{
+    struct event_user * evUser;
+
+    db_init_event_freelists();
 
     evUser = (struct event_user *)
         freeListCalloc(dbevEventUserFreeList);
@@ -371,7 +385,7 @@ void db_close_events (dbEventCtx ctx)
  */
 static struct event_que * create_ev_que ( struct event_user * const evUser )
 {
-    struct event_que * const ev_que = (struct event_que *) 
+    struct event_que * const ev_que = (struct event_que *)
         freeListCalloc ( dbevEventQueueFreeList );
     if ( ! ev_que ) {
         return NULL;
@@ -415,7 +429,7 @@ dbEventSubscription db_add_event (
     while ( TRUE ) {
         int success = 0;
         LOCKEVQUE ( ev_que );
-        success = ( ev_que->quota + ev_que->nCanceled < 
+        success = ( ev_que->quota + ev_que->nCanceled <
                                 EVENTQUESIZE - EVENTENTRIES );
         if ( success ) {
             ev_que->quota += EVENTENTRIES;
@@ -1047,7 +1061,11 @@ static void event_task (void *pParm)
     epicsEventDestroy(evUser->pflush_sem);
     epicsMutexDestroy(evUser->lock);
 
-    freeListFree(dbevEventUserFreeList, evUser);
+    if (dbevEventUserFreeList)
+        freeListFree(dbevEventUserFreeList, evUser);
+    else
+        fprintf(stderr, "%s exiting but dbevEventUserFreeList already NULL\n",
+                __FUNCTION__);
 
     taskwdRemove(epicsThreadGetIdSelf());
 
@@ -1097,7 +1115,7 @@ int db_start_events (
 /*
  * db_event_change_priority()
  */
-void db_event_change_priority ( dbEventCtx ctx, 
+void db_event_change_priority ( dbEventCtx ctx,
                                         unsigned epicsPriority )
 {
     struct event_user * const evUser = ( struct event_user * ) ctx;

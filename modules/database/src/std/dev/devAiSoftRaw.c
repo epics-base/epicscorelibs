@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
@@ -25,30 +26,19 @@
 #include "epicsExport.h"
 
 /* Create the dset for devAiSoftRaw */
-static long init_record(aiRecord *prec);
+static long init_record(dbCommon *pcommon);
 static long read_ai(aiRecord *prec);
 
-struct {
-    long      number;
-    DEVSUPFUN report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record;
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN read_ai;
-    DEVSUPFUN special_linconv;
-} devAiSoftRaw = {
-    6,
-    NULL,
-    NULL,
-    init_record,
-    NULL,
-    read_ai,
-    NULL
+aidset devAiSoftRaw = {
+    {6, NULL, NULL, init_record, NULL},
+    read_ai, NULL
 };
 epicsExportAddress(dset, devAiSoftRaw);
 
-static long init_record(aiRecord *prec)
+static long init_record(dbCommon *pcommon)
 {
+    aiRecord *prec = (aiRecord *)pcommon;
+
     recGblInitConstantLink(&prec->inp, DBF_LONG, &prec->rval);
 
     return 0;

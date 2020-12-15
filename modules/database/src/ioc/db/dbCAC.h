@@ -3,14 +3,14 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  *
  * NOTES:
  * 1) This interface is preliminary and will change in the future
@@ -47,6 +47,17 @@
 #include "dbCommon.h"
 #include "db_convert.h"
 #include "resourceLib.h"
+
+namespace ca {
+#if __cplusplus>=201103L
+template<typename T>
+using auto_ptr = std::unique_ptr<T>;
+#define PTRMOVE(AUTO) std::move(AUTO)
+#else
+using std::auto_ptr;
+#define PTRMOVE(AUTO) (AUTO)
+#endif
+}
 
 extern "C" int putNotifyPut ( processNotify *ppn, notifyPutType notifyPutType );
 extern "C" void putNotifyCompletion ( processNotify *ppn );
@@ -194,7 +205,7 @@ private:
     epicsMutex & mutex;
     epicsMutex & cbMutex;
     cacContextNotify & notify;
-    std::auto_ptr < cacContext > pNetContext;
+    ca::auto_ptr < cacContext > pNetContext;
     char * pStateNotifyCache;
     bool isolated;
 

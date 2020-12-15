@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 #include <stdio.h>
@@ -38,50 +38,50 @@ void caEventRate ( const char *pName, unsigned count )
     chid * pChidTable = new chid [ count ];
 
     {
-        printf ( "Connecting to CA Channel \"%s\" %u times.", 
+        printf ( "Connecting to CA Channel \"%s\" %u times.",
                     pName, count );
         fflush ( stdout );
-    
+
         epicsTime begin = epicsTime::getCurrent ();
         for ( unsigned i = 0u; i < count; i++ ) {
             int status = ca_search ( pName,  & pChidTable[i] );
             SEVCHK ( status, NULL );
         }
-    
+
         int status = ca_pend_io ( 10000.0 );
         if ( status != ECA_NORMAL ) {
             fprintf ( stderr, " not found.\n" );
             return;
         }
         epicsTime end = epicsTime::getCurrent ();
-    
+
         printf ( " done(%f sec).\n", end - begin );
     }
 
     {
         printf ( "Subscribing %u times.", count );
         fflush ( stdout );
-        
+
         epicsTime begin = epicsTime::getCurrent ();
         for ( unsigned i = 0u; i < count; i++ ) {
-            int addEventStatus = ca_add_event ( DBR_FLOAT, 
+            int addEventStatus = ca_add_event ( DBR_FLOAT,
                 pChidTable[i], eventCallBack, &eventCount, NULL);
             SEVCHK ( addEventStatus, __FILE__ );
         }
-    
+
         int status = ca_flush_io ();
         SEVCHK ( status, __FILE__ );
-    
+
         epicsTime end = epicsTime::getCurrent ();
-    
+
         printf ( " done(%f sec).\n", end - begin );
     }
-        
+
     {
         printf ( "Waiting for initial value events." );
         fflush ( stdout );
-    
-        // let the first one go by 
+
+        // let the first one go by
         epicsTime begin = epicsTime::getCurrent ();
         while ( eventCount < count ) {
             int status = ca_pend_event ( 0.01 );
@@ -90,7 +90,7 @@ void caEventRate ( const char *pName, unsigned count )
             }
         }
         epicsTime end = epicsTime::getCurrent ();
-    
+
         printf ( " done(%f sec).\n", end - begin );
     }
 
@@ -128,7 +128,7 @@ void caEventRate ( const char *pName, unsigned count )
         double mean = X / N;
         double stdDev = sqrt ( XX / N - mean * mean );
 
-        printf ( "CA Event Rate (Hz): current %g mean %g std dev %g\n", 
+        printf ( "CA Event Rate (Hz): current %g mean %g std dev %g\n",
             Hz, mean, stdDev );
 
         if ( samplePeriod < maxSamplePeriod ) {

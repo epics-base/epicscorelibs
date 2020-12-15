@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*registry.c */
 
@@ -16,7 +16,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#define epicsExportSharedSymbols
 #include "dbDefs.h"
 #include "cantProceed.h"
 #include "epicsFindSymbol.h"
@@ -31,8 +30,8 @@ static void registryInit(int tableSize)
     gphInitPvt(&gphPvt,tableSize);
     if(!gphPvt) cantProceed("registry why did gphInitPvt fail\n");
 }
-    
-epicsShareFunc int epicsShareAPI registrySetTableSize(int size)
+
+LIBCOM_API int epicsStdCall registrySetTableSize(int size)
 {
     if(gphPvt) {
         printf("registryInit already called\n");
@@ -41,9 +40,9 @@ epicsShareFunc int epicsShareAPI registrySetTableSize(int size)
     registryInit(size);
     return(0);
 }
-    
 
-epicsShareFunc int epicsShareAPI registryAdd(
+
+LIBCOM_API int epicsStdCall registryAdd(
     void *registryID,const char *name,void *data)
 {
     GPHENTRY *pentry;
@@ -54,7 +53,7 @@ epicsShareFunc int epicsShareAPI registryAdd(
     return(TRUE);
 }
 
-epicsShareFunc int epicsShareAPI registryChange(
+LIBCOM_API int epicsStdCall registryChange(
     void *registryID,const char *name,void *data)
 {
     GPHENTRY *pentry;
@@ -65,7 +64,7 @@ epicsShareFunc int epicsShareAPI registryChange(
     return(TRUE);
 }
 
-epicsShareFunc void * epicsShareAPI registryFind(
+LIBCOM_API void * epicsStdCall registryFind(
     void *registryID,const char *name)
 {
     GPHENTRY *pentry;
@@ -77,14 +76,14 @@ epicsShareFunc void * epicsShareAPI registryFind(
     return(pentry->userPvt);
 }
 
-epicsShareFunc void epicsShareAPI registryFree(void)
+LIBCOM_API void epicsStdCall registryFree(void)
 {
     if(!gphPvt) return;
     gphFreeMem(gphPvt);
     gphPvt = 0;
 }
 
-epicsShareFunc int epicsShareAPI registryDump(void)
+LIBCOM_API int epicsStdCall registryDump(void)
 {
     if(!gphPvt) return(0);
     gphDump(gphPvt);

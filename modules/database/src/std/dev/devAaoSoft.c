@@ -3,13 +3,14 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
  * devAaoSoft.c - Device Support Routines for soft Waveform Records
- * 
+ *
  *      Original Author: Bob Dalesio
  *      Current Author:  Dirk Zimoch
  *      Date:            27-MAY-2010
@@ -30,28 +31,19 @@
 #include "epicsExport.h"
 
 /* Create the dset for devAaoSoft */
-static long init_record();
-static long write_aao();
+static long init_record(dbCommon *pcommon);
+static long write_aao(aaoRecord *prec);
 
-struct {
-    long      number;
-    DEVSUPFUN report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record;
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN read_aao;
-} devAaoSoft = {
-    5,
-    NULL,
-    NULL,
-    init_record,
-    NULL,
+aaodset devAaoSoft = {
+    {5, NULL, NULL, init_record, NULL},
     write_aao
 };
-epicsExportAddress(dset,devAaoSoft);
+epicsExportAddress(dset, devAaoSoft);
 
-static long init_record(aaoRecord *prec)
+static long init_record(dbCommon *pcommon)
 {
+    aaoRecord *prec = (aaoRecord *)pcommon;
+
     if (dbLinkIsConstant(&prec->out)) {
         prec->nord = 0;
     }

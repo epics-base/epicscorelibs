@@ -1,7 +1,8 @@
 /*************************************************************************\
 * Copyright (c) 2002 The University of Saskatchewan
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* osdEnv.c */
 /*
@@ -21,7 +22,6 @@
 #include <ctype.h>
 #include <envLib.h>
 
-#define epicsExportSharedSymbols
 #include "cantProceed.h"
 #include "epicsFindSymbol.h"
 #include "epicsStdio.h"
@@ -33,7 +33,7 @@
  * Leaks memory, but the assumption is that this routine won't be
  * called often enough for the leak to be a problem.
  */
-epicsShareFunc void epicsShareAPI epicsEnvSet (const char *name, const char *value)
+LIBCOM_API void epicsStdCall epicsEnvSet (const char *name, const char *value)
 {
     char *cp;
 
@@ -43,7 +43,7 @@ epicsShareFunc void epicsShareAPI epicsEnvSet (const char *name, const char *val
     }
 
     iocshEnvClear(name);
-    
+
     cp = mallocMustSucceed (strlen (name) + strlen (value) + 2, "epicsEnvSet");
     strcpy (cp, name);
     strcat (cp, "=");
@@ -62,7 +62,7 @@ epicsShareFunc void epicsShareAPI epicsEnvSet (const char *name, const char *val
  * support to really unset an environment variable.
  */
 
-epicsShareFunc void epicsShareAPI epicsEnvUnset (const char *name)
+LIBCOM_API void epicsStdCall epicsEnvUnset (const char *name)
 {
     char* var;
 
@@ -78,7 +78,7 @@ epicsShareFunc void epicsShareAPI epicsEnvUnset (const char *name)
 /*
  * Show the value of the specified, or all, environment variables
  */
-epicsShareFunc void epicsShareAPI epicsEnvShow (const char *name)
+LIBCOM_API void epicsStdCall epicsEnvShow (const char *name)
 {
     if (name == NULL) {
         envShow (0);

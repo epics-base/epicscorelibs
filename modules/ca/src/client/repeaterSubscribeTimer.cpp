@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *
@@ -25,17 +25,15 @@
 #include "iocinf.h"
 #include "repeaterSubscribeTimer.h"
 
-#define epicsExportSharedSymbols
 #include "udpiiu.h"
-#undef epicsExportSharedSymbols
 
 static const double repeaterSubscribeTimerInitialPeriod = 10.0; // sec
 static const double repeaterSubscribeTimerPeriod = 1.0; // sec
 
-repeaterSubscribeTimer::repeaterSubscribeTimer ( 
+repeaterSubscribeTimer::repeaterSubscribeTimer (
     repeaterTimerNotify & iiuIn, epicsTimerQueue & queueIn,
     epicsMutex & cbMutexIn, cacContextNotify & ctxNotifyIn ) :
-    timer ( queueIn.createTimer () ), iiu ( iiuIn ), 
+    timer ( queueIn.createTimer () ), iiu ( iiuIn ),
         cbMutex ( cbMutexIn ),ctxNotify ( ctxNotifyIn ),
         stateMutex(__FILE__, __LINE__),
         attempts ( 0 ), registered ( false ), once ( false )
@@ -49,7 +47,7 @@ repeaterSubscribeTimer::~repeaterSubscribeTimer ()
 
 void repeaterSubscribeTimer::start ()
 {
-    this->timer.start ( 
+    this->timer.start (
         *this, repeaterSubscribeTimerInitialPeriod );
 }
 
@@ -68,12 +66,12 @@ epicsTimerNotify::expireStatus repeaterSubscribeTimer::
     expire ( const epicsTime & /* currentTime */ )
 {
     epicsGuard < epicsMutex > guard ( this->stateMutex );
-    
+
     static const unsigned nTriesToMsg = 50;
     if ( this->attempts > nTriesToMsg && ! this->once ) {
         callbackManager mgr ( this->ctxNotify, this->cbMutex );
         this->iiu.printFormated ( mgr.cbGuard,
-    "CA client library is unable to contact CA repeater after %u tries.\n", 
+    "CA client library is unable to contact CA repeater after %u tries.\n",
             nTriesToMsg );
         this->iiu.printFormated ( mgr.cbGuard,
     "Silence this message by starting a CA repeater daemon\n") ;
@@ -96,7 +94,7 @@ epicsTimerNotify::expireStatus repeaterSubscribeTimer::
 void repeaterSubscribeTimer::show ( unsigned /* level */ ) const
 {
     epicsGuard < epicsMutex > guard ( this->stateMutex );
-    
+
     ::printf ( "repeater subscribe timer: attempts=%u registered=%u once=%u\n",
         this->attempts, this->registered, this->once );
 }

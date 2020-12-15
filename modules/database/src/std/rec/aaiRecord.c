@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2002 Southeastern Universities Research Association, as
 *     Operator of Thomas Jefferson National Accelerator Facility.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -90,22 +91,13 @@ rset aaiRSET={
 };
 epicsExportAddress(rset,aaiRSET);
 
-struct aaidset { /* aai dset */
-    long      number;
-    DEVSUPFUN dev_report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record; /*returns: (-1,0)=>(failure,success)*/
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN read_aai; /*returns: (-1,0)=>(failure,success)*/
-};
-
 static void monitor(aaiRecord *);
 static long readValue(aaiRecord *);
 
 static long init_record(struct dbCommon *pcommon, int pass)
 {
     struct aaiRecord *prec = (struct aaiRecord *)pcommon;
-    struct aaidset *pdset = (struct aaidset *)(prec->dset);
+    aaidset *pdset = (aaidset *)(prec->dset);
 
     /* must have dset defined */
     if (!pdset) {
@@ -125,8 +117,8 @@ static long init_record(struct dbCommon *pcommon, int pass)
            not change after links are established before pass 1
         */
 
-        if (pdset->init_record) {
-            long status = pdset->init_record(prec);
+        if (pdset->common.init_record) {
+            long status = pdset->common.init_record(pcommon);
 
             /* init_record may set the bptr to point to the data */
             if (status)
@@ -143,7 +135,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
     recGblInitSimm(pcommon, &prec->sscn, &prec->oldsimm, &prec->simm, &prec->siml);
 
     /* must have read_aai function defined */
-    if (pdset->number < 5 || pdset->read_aai == NULL) {
+    if (pdset->common.number < 5 || pdset->read_aai == NULL) {
         recGblRecordError(S_dev_missingSup, prec, "aai: init_record");
         return S_dev_missingSup;
     }
@@ -153,7 +145,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct aaiRecord *prec = (struct aaiRecord *)pcommon;
-    struct aaidset *pdset = (struct aaidset *)(prec->dset);
+    aaidset *pdset = (aaidset *)(prec->dset);
     long status;
     unsigned char pact = prec->pact;
 
@@ -339,7 +331,7 @@ static void monitor(aaiRecord *prec)
 
 static long readValue(aaiRecord *prec)
 {
-    struct aaidset *pdset = (struct aaidset *) prec->dset;
+    aaidset *pdset = (aaidset *) prec->dset;
     long status;
 
     /* NB: Device support must post updates to NORD */

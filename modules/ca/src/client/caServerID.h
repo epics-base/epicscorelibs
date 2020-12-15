@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *
@@ -18,8 +18,8 @@
  *  Author: Jeff Hill
  */
 
-#ifndef caServerIDh
-#define caServerIDh
+#ifndef INC_caServerID_H
+#define INC_caServerID_H
 
 #include "osiSock.h"
 #include "resourceLib.h"
@@ -37,7 +37,7 @@ private:
     ca_uint8_t pri;
 };
 
-inline caServerID::caServerID ( 
+inline caServerID::caServerID (
     const struct sockaddr_in & addrIn, unsigned priorityIn ) :
     addr ( addrIn ), pri ( static_cast <ca_uint8_t> ( priorityIn ) )
 {
@@ -46,7 +46,7 @@ inline caServerID::caServerID (
 
 inline bool caServerID::operator == ( const caServerID & rhs ) const
 {
-    if (    this->addr.sin_addr.s_addr == rhs.addr.sin_addr.s_addr && 
+    if (    this->addr.sin_addr.s_addr == rhs.addr.sin_addr.s_addr &&
             this->addr.sin_port == rhs.addr.sin_port &&
             this->pri == rhs.pri ) {
         return true;
@@ -67,7 +67,7 @@ inline resTableIndex caServerID::hash () const
     index ^= this->addr.sin_port;
     index ^= this->addr.sin_port >> 8u;
     index ^= this->pri;
-    return integerHash ( caServerMinIndexBitWidth, 
+    return integerHash ( caServerMinIndexBitWidth,
         caServerMaxIndexBitWidth, index );
 }
 
@@ -83,6 +83,4 @@ inline unsigned caServerID::priority () const
     return this->pri;
 }
 
-#endif // ifdef caServerID
-
-
+#endif // ifdef INC_caServerID_H

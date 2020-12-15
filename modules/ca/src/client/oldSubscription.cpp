@@ -3,12 +3,12 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
+/*
  *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
@@ -23,17 +23,16 @@
 
 #include "errlog.h"
 
-#define epicsExportSharedSymbols
 #include "iocinf.h"
 #include "oldAccess.h"
 
 oldSubscription::oldSubscription  (
-    epicsGuard < epicsMutex > & guard, 
-    oldChannelNotify & chanIn, cacChannel & io, 
+    epicsGuard < epicsMutex > & guard,
+    oldChannelNotify & chanIn, cacChannel & io,
     unsigned type, arrayElementCount nElem, unsigned mask,
     caEventCallBackFunc * pFuncIn, void * pPrivateIn,
     evid * pEventId ) :
-    chan ( chanIn ), id ( UINT_MAX ), pFunc ( pFuncIn ), 
+    chan ( chanIn ), id ( UINT_MAX ), pFunc ( pFuncIn ),
         pPrivate ( pPrivateIn )
 {
     // The users event id *must* be set prior to potentially
@@ -51,7 +50,7 @@ oldSubscription::~oldSubscription ()
 {
 }
 
-void oldSubscription::current ( 
+void oldSubscription::current (
     epicsGuard < epicsMutex > & guard,
     unsigned type, arrayElementCount count, const void * pData )
 {
@@ -68,10 +67,10 @@ void oldSubscription::current (
         ( *pFuncTmp ) ( args );
     }
 }
-    
+
 void oldSubscription::exception (
     epicsGuard < epicsMutex > & guard,
-    int status, const char * /* pContext */, 
+    int status, const char * /* pContext */,
     unsigned type, arrayElementCount count )
 {
     if ( status == ECA_CHANDESTROY ) {

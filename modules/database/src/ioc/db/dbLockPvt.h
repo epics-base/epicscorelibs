@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2014 Brookhaven Science Assoc., as Operator of Brookhaven
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -24,10 +25,10 @@
  * are guarded by its lock.
  */
 typedef struct dbLockSet {
-    ELLNODE		node;
-    ELLLIST		lockRecordList; /* holds lockRecord::node */
-    epicsMutexId 	lock;
-    unsigned long	id;
+    ELLNODE             node;
+    ELLLIST             lockRecordList; /* holds lockRecord::node */
+    epicsMutexId        lock;
+    unsigned long       id;
 
     int                 refcount;
 #ifdef LOCKSET_DEBUG
@@ -48,15 +49,15 @@ struct lockRecord;
  * plockSet is guarded by spin.
  */
 typedef struct lockRecord {
-    ELLNODE	node; /* in lockSet::lockRecordList */
+    ELLNODE     node; /* in lockSet::lockRecordList */
     /* The association between lockRecord and lockSet
      * can only be changed while the lockSet is held,
      * and the lockRecord's spinlock is held.
      * It may be read which either lock is held.
      */
-    lockSet	*plockSet;
+    lockSet     *plockSet;
     /* the association between lockRecord and dbCommon never changes */
-    dbCommon	*precord;
+    dbCommon    *precord;
     epicsSpinId spin;
 
     /* temp used during lockset split.

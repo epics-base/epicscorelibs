@@ -3,15 +3,16 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* recStringout.c - Record Support Routines for Stringout records */
 /*
- * Author: 	Janet Anderson
- * Date:	4/23/91
- */ 
+ * Author:  Janet Anderson
+ * Date:    4/23/91
+ */
 
 
 #include <stddef.h>
@@ -61,35 +62,27 @@ static long special(DBADDR *, int);
 #define get_alarm_double NULL
 
 rset stringoutRSET={
-	RSETNUMBER,
-	report,
-	initialize,
-	init_record,
-	process,
-	special,
-	get_value,
-	cvt_dbaddr,
-	get_array_info,
-	put_array_info,
-	get_units,
-	get_precision,
-	get_enum_str,
-	get_enum_strs,
-	put_enum_str,
-	get_graphic_double,
-	get_control_double,
-	get_alarm_double
+    RSETNUMBER,
+    report,
+    initialize,
+    init_record,
+    process,
+    special,
+    get_value,
+    cvt_dbaddr,
+    get_array_info,
+    put_array_info,
+    get_units,
+    get_precision,
+    get_enum_str,
+    get_enum_strs,
+    put_enum_str,
+    get_graphic_double,
+    get_control_double,
+    get_alarm_double
 };
 epicsExportAddress(rset,stringoutRSET);
 
-struct stringoutdset { /* stringout input dset */
-	long		number;
-	DEVSUPFUN	dev_report;
-	DEVSUPFUN	init;
-	DEVSUPFUN	init_record; /*returns: (-1,0)=>(failure,success)*/
-	DEVSUPFUN	get_ioint_info;
-	DEVSUPFUN	write_stringout;/*(-1,0)=>(failure,success)*/
-};
 static void monitor(stringoutRecord *);
 static long writeValue(stringoutRecord *);
 
@@ -99,7 +92,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
     struct stringoutRecord *prec = (struct stringoutRecord *)pcommon;
     STATIC_ASSERT(sizeof(prec->oval)==sizeof(prec->val));
     STATIC_ASSERT(sizeof(prec->ivov)==sizeof(prec->val));
-    struct stringoutdset *pdset = (struct stringoutdset *) prec->dset;
+    stringoutdset *pdset = (stringoutdset *) prec->dset;
 
     if (pass == 0) return 0;
 
@@ -111,7 +104,7 @@ static long init_record(struct dbCommon *pcommon, int pass)
     }
 
     /* must have  write_stringout functions defined */
-    if ((pdset->number < 5) || (pdset->write_stringout == NULL)) {
+    if ((pdset->common.number < 5) || (pdset->write_stringout == NULL)) {
         recGblRecordError(S_dev_missingSup, prec, "stringout: init_record");
         return S_dev_missingSup;
     }
@@ -120,8 +113,8 @@ static long init_record(struct dbCommon *pcommon, int pass)
     if (recGblInitConstantLink(&prec->dol, DBF_STRING, prec->val))
         prec->udf = FALSE;
 
-    if (pdset->init_record) {
-        long status = pdset->init_record(prec);
+    if (pdset->common.init_record) {
+        long status = pdset->common.init_record(pcommon);
 
         if(status)
             return status;
@@ -133,59 +126,66 @@ static long init_record(struct dbCommon *pcommon, int pass)
 static long process(struct dbCommon *pcommon)
 {
     struct stringoutRecord *prec = (struct stringoutRecord *)pcommon;
-    struct stringoutdset  *pdset = (struct stringoutdset *)(prec->dset);
-	long		 status=0;
-	unsigned char    pact=prec->pact;
+    stringoutdset  *pdset = (stringoutdset *)(prec->dset);
+    long             status=0;
+    unsigned char    pact=prec->pact;
 
-	if( (pdset==NULL) || (pdset->write_stringout==NULL) ) {
-		prec->pact=TRUE;
-		recGblRecordError(S_dev_missingSup,(void *)prec,"write_stringout");
-		return(S_dev_missingSup);
-	}
-        if (!prec->pact &&
-            !dbLinkIsConstant(&prec->dol) &&
-            prec->omsl == menuOmslclosed_loop) {
-                status = dbGetLink(&prec->dol, DBR_STRING, prec->val, 0, 0);
-                if (!dbLinkIsConstant(&prec->dol) && !status)
-                    prec->udf=FALSE;
-        }
+    if( (pdset==NULL) || (pdset->write_stringout==NULL) ) {
+        prec->pact=TRUE;
+        recGblRecordError(S_dev_missingSup,(void *)prec,"write_stringout");
+        return(S_dev_missingSup);
+    }
+    if (!prec->pact &&
+        !dbLinkIsConstant(&prec->dol) &&
+        prec->omsl == menuOmslclosed_loop) {
+            status = dbGetLink(&prec->dol, DBR_STRING, prec->val, 0, 0);
+            if (!dbLinkIsConstant(&prec->dol) && !status)
+                prec->udf=FALSE;
+    }
 
-        if(prec->udf == TRUE ){
-                recGblSetSevr(prec,UDF_ALARM,prec->udfs);
-        }
+    if(prec->udf == TRUE ){
+        recGblSetSevr(prec,UDF_ALARM,prec->udfs);
+    }
 
-        if (prec->nsev < INVALID_ALARM )
-                status=writeValue(prec); /* write the new value */
-        else {
-                switch (prec->ivoa) {
-                    case (menuIvoaContinue_normally) :
-                        status=writeValue(prec); /* write the new value */
-                        break;
-                    case (menuIvoaDon_t_drive_outputs) :
-                        break;
-                    case (menuIvoaSet_output_to_IVOV) :
-                        if(prec->pact == FALSE){
-                            strncpy(prec->val, prec->ivov, sizeof(prec->val));
-                        }
-                        status=writeValue(prec); /* write the new value */
-                        break;
-                    default :
-                        status=-1;
-                        recGblRecordError(S_db_badField,(void *)prec,
-                                "stringout:process Illegal IVOA field");
-                }
-        }
-
-	/* check if device support set pact */
-	if ( !pact && prec->pact ) return(0);
-
-	prec->pact = TRUE;
+    /* Update the timestamp before writing output values so it
+     * will be uptodate if any downstream records fetch it via TSEL */
     recGblGetTimeStampSimm(prec, prec->simm, NULL);
 
-	monitor(prec);
-	recGblFwdLink(prec);
-	prec->pact=FALSE;
-	return(status);
+    if (prec->nsev < INVALID_ALARM )
+            status=writeValue(prec); /* write the new value */
+    else {
+        switch (prec->ivoa) {
+            case (menuIvoaContinue_normally) :
+                status=writeValue(prec); /* write the new value */
+                break;
+            case (menuIvoaDon_t_drive_outputs) :
+                break;
+            case (menuIvoaSet_output_to_IVOV) :
+                if(prec->pact == FALSE){
+                    strncpy(prec->val, prec->ivov, sizeof(prec->val));
+                }
+                status=writeValue(prec); /* write the new value */
+                break;
+            default :
+                status=-1;
+                recGblRecordError(S_db_badField,(void *)prec,
+                        "stringout:process Illegal IVOA field");
+        }
+    }
+
+    /* check if device support set pact */
+    if ( !pact && prec->pact ) return(0);
+
+    prec->pact = TRUE;
+    if ( pact ) {
+        /* Update timestamp again for asynchronous devices */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
+
+    monitor(prec);
+    recGblFwdLink(prec);
+    prec->pact=FALSE;
+    return(status);
 }
 
 static long special(DBADDR *paddr, int after)
@@ -228,7 +228,7 @@ static void monitor(stringoutRecord *prec)
 
 static long writeValue(stringoutRecord *prec)
 {
-    struct stringoutdset *pdset = (struct stringoutdset *) prec->dset;
+    stringoutdset *pdset = (stringoutdset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {

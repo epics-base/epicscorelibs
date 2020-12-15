@@ -3,14 +3,15 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+/*
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
 #include <string>
@@ -56,14 +57,14 @@ dbSubscriptionIO::~dbSubscriptionIO ()
 {
 }
 
-void dbSubscriptionIO::destructor ( CallbackGuard & cbGuard, 
+void dbSubscriptionIO::destructor ( CallbackGuard & cbGuard,
                               epicsGuard < epicsMutex > & guard )
 {
     guard.assertIdenticalMutex ( this->mutex );
     this->~dbSubscriptionIO ();
 }
 
-void dbSubscriptionIO::unsubscribe ( CallbackGuard & cbGuard, 
+void dbSubscriptionIO::unsubscribe ( CallbackGuard & cbGuard,
     epicsGuard < epicsMutex > & guard )
 {
     guard.assertIdenticalMutex ( this->mutex );
@@ -112,7 +113,7 @@ void dbSubscriptionIO::operator delete ( void * pCadaver,
 #endif
 
 extern "C" void dbSubscriptionEventCallback ( void *pPrivate, struct dbChannel * /* dbch */,
-	int /* eventsRemaining */, struct db_field_log *pfl )
+    int /* eventsRemaining */, struct db_field_log *pfl )
 {
     dbSubscriptionIO * pIO = static_cast < dbSubscriptionIO * > ( pPrivate );
     pIO->chan.callStateNotify ( pIO->type, pIO->count, pfl, pIO->notify );

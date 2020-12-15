@@ -1,11 +1,12 @@
-/* 
+/*
  * Copyright: Stanford University / SLAC National Laboratory.
  *
+ * SPDX-License-Identifier: EPICS
  * EPICS BASE is distributed subject to a Software License Agreement found
- * in file LICENSE that is included with this distribution. 
+ * in file LICENSE that is included with this distribution.
  *
  * Author: Till Straumann <strauman@slac.stanford.edu>, 2011, 2014
- */ 
+ */
 
 // pull in libc feature test macros
 #include <stdlib.h>
@@ -23,14 +24,13 @@
 
 #endif
 
-#define epicsExportSharedSymbols
 #include "epicsStackTracePvt.h"
 
 int epicsBackTrace(void **buf, int buf_sz)
 {
 #if HAS_EXECINFO
-	return backtrace(buf, buf_sz);
+    return backtrace(buf, buf_sz);
 #else
-	return -1;
+    return -1;
 #endif
 }

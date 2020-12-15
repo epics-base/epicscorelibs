@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -20,6 +21,7 @@
 #include "epicsTypes.h"
 #include "epicsTime.h"
 #include "dbAddr.h"
+#include "dbChannel.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -368,7 +370,7 @@ epicsShareFunc const char * dbLinkFieldName(const struct link *plink);
 
 epicsShareFunc void dbInitLink(struct link *plink, short dbfType);
 epicsShareFunc void dbAddLink(struct dbLocker *locker, struct link *plink,
-        short dbfType, DBADDR *ptarget);
+        short dbfType, dbChannel *ptarget);
 
 epicsShareFunc void dbLinkOpen(struct link *plink);
 epicsShareFunc void dbRemoveLink(struct dbLocker *locker, struct link *plink);

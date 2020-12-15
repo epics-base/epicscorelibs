@@ -3,13 +3,14 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
-/*  
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+/*
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
 #include <limits.h>
@@ -70,7 +71,7 @@ dbContext::dbContext ( epicsMutex & cbMutexIn,
         epicsMutex & mutexIn, cacContextNotify & notifyIn ) :
     readNotifyCache ( mutexIn ), ctx ( 0 ),
     stateNotifyCacheSize ( 0 ), mutex ( mutexIn ), cbMutex ( cbMutexIn ),
-    notify ( notifyIn ), pNetContext ( 0 ), pStateNotifyCache ( 0 ),
+    notify ( notifyIn ), pStateNotifyCache ( 0 ),
     isolated(dbServiceIsolate)
 {
 }
@@ -123,7 +124,7 @@ cacChannel & dbContext::createChannel (
 
 void dbContext::destroyChannel (
                   CallbackGuard & cbGuard,
-                  epicsGuard < epicsMutex > & guard, 
+                  epicsGuard < epicsMutex > & guard,
                   dbChannelIO & chan )
 {
     guard.assertIdenticalMutex ( this->mutex );
@@ -281,7 +282,7 @@ void dbContext::initiatePutNotify (
 
 void dbContext::destroyAllIO (
                   CallbackGuard & cbGuard,
-                  epicsGuard < epicsMutex > & guard, 
+                  epicsGuard < epicsMutex > & guard,
                   dbChannelIO & chan )
 {
     guard.assertIdenticalMutex ( this->mutex );
@@ -315,7 +316,7 @@ void dbContext::destroyAllIO (
 }
 
 void dbContext::ioCancel (
-    CallbackGuard & cbGuard, epicsGuard < epicsMutex > & guard, 
+    CallbackGuard & cbGuard, epicsGuard < epicsMutex > & guard,
     dbChannelIO & chan, const cacChannel::ioid &id )
 {
     guard.assertIdenticalMutex ( this->mutex );

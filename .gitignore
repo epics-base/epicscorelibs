@@ -9,9 +9,10 @@
 /configure/*.local
 /modules/RELEASE.*.local
 /modules/Makefile.local
-/.tests-failed
 O.*/
 /QtC-*
+/.vscode/
 *.orig
 *.log
 .*.swp
+.DS_Store

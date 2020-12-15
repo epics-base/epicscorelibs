@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *  tell CA clients this a server has joined the network
@@ -47,9 +47,9 @@ void rsrv_online_notify_task(void *pParm)
     int                         status;
     ca_uint32_t                 beaconCounter = 0;
     int *lastError;
-    
+
     taskwdInsert (epicsThreadGetIdSelf(),NULL,NULL);
-    
+
     if ( envGetConfigParamPtr ( & EPICS_CAS_BEACON_PERIOD ) ) {
         longStatus = envGetDoubleConfigParam ( & EPICS_CAS_BEACON_PERIOD, & maxPeriod );
     }
@@ -63,7 +63,7 @@ void rsrv_online_notify_task(void *pParm)
         epicsPrintf ("Setting \"%s\" = %f\n",
             EPICS_CAS_BEACON_PERIOD.name, maxPeriod);
     }
-    
+
     delay = 0.02; /* initial beacon period in sec */
     maxdelay = maxPeriod;
 

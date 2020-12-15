@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2013 Brookhaven National Laboratory.
 * Copyright (c) 2013 ITER Organization.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
  \*************************************************************************/
@@ -32,6 +33,7 @@
 #include "initHooks.h"
 #include "iocInit.h"
 #include "errSymTbl.h"
+#include "iocshRegisterCommon.h"
 
 static dbEventCtx testEvtCtx;
 static epicsMutexId testEvtLock;
@@ -97,6 +99,7 @@ void testdbCleanup(void)
     db_cleanup_events();
     initHookFree();
     registryFree();
+    clearRegistrarOnce();
     pdbbase = NULL;
     dbmfFreeChunks();
 }

@@ -3,28 +3,28 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
-/* Author:  Marty Kraimer Date:    04-19-94	*/
+/* Author:  Marty Kraimer Date:    04-19-94     */
 
 #ifndef INCfreeListh
 #define INCfreeListh
 
 #include <stddef.h>
-#include "shareLib.h"
+#include "libComAPI.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-epicsShareFunc void epicsShareAPI freeListInitPvt(void **ppvt,int size,int nmalloc);
-epicsShareFunc void * epicsShareAPI freeListCalloc(void *pvt);
-epicsShareFunc void * epicsShareAPI freeListMalloc(void *pvt);
-epicsShareFunc void epicsShareAPI freeListFree(void *pvt,void*pmem);
-epicsShareFunc void epicsShareAPI freeListCleanup(void *pvt);
-epicsShareFunc size_t epicsShareAPI freeListItemsAvail(void *pvt);
+LIBCOM_API void epicsStdCall freeListInitPvt(void **ppvt,int size,int nmalloc);
+LIBCOM_API void * epicsStdCall freeListCalloc(void *pvt);
+LIBCOM_API void * epicsStdCall freeListMalloc(void *pvt);
+LIBCOM_API void epicsStdCall freeListFree(void *pvt,void*pmem);
+LIBCOM_API void epicsStdCall freeListCleanup(void *pvt);
+LIBCOM_API size_t epicsStdCall freeListItemsAvail(void *pvt);
 
 #ifdef __cplusplus
 }

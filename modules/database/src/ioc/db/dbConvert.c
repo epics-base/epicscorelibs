@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -1704,7 +1705,7 @@ static long putEnumEnum PUT_NOCONVERT(epicsEnum16, epicsEnum16)
  DBR_FLOAT,       DBR_DOUBLE,      DBR_ENUM
  ***************************************************************************/
 
-epicsShareDef GETCONVERTFUNC dbGetConvertRoutine[DBF_DEVICE+1][DBR_ENUM+1] = {
+GETCONVERTFUNC dbGetConvertRoutine[DBF_DEVICE+1][DBR_ENUM+1] = {
 
 /* source is a DBF_STRING               */
 {getStringString, getStringChar,   getStringUchar,  getStringShort,  getStringUshort,
@@ -1775,7 +1776,7 @@ epicsShareDef GETCONVERTFUNC dbGetConvertRoutine[DBF_DEVICE+1][DBR_ENUM+1] = {
  DBF_MENU,        DBF_DEVICE
  ***************************************************************************/
 
-epicsShareDef PUTCONVERTFUNC dbPutConvertRoutine[DBR_ENUM+1][DBF_DEVICE+1] = {
+PUTCONVERTFUNC dbPutConvertRoutine[DBR_ENUM+1][DBF_DEVICE+1] = {
 /* source is a DBR_STRING               */
 {putStringString, putStringChar,   putStringUchar,  putStringShort,  putStringUshort,
  putStringLong,   putStringUlong,  putStringInt64,  putStringUInt64,

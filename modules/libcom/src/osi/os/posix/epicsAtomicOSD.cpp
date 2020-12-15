@@ -1,9 +1,10 @@
 
 /*************************************************************************\
-* Copyright (c) 2011 LANS LLC, as Operator of 
+* Copyright (c) 2011 LANS LLC, as Operator of
 *     Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
@@ -15,24 +16,23 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define epicsExportSharedSymbols
 #include "epicsAssert.h"
 #include "epicsAtomic.h"
 
 /*
  * Slow, but probably correct on all systems.
- * Useful only if something more efficient isn`t 
- * provided based on knowledge of the compiler 
- * or OS 
+ * Useful only if something more efficient isn`t
+ * provided based on knowledge of the compiler
+ * or OS
  *
- * A statically initialized pthread mutex doesn`t 
- * need to be destroyed 
- * 
+ * A statically initialized pthread mutex doesn`t
+ * need to be destroyed
+ *
  * !!!!!
- * !!!!! WARNING 
+ * !!!!! WARNING
  * !!!!!
  * !!!!! Do not use this implementation on systems where
- * !!!!! code runs at interrupt context. If so, then 
+ * !!!!! code runs at interrupt context. If so, then
  * !!!!! an implementation must be provided that is based
  * !!!!! on a compiler intrinsic or an interrupt lock and or
  * !!!!! a spin lock primitive
@@ -65,9 +65,9 @@ void epicsAtomicUnlock ( EpicsAtomicLockKey * )
 
 
 // Slow, but probably correct on all systems.
-// Useful only if something more efficient isn`t 
-// provided based on knowledge of the compiler 
-// or OS 
+// Useful only if something more efficient isn`t
+// provided based on knowledge of the compiler
+// or OS
 void epicsAtomicMemoryBarrierFallback (void)
 {
     EpicsAtomicLockKey key;

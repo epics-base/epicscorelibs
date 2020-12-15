@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -16,7 +17,6 @@
 #define EPICS_EXPOSE_LIBCOM_MONOTONIC_PRIVATE
 #include "osiSock.h"
 
-#define epicsExportSharedSymbols
 #include "cantProceed.h"
 #include "epicsTime.h"
 #include "generalTimeSup.h"
@@ -88,7 +88,7 @@ int epicsTime_localtime ( const time_t *clock,
     }
 }
 
-extern "C" epicsShareFunc void
+extern "C" LIBCOM_API void
     convertDoubleToWakeTime(double timeout,struct timespec *wakeTime)
 {
     struct timespec now, wait;

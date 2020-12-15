@@ -5,6 +5,7 @@
 *     Operator of Los Alamos National Laboratory.
 * Copyright (c) 2013 Helmholtz-Zentrum Berlin
 *     für Materialien und Energie GmbH.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -508,7 +509,7 @@ static void doInitRecord0(dbRecordType *pdbRecordType, dbCommon *precord,
 
     /* Initial UDF severity */
     if (precord->udf && precord->stat == UDF_ALARM)
-    	precord->sevr = precord->udfs;
+        precord->sevr = precord->udfs;
 
     /* Init DSET NOTE that result may be NULL */
     pdevSup = dbDTYPtoDevSup(pdbRecordType, precord->dtyp);

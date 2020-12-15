@@ -3,14 +3,15 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
  * Original Author: Janet Anderson
- * Date:	9/23/91
- */ 
+ * Date:    9/23/91
+ */
 #include <stddef.h>
 #include <stdlib.h>
 #include <stdarg.h>
@@ -58,36 +59,28 @@ static long get_control_double(DBADDR *, struct dbr_ctrlDouble *);
 static long get_alarm_double(DBADDR *, struct dbr_alDouble *);
 
 rset int64outRSET={
-	RSETNUMBER,
-	report,
-	initialize,
-	init_record,
-	process,
-	special,
-	get_value,
-	cvt_dbaddr,
-	get_array_info,
-	put_array_info,
-	get_units,
-	get_precision,
-	get_enum_str,
-	get_enum_strs,
-	put_enum_str,
-	get_graphic_double,
-	get_control_double,
-	get_alarm_double
+    RSETNUMBER,
+    report,
+    initialize,
+    init_record,
+    process,
+    special,
+    get_value,
+    cvt_dbaddr,
+    get_array_info,
+    put_array_info,
+    get_units,
+    get_precision,
+    get_enum_str,
+    get_enum_strs,
+    put_enum_str,
+    get_graphic_double,
+    get_control_double,
+    get_alarm_double
 };
 epicsExportAddress(rset,int64outRSET);
 
 
-struct int64outdset { /* int64out input dset */
-	long		number;
-	DEVSUPFUN	dev_report;
-	DEVSUPFUN	init;
-	DEVSUPFUN	init_record; /*returns: (-1,0)=>(failure,success)*/
-	DEVSUPFUN	get_ioint_info;
-	DEVSUPFUN	write_int64out;/*(-1,0)=>(failure,success*/
-};
 static void checkAlarms(int64outRecord *prec);
 static void monitor(int64outRecord *prec);
 static long writeValue(int64outRecord *prec);
@@ -97,28 +90,28 @@ static void convert(int64outRecord *prec, epicsInt64 value);
 static long init_record(dbCommon *pcommon, int pass)
 {
     int64outRecord *prec = (int64outRecord*)pcommon;
-    struct int64outdset *pdset;
+    int64outdset *pdset;
     long status=0;
 
     if (pass == 0) return 0;
 
     recGblInitSimm(pcommon, &prec->sscn, &prec->oldsimm, &prec->simm, &prec->siml);
 
-    if(!(pdset = (struct int64outdset *)(prec->dset))) {
-	recGblRecordError(S_dev_noDSET,(void *)prec,"int64out: init_record");
-	return(S_dev_noDSET);
+    if(!(pdset = (int64outdset *)(prec->dset))) {
+        recGblRecordError(S_dev_noDSET,(void *)prec,"int64out: init_record");
+        return(S_dev_noDSET);
     }
     /* must have  write_int64out functions defined */
-    if( (pdset->number < 5) || (pdset->write_int64out == NULL) ) {
-	recGblRecordError(S_dev_missingSup,(void *)prec,"int64out: init_record");
-	return(S_dev_missingSup);
+    if ((pdset->common.number < 5) || (pdset->write_int64out == NULL)) {
+        recGblRecordError(S_dev_missingSup,(void *)prec,"int64out: init_record");
+        return(S_dev_missingSup);
     }
     if (prec->dol.type == CONSTANT) {
-	if(recGblInitConstantLink(&prec->dol,DBF_INT64,&prec->val))
-	    prec->udf=FALSE;
+        if(recGblInitConstantLink(&prec->dol,DBF_INT64,&prec->val))
+            prec->udf=FALSE;
     }
-    if( pdset->init_record ) {
-	if((status=(*pdset->init_record)(prec))) return(status);
+    if (pdset->common.init_record) {
+        if ((status = pdset->common.init_record(pcommon))) return status;
     }
     prec->mlst = prec->val;
     prec->alst = prec->val;
@@ -129,69 +122,76 @@ static long init_record(dbCommon *pcommon, int pass)
 static long process(dbCommon *pcommon)
 {
     int64outRecord *prec = (int64outRecord*)pcommon;
-	struct int64outdset	*pdset = (struct int64outdset *)(prec->dset);
-	long		 status=0;
-	epicsInt64	 value;
-	unsigned char    pact=prec->pact;
+    int64outdset  *pdset = (int64outdset *)(prec->dset);
+    long                status=0;
+    epicsInt64          value;
+    unsigned char       pact=prec->pact;
 
-	if( (pdset==NULL) || (pdset->write_int64out==NULL) ) {
-		prec->pact=TRUE;
-		recGblRecordError(S_dev_missingSup,(void *)prec,"write_int64out");
-		return(S_dev_missingSup);
-	}
-	if (!prec->pact) {
-		if((prec->dol.type != CONSTANT)
+    if( (pdset==NULL) || (pdset->write_int64out==NULL) ) {
+        prec->pact=TRUE;
+        recGblRecordError(S_dev_missingSup,(void *)prec,"write_int64out");
+        return(S_dev_missingSup);
+    }
+    if (!prec->pact) {
+        if((prec->dol.type != CONSTANT)
                 && (prec->omsl == menuOmslclosed_loop)) {
-			status = dbGetLink(&(prec->dol),DBR_INT64,
-				&value,0,0);
-			if (prec->dol.type!=CONSTANT && RTN_SUCCESS(status))
-				prec->udf=FALSE;
-		}
-		else {
-			value = prec->val;
-		}
-		if (!status) convert(prec,value);
-	}
-
-	/* check for alarms */
-	checkAlarms(prec);
-
-        if (prec->nsev < INVALID_ALARM )
-                status=writeValue(prec); /* write the new value */
-        else {
-                switch (prec->ivoa) {
-                    case (menuIvoaContinue_normally) :
-                        status=writeValue(prec); /* write the new value */
-                        break;
-                    case (menuIvoaDon_t_drive_outputs) :
-                        break;
-                    case (menuIvoaSet_output_to_IVOV) :
-                        if(prec->pact == FALSE){
-                                prec->val=prec->ivov;
-                        }
-                        status=writeValue(prec); /* write the new value */
-                        break;
-                    default :
-                        status=-1;
-                        recGblRecordError(S_db_badField,(void *)prec,
-                                "int64out:process Illegal IVOA field");
-                }
+            status = dbGetLink(&(prec->dol),DBR_INT64,
+                &value,0,0);
+            if (prec->dol.type!=CONSTANT && RTN_SUCCESS(status))
+                prec->udf=FALSE;
         }
+        else {
+            value = prec->val;
+        }
+        if (!status) convert(prec,value);
 
-	/* check if device support set pact */
-	if ( !pact && prec->pact ) return(0);
-	prec->pact = TRUE;
+        /* Update the timestamp before writing output values so it
+         * will be uptodate if any downstream records fetch it via TSEL */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
 
-    recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    /* check for alarms */
+    checkAlarms(prec);
 
-	/* check event list */
-	monitor(prec);
+    if (prec->nsev < INVALID_ALARM )
+            status=writeValue(prec); /* write the new value */
+    else {
+        switch (prec->ivoa) {
+            case (menuIvoaContinue_normally) :
+                status=writeValue(prec); /* write the new value */
+                break;
+            case (menuIvoaDon_t_drive_outputs) :
+                break;
+            case (menuIvoaSet_output_to_IVOV) :
+                if(prec->pact == FALSE){
+                        prec->val=prec->ivov;
+                }
+                status=writeValue(prec); /* write the new value */
+                break;
+            default :
+                status=-1;
+                recGblRecordError(S_db_badField,(void *)prec,
+                        "int64out:process Illegal IVOA field");
+        }
+    }
 
-	/* process the forward scan link record */
-	recGblFwdLink(prec);
+    /* check if device support set pact */
+    if ( !pact && prec->pact ) return(0);
+    prec->pact = TRUE;
 
-	prec->pact=FALSE;
-	return(status);
+    if ( pact ) {
+        /* Update timestamp again for asynchronous devices */
+        recGblGetTimeStampSimm(prec, prec->simm, NULL);
+    }
+
+    /* check event list */
+    monitor(prec);
+
+    /* process the forward scan link record */
+    recGblFwdLink(prec);
+
+    prec->pact=FALSE;
+    return(status);
 }
 
 static long special(DBADDR *paddr, int after)
@@ -229,7 +229,7 @@ static long get_units(DBADDR *paddr,char *units)
 static long get_graphic_double(DBADDR *paddr,struct dbr_grDouble *pgd)
 {
     int64outRecord *prec=(int64outRecord *)paddr->precord;
-    
+
     switch (dbGetFieldIndex(paddr)) {
         case indexof(VAL):
         case indexof(HIHI):
@@ -377,7 +377,7 @@ static void monitor(int64outRecord *prec)
 
 static long writeValue(int64outRecord *prec)
 {
-    struct int64outdset *pdset = (struct int64outdset *) prec->dset;
+    int64outdset *pdset = (int64outdset *) prec->dset;
     long status = 0;
 
     if (!prec->pact) {
@@ -418,9 +418,9 @@ static long writeValue(int64outRecord *prec)
 static void convert(int64outRecord *prec, epicsInt64 value)
 {
         /* check drive limits */
-	if(prec->drvh > prec->drvl) {
-        	if (value > prec->drvh) value = prec->drvh;
-        	else if (value < prec->drvl) value = prec->drvl;
-	}
-	prec->val = value;
+    if(prec->drvh > prec->drvl) {
+        if (value > prec->drvh) value = prec->drvh;
+        else if (value < prec->drvl) value = prec->drvl;
+    }
+    prec->val = value;
 }

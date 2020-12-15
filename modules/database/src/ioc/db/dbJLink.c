@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2016 UChicago Argonne LLC, as Operator of Argonne
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -27,7 +28,7 @@
 #include "link.h"
 #include "epicsExport.h"
 
-epicsShareDef int dbJLinkDebug = 0;
+int dbJLinkDebug = 0;
 epicsExportAddress(int, dbJLinkDebug);
 
 #define IFDEBUG(n) if (dbJLinkDebug >= (n))
@@ -39,12 +40,12 @@ typedef struct parseContext {
     short jsonDepth;
 } parseContext;
 
-epicsShareDef const char *jlif_result_name[2] = {
+const char *jlif_result_name[2] = {
     "jlif_stop",
     "jlif_continue",
 };
 
-epicsShareDef const char *jlif_key_result_name[5] = {
+const char *jlif_key_result_name[5] = {
     "jlif_key_stop",
     "jlif_key_continue",
     "jlif_key_child_inlink",

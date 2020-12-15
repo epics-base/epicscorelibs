@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *
@@ -33,7 +34,7 @@
  * received it goes to all sockets on the same port, but if a unicast is
  * received it goes to only one of the sockets on the same port (we can only
  * guess at which one it will be).
- *   
+ *
  * I have observed this behavior under winsock II:
  * o only one of the sockets on the same port receives the message if we
  *   send to the loopback address
@@ -69,7 +70,6 @@
 #include "taskwd.h"
 #include "errlog.h"
 
-#define epicsExportSharedSymbols
 #include "iocinf.h"
 #include "caProto.h"
 #include "udpiiu.h"
@@ -77,7 +77,7 @@
 #include "addrList.h"
 
 
-/* 
+/*
  *  these can be external since there is only one instance
  *  per machine so we dont care about reentrancy
  */
@@ -90,7 +90,7 @@ static const unsigned short PORT_ANY = 0u;
  */
 static int makeSocket ( unsigned short port, bool reuseAddr, SOCKET * pSock )
 {
-    SOCKET sock = epicsSocketCreate ( AF_INET, SOCK_DGRAM, 0 );     
+    SOCKET sock = epicsSocketCreate ( AF_INET, SOCK_DGRAM, 0 );
 
     if ( sock == INVALID_SOCKET ) {
         *pSock = sock;
@@ -109,8 +109,8 @@ static int makeSocket ( unsigned short port, bool reuseAddr, SOCKET * pSock )
 
         memset ( (char *) &bd, 0, sizeof (bd) );
         bd.ia.sin_family = AF_INET;
-        bd.ia.sin_addr.s_addr = htonl ( INADDR_ANY ); 
-        bd.ia.sin_port = htons ( port );  
+        bd.ia.sin_addr.s_addr = htonl ( INADDR_ANY );
+        bd.ia.sin_port = htons ( port );
         status = bind ( sock, &bd.sa, (int) sizeof(bd) );
         if ( status < 0 ) {
             status = SOCKERRNO;
@@ -140,7 +140,7 @@ bool repeaterClient::connect ()
 
     if ( int sockerrno = makeSocket ( PORT_ANY, false, & this->sock ) ) {
         char sockErrBuf[64];
-        epicsSocketConvertErrorToString ( 
+        epicsSocketConvertErrorToString (
             sockErrBuf, sizeof ( sockErrBuf ), sockerrno );
         fprintf ( stderr, "%s: no client sock because \"%s\"\n",
                 __FILE__, sockErrBuf );
@@ -150,7 +150,7 @@ bool repeaterClient::connect ()
     status = ::connect ( this->sock, &this->from.sa, sizeof ( this->from.sa ) );
     if ( status < 0 ) {
         char sockErrBuf[64];
-        epicsSocketConvertErrnoToString ( 
+        epicsSocketConvertErrnoToString (
             sockErrBuf, sizeof ( sockErrBuf ) );
         fprintf ( stderr, "%s: unable to connect client sock because \"%s\"\n",
             __FILE__, sockErrBuf );
@@ -179,7 +179,7 @@ bool repeaterClient::sendConfirm ()
     }
     else {
         char sockErrBuf[64];
-        epicsSocketConvertErrnoToString ( 
+        epicsSocketConvertErrnoToString (
             sockErrBuf, sizeof ( sockErrBuf ) );
         debugPrintf ( ( "CA Repeater: confirm req err was \"%s\"\n", sockErrBuf) );
         return false;
@@ -228,7 +228,7 @@ repeaterClient::~repeaterClient ()
 }
 
 void repeaterClient::operator delete ( void * )
-{ 
+{
     // Visual C++ .net appears to require operator delete if
     // placement operator delete is defined? I smell a ms rat
     // because if I declare placement new and delete, but
@@ -238,16 +238,16 @@ void repeaterClient::operator delete ( void * )
         __FILE__, __LINE__ );
 }
 
-void * repeaterClient::operator new ( size_t size, 
+void * repeaterClient::operator new ( size_t size,
     tsFreeList < repeaterClient, 0x20 > & freeList )
-{ 
+{
     return freeList.allocate ( size );
 }
 
 #ifdef CXX_PLACEMENT_DELETE
-void repeaterClient::operator delete ( void *pCadaver, 
-    tsFreeList < repeaterClient, 0x20 > & freeList ) 
-{ 
+void repeaterClient::operator delete ( void *pCadaver,
+    tsFreeList < repeaterClient, 0x20 > & freeList )
+{
     freeList.release ( pCadaver );
 }
 #endif
@@ -327,7 +327,7 @@ static void verifyClients ( tsFreeList < repeaterClient, 0x20 > & freeList )
 /*
  * fanOut()
  */
-static void fanOut ( const osiSockAddr & from, const void * pMsg, 
+static void fanOut ( const osiSockAddr & from, const void * pMsg,
     unsigned msgSize, tsFreeList < repeaterClient, 0x20 > & freeList )
 {
     static tsDLList < repeaterClient > theClients;
@@ -355,7 +355,7 @@ static void fanOut ( const osiSockAddr & from, const void * pMsg,
 /*
  * register_new_client()
  */
-static void register_new_client ( osiSockAddr & from, 
+static void register_new_client ( osiSockAddr & from,
             tsFreeList < repeaterClient, 0x20 > & freeList )
 {
     bool newClient = false;
@@ -376,7 +376,7 @@ static void register_new_client ( osiSockAddr & from,
             SOCKET sock;
             if ( int sockerrno = makeSocket ( PORT_ANY, true, & sock ) ) {
                 char sockErrBuf[64];
-                epicsSocketConvertErrorToString ( 
+                epicsSocketConvertErrorToString (
                     sockErrBuf, sizeof ( sockErrBuf ), sockerrno );
                 fprintf ( stderr, "%s: Unable to create repeater bind test socket because \"%s\"\n",
                     __FILE__, sockErrBuf );
@@ -392,7 +392,7 @@ static void register_new_client ( osiSockAddr & from,
          * repeater would not always allow the loopback address
          * as a local client address so current clients alternate
          * between the address of the first non-loopback interface
-         * found and the loopback addresss when subscribing with 
+         * found and the loopback addresss when subscribing with
          * the CA repeater until all CA repeaters have been updated
          * to current code.
          */
@@ -419,8 +419,8 @@ static void register_new_client ( osiSockAddr & from,
             break;
         }
         pclient++;
-    }      
-    
+    }
+
     repeaterClient *pNewClient;
     if ( pclient.valid () ) {
         pNewClient = pclient.pointer ();
@@ -436,7 +436,7 @@ static void register_new_client ( osiSockAddr & from,
             freeList.release ( pNewClient );
             return;
         }
-        client_list.add ( *pNewClient ); 
+        client_list.add ( *pNewClient );
         newClient = true;
     }
 
@@ -452,7 +452,7 @@ static void register_new_client ( osiSockAddr & from,
     }
 
     /*
-     * send a noop message to all other clients so that we dont 
+     * send a noop message to all other clients so that we dont
      * accumulate sockets when there are no beacons
      */
     caHdr noop;
@@ -480,14 +480,14 @@ static void register_new_client ( osiSockAddr & from,
 /*
  *  ca_repeater ()
  */
-void ca_repeater () 
+void ca_repeater ()
 {
     tsFreeList < repeaterClient, 0x20 > freeList;
     int size;
     SOCKET sock;
     osiSockAddr from;
     unsigned short port;
-    char * pBuf; 
+    char * pBuf;
 
     pBuf = new char [MAX_UDP_RECV];
 
@@ -509,7 +509,7 @@ void ca_repeater ()
             return;
         }
         char sockErrBuf[64];
-        epicsSocketConvertErrorToString ( 
+        epicsSocketConvertErrorToString (
             sockErrBuf, sizeof ( sockErrBuf ), sockerrno );
         fprintf ( stderr, "%s: Unable to create repeater socket because \"%s\" - fatal\n",
             __FILE__, sockErrBuf );
@@ -585,7 +585,7 @@ void ca_repeater ()
                 continue;
             }
             char sockErrBuf[64];
-            epicsSocketConvertErrnoToString ( 
+            epicsSocketConvertErrnoToString (
                 sockErrBuf, sizeof ( sockErrBuf ) );
             fprintf ( stderr, "CA Repeater: unexpected UDP recv err: %s\n",
                 sockErrBuf );
@@ -622,7 +622,7 @@ void ca_repeater ()
             continue;
         }
 
-        fanOut ( from, pMsg, size, freeList ); 
+        fanOut ( from, pMsg, size, freeList );
     }
 }
 

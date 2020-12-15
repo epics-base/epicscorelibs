@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -120,11 +121,11 @@ static void check(const char *str, const char *macros, const char *expect)
     static const char *pairs[] = { "", "environ", NULL, NULL };
     char *got;
     int pass = 1;
-    
+
     macCreateHandle(&handle, pairs);
     macParseDefns(NULL, macros, &defines);
     macInstallMacros(handle, defines);
-    
+
     got = macDefExpand(str, handle);
 
     if (expect && !got) {
@@ -140,7 +141,7 @@ static void check(const char *str, const char *macros, const char *expect)
         pass = 0;
     }
     testOk(pass, "%s", str);
-    
+
     macDeleteHandle(handle);
 }
 
@@ -222,7 +223,7 @@ MAIN(macDefExpandTest)
     check("${FOO,BAR=x}/${BAR}", "BAR=GLEEP", "BLETCH/GLEEP");
     check("${BAZ=BLETCH,BAR}/${BAR}", "BAR=GLEEP", "BLETCH/GLEEP");
     check("${BAZ=BLETCH,BAR=x}/${BAR}", "BAR=GLEEP", "BLETCH/GLEEP");
-    
+
     check("${${FOO}}", "BAR=GLEEP,BLETCH=BAR", "BAR");
     check("x${${FOO}}y", "BAR=GLEEP,BLETCH=BAR", "xBARy");
     check("${${FOO}=GRIBBLE}", "BAR=GLEEP,BLETCH=BAR", "BAR");
@@ -247,7 +248,7 @@ MAIN(macDefExpandTest)
     check("${FOO=$(BAR),BAR=$(FOO)}", "BAR=${FOO},BLETCH=${BAR},STR1=VAL1,STR2=VAL2", NULL);
 
     macEnvScope();
-    
+
     errlogFlush();
     eltc(1);
     return testDone();

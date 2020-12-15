@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* osdEvent.c */
 /*
@@ -22,8 +23,7 @@
 #define STRICT
 #include <windows.h>
 
-#define epicsExportSharedSymbols
-#include "shareLib.h"
+#include "libComAPI.h"
 #include "epicsEvent.h"
 
 typedef struct epicsEventOSD {
@@ -33,8 +33,8 @@ typedef struct epicsEventOSD {
 /*
  * epicsEventCreate ()
  */
-epicsShareFunc epicsEventId epicsEventCreate (
-    epicsEventInitialState initialState ) 
+LIBCOM_API epicsEventId epicsEventCreate (
+    epicsEventInitialState initialState )
 {
     epicsEventOSD *pSem;
 
@@ -53,7 +53,7 @@ epicsShareFunc epicsEventId epicsEventCreate (
 /*
  * epicsEventDestroy ()
  */
-epicsShareFunc void epicsEventDestroy ( epicsEventId pSem ) 
+LIBCOM_API void epicsEventDestroy ( epicsEventId pSem ) 
 {
     CloseHandle ( pSem->handle );
     free ( pSem );
@@ -62,7 +62,7 @@ epicsShareFunc void epicsEventDestroy ( epicsEventId pSem )
 /*
  * epicsEventTrigger ()
  */
-epicsShareFunc epicsEventStatus epicsEventTrigger ( epicsEventId pSem ) 
+LIBCOM_API epicsEventStatus epicsEventTrigger ( epicsEventId pSem ) 
 {
     BOOL status;
     status = SetEvent ( pSem->handle );
@@ -72,8 +72,8 @@ epicsShareFunc epicsEventStatus epicsEventTrigger ( epicsEventId pSem )
 /*
  * epicsEventWait ()
  */
-epicsShareFunc epicsEventStatus epicsEventWait ( epicsEventId pSem ) 
-{ 
+LIBCOM_API epicsEventStatus epicsEventWait ( epicsEventId pSem ) 
+{
     DWORD status;
     status = WaitForSingleObject (pSem->handle, INFINITE);
     if ( status == WAIT_OBJECT_0 ) {
@@ -87,9 +87,9 @@ epicsShareFunc epicsEventStatus epicsEventWait ( epicsEventId pSem )
 /*
  * epicsEventWaitWithTimeout ()
  */
-epicsShareFunc epicsEventStatus epicsEventWaitWithTimeout (
+LIBCOM_API epicsEventStatus epicsEventWaitWithTimeout (
     epicsEventId pSem, double timeOut )
-{ 
+{
     static const unsigned mSecPerSec = 1000;
     DWORD status;
     DWORD tmo;
@@ -121,8 +121,8 @@ epicsShareFunc epicsEventStatus epicsEventWaitWithTimeout (
 /*
  * epicsEventTryWait ()
  */
-epicsShareFunc epicsEventStatus epicsEventTryWait ( epicsEventId pSem ) 
-{ 
+LIBCOM_API epicsEventStatus epicsEventTryWait ( epicsEventId pSem ) 
+{
     DWORD status;
 
     status = WaitForSingleObject ( pSem->handle, 0 );
@@ -140,6 +140,6 @@ epicsShareFunc epicsEventStatus epicsEventTryWait ( epicsEventId pSem )
 /*
  * epicsEventShow ()
  */
-epicsShareFunc void epicsEventShow ( epicsEventId id, unsigned level ) 
-{ 
+LIBCOM_API void epicsEventShow ( epicsEventId id, unsigned level ) 
+{
 }

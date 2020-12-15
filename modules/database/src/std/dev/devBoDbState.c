@@ -2,6 +2,7 @@
 * Copyright (c) 2010 Brookhaven National Laboratory.
 * Copyright (c) 2010 Helmholtz-Zentrum Berlin
 *     fuer Materialien und Energie GmbH.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -67,20 +68,9 @@ static long write_bo(boRecord *prec)
     return 0;
 }
 
-static struct {
-        long		number;
-        DEVSUPFUN	report;
-        DEVSUPFUN	init;
-        DEVSUPFUN	init_record;
-        DEVSUPFUN	get_ioint_info;
-        DEVSUPFUN	write_bo;
-} devBoDbState = {
-        5,
-        NULL,
-        init,
-        NULL,
-        NULL,
-        write_bo
+/* Create the dset for devBoDbState */
+bodset devBoDbState = {
+    {5, NULL, init, NULL, NULL},
+    write_bo
 };
-
 epicsExportAddress(dset, devBoDbState);

@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
@@ -15,7 +16,7 @@
 #ifndef osiSockh
 #define osiSockh
 
-#include "shareLib.h"
+#include "libComAPI.h"
 #include "osdSock.h"
 #include "ellLib.h"
 
@@ -27,15 +28,15 @@ struct sockaddr;
 struct sockaddr_in;
 struct in_addr;
 
-epicsShareFunc SOCKET epicsShareAPI epicsSocketCreate ( 
+LIBCOM_API SOCKET epicsStdCall epicsSocketCreate ( 
     int domain, int type, int protocol );
-epicsShareFunc int epicsShareAPI epicsSocketAccept ( 
+LIBCOM_API int epicsStdCall epicsSocketAccept ( 
     int sock, struct sockaddr * pAddr, osiSocklen_t * addrlen );
-epicsShareFunc void epicsShareAPI epicsSocketDestroy ( 
+LIBCOM_API void epicsStdCall epicsSocketDestroy ( 
     SOCKET );
-epicsShareFunc void epicsShareAPI 
+LIBCOM_API void epicsStdCall 
     epicsSocketEnableAddressReuseDuringTimeWaitState ( SOCKET s );
-epicsShareFunc void epicsShareAPI 
+LIBCOM_API void epicsStdCall 
     epicsSocketEnableAddressUseForDatagramFanout ( SOCKET s );
 
 /*
@@ -44,12 +45,12 @@ epicsShareFunc void epicsShareAPI
  * receive, or connect call. For odd ball systems this is stubbed out in the
  * osi area.
  */
-enum epicsSocketSystemCallInterruptMechanismQueryInfo { 
-    esscimqi_socketCloseRequired, 
+enum epicsSocketSystemCallInterruptMechanismQueryInfo {
+    esscimqi_socketCloseRequired,
     esscimqi_socketBothShutdownRequired,
     esscimqi_socketSigAlarmRequired /* NO LONGER USED/SUPPORTED */
 };
-epicsShareFunc enum epicsSocketSystemCallInterruptMechanismQueryInfo 
+LIBCOM_API enum epicsSocketSystemCallInterruptMechanismQueryInfo 
         epicsSocketSystemCallInterruptMechanismQuery ();
 
 #ifdef EPICS_PRIVATE_API
@@ -58,21 +59,21 @@ epicsShareFunc enum epicsSocketSystemCallInterruptMechanismQueryInfo
  * of unsent data in the output queue.
  * Returns -1 if the information is not available.
  */
-epicsShareFunc int epicsSocketUnsentCount(SOCKET sock);
+LIBCOM_API int epicsSocketUnsentCount(SOCKET sock);
 #endif
 
 /*
  * convert socket address to ASCII in this order
  * 1) look for matching host name and typically add trailing IP port
- * 2) failing that, convert to raw ascii address (typically this is a 
+ * 2) failing that, convert to raw ascii address (typically this is a
  *      dotted IP address with trailing port)
  * 3) failing that, writes "<Ukn Addr Type>" into pBuf
  *
- * returns the number of character elements stored in buffer not 
+ * returns the number of character elements stored in buffer not
  * including the null termination, but always writes at least a
  * null ternminater in the string (if bufSize >= 1)
  */
-epicsShareFunc unsigned epicsShareAPI sockAddrToA (
+LIBCOM_API unsigned epicsStdCall sockAddrToA (
     const struct sockaddr * paddr, char * pBuf, unsigned bufSize );
 
 /*
@@ -80,45 +81,45 @@ epicsShareFunc unsigned epicsShareAPI sockAddrToA (
  * 1) look for matching host name and add trailing port
  * 2) convert to raw dotted IP address with trailing port
  *
- * returns the number of character elements stored in buffer not 
+ * returns the number of character elements stored in buffer not
  * including the null termination, but always writes at least a
  * null ternminater in the string (if bufSize >= 1)
  */
-epicsShareFunc unsigned epicsShareAPI ipAddrToA (
+LIBCOM_API unsigned epicsStdCall ipAddrToA (
     const struct sockaddr_in * pInetAddr, char * pBuf, unsigned bufSize );
 
 /*
- * sockAddrToDottedIP () 
+ * sockAddrToDottedIP ()
  * typically convert to raw dotted IP address with trailing port
  *
- * returns the number of character elements stored in buffer not 
+ * returns the number of character elements stored in buffer not
  * including the null termination, but always writes at least a
  * null ternminater in the string (if bufSize >= 1)
  */
-epicsShareFunc unsigned epicsShareAPI sockAddrToDottedIP ( 
+LIBCOM_API unsigned epicsStdCall sockAddrToDottedIP ( 
     const struct sockaddr * paddr, char * pBuf, unsigned bufSize );
 
 /*
- * ipAddrToDottedIP () 
+ * ipAddrToDottedIP ()
  * convert to raw dotted IP address with trailing port
  *
- * returns the number of character elements stored in buffer not 
+ * returns the number of character elements stored in buffer not
  * including the null termination, but always writes at least a
  * null ternminater in the string (if bufSize >= 1)
  */
-epicsShareFunc unsigned epicsShareAPI ipAddrToDottedIP ( 
+LIBCOM_API unsigned epicsStdCall ipAddrToDottedIP ( 
     const struct sockaddr_in * paddr, char * pBuf, unsigned bufSize );
 
 /*
  * convert inet address to a host name string
  *
- * returns the number of character elements stored in buffer not 
+ * returns the number of character elements stored in buffer not
  * including the null termination. This will be zero if a matching
  * host name cant be found.
  *
  * there are many OS specific implementation stubs for this routine
  */
-epicsShareFunc unsigned epicsShareAPI ipAddrToHostName (
+LIBCOM_API unsigned epicsStdCall ipAddrToHostName (
     const struct in_addr * pAddr, char * pBuf, unsigned bufSize );
 
 /*
@@ -127,30 +128,30 @@ epicsShareFunc unsigned epicsShareAPI ipAddrToHostName (
  * 2) look for raw number form of ip address with optional port
  * 3) look for valid host name with optional port
  */
-epicsShareFunc int epicsShareAPI aToIPAddr
-	( const char * pAddrString, unsigned short defaultPort, struct sockaddr_in * pIP);
+LIBCOM_API int epicsStdCall aToIPAddr
+    ( const char * pAddrString, unsigned short defaultPort, struct sockaddr_in * pIP);
 
 /*
  * attempt to convert ASCII host name string with optional port to an IP address
  */
-epicsShareFunc int epicsShareAPI hostToIPAddr 
-				(const char *pHostName, struct in_addr *pIPA);
+LIBCOM_API int epicsStdCall hostToIPAddr 
+    (const char *pHostName, struct in_addr *pIPA);
 /*
  * attach to BSD socket library
  */
-epicsShareFunc int epicsShareAPI osiSockAttach (void); /* returns T if success, else F */
+LIBCOM_API int epicsStdCall osiSockAttach (void); /* returns T if success, else F */
 
 /*
  * release BSD socket library
  */
-epicsShareFunc void epicsShareAPI osiSockRelease (void);
+LIBCOM_API void epicsStdCall osiSockRelease (void);
 
 /*
  * convert socket error numbers to a string
  */
-epicsShareFunc void epicsSocketConvertErrorToString (
+LIBCOM_API void epicsSocketConvertErrorToString (
         char * pBuf, unsigned bufSize, int error );
-epicsShareFunc void epicsSocketConvertErrnoToString (
+LIBCOM_API void epicsSocketConvertErrnoToString (
         char * pBuf, unsigned bufSize );
 
 typedef union osiSockAddr {
@@ -164,50 +165,50 @@ typedef struct osiSockAddrNode {
 } osiSockAddrNode;
 
 /*
- * sockAddrAreIdentical() 
+ * sockAddrAreIdentical()
  * (returns true if addresses are identical)
  */
-epicsShareFunc int epicsShareAPI sockAddrAreIdentical 
-			( const osiSockAddr * plhs, const osiSockAddr * prhs );
+LIBCOM_API int epicsStdCall sockAddrAreIdentical 
+    ( const osiSockAddr * plhs, const osiSockAddr * prhs );
 
 /*
  *  osiSockDiscoverBroadcastAddresses ()
  *  Returns the broadcast addresses of each network interface found.
  *
- *	This routine is provided with the address of an ELLLIST, a socket,
- * 	a destination port number, and a match address. When the 
- * 	routine returns there will be one additional entry 
- *	(an osiSockAddrNode) in the list for each network interface found that 
- *	is up and isnt a loop back interface (match addr is INADDR_ANY),
- *	or only the interfaces that match the specified addresses (match addr 
- *  is other than INADDR_ANY). If the interface supports broadcasting 
- *  then add its broadcast address to the list. If the interface is a 
+ *  This routine is provided with the address of an ELLLIST, a socket,
+ *  a destination port number, and a match address. When the
+ *  routine returns there will be one additional entry
+ *  (an osiSockAddrNode) in the list for each network interface found that
+ *  is up and isnt a loop back interface (match addr is INADDR_ANY),
+ *  or only the interfaces that match the specified addresses (match addr
+ *  is other than INADDR_ANY). If the interface supports broadcasting
+ *  then add its broadcast address to the list. If the interface is a
  *  point to point link then add the destination address of the point to
- *	point link to the list. 
+ *  point link to the list.
  *
- * 	Any mutex locking required to protect pList is applied externally.
+ *  Any mutex locking required to protect pList is applied externally.
  *
  */
-epicsShareFunc void epicsShareAPI osiSockDiscoverBroadcastAddresses
+LIBCOM_API void epicsStdCall osiSockDiscoverBroadcastAddresses
      (ELLLIST *pList, SOCKET socket, const osiSockAddr *pMatchAddr);
 
 /*
  * osiLocalAddr ()
  * Returns the osiSockAddr of the first non-loopback interface found
- * that is operational (up flag is set). If no valid address can be 
- * located then return an osiSockAddr with the address family set to 
+ * that is operational (up flag is set). If no valid address can be
+ * located then return an osiSockAddr with the address family set to
  * unspecified (AF_UNSPEC).
  *
  * Unfortunately in EPICS 3.13 beta 11 and before the CA
  * repeater would not always allow the loopback address
  * as a local client address so current clients alternate
  * between the address of the first non-loopback interface
- * found and the loopback addresss when subscribing with 
+ * found and the loopback addresss when subscribing with
  * the CA repeater until all CA repeaters have been updated
- * to current code. After all CA repeaters have been restarted 
+ * to current code. After all CA repeaters have been restarted
  * this osi interface can be eliminated.
  */
-epicsShareFunc osiSockAddr epicsShareAPI osiLocalAddr (SOCKET socket);
+LIBCOM_API osiSockAddr epicsStdCall osiLocalAddr (SOCKET socket);
 
 #ifdef __cplusplus
 }

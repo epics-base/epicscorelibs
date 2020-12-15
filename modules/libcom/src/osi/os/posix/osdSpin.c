@@ -2,6 +2,7 @@
 * Copyright (c) 2012 Helmholtz-Zentrum Berlin
 *     fuer Materialien und Energie GmbH.
 * Copyright (c) 2012 ITER Organization.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -16,7 +17,6 @@
 #include <string.h>
 #include <pthread.h>
 
-#define epicsExportSharedSymbols
 #include "errlog.h"
 #include "cantProceed.h"
 #include "epicsSpin.h"

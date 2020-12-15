@@ -3,8 +3,8 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
@@ -17,18 +17,13 @@
  *  Copyright, 1986, The Regents of the University of California.
  *
  *
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
-#ifndef nciuh
-#define nciuh
-
-#ifdef epicsExportSharedSymbols
-#   define nciuh_restore_epicsExportSharedSymbols
-#   undef epicsExportSharedSymbols
-#endif
+#ifndef INC_nciu_H
+#define INC_nciu_H
 
 #include "resourceLib.h"
 #include "tsDLList.h"
@@ -36,10 +31,7 @@
 #include "epicsMutex.h"
 #include "compilerDependencies.h"
 
-#ifdef nciuh_restore_epicsExportSharedSymbols
-#   define epicsExportSharedSymbols
-#   include "shareLib.h"
-#endif
+#include "libCaAPI.h"
 
 #define CA_MINOR_PROTOCOL_REVISION 13
 #include "caProto.h"
@@ -278,8 +270,8 @@ private:
         epicsGuard < epicsMutex > &, class baseNMIU & );
     const char * pHostName (
         epicsGuard < epicsMutex > & guard ) const throw ();
-	nciu ( const nciu & );
-	nciu & operator = ( const nciu & );
+    nciu ( const nciu & );
+    nciu & operator = ( const nciu & );
     void operator delete ( void * );
 };
 
@@ -382,4 +374,4 @@ inline bool channelNode::isInstalledInServer ( epicsGuard < epicsMutex > & ) con
         this->listMember == cs_subscripUpdateReqPend;
 }
 
-#endif // ifdef nciuh
+#endif // ifdef INC_nciu_H

@@ -3,11 +3,11 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
-/* 
+/*
  * Operating System Dependent Implementation of osiProcess.h
  *
  * Author: Jeff Hill
@@ -24,10 +24,9 @@
 #define STRICT
 #include <windows.h>
 
-#define epicsExportSharedSymbols
 #include "osiProcess.h"
 
-epicsShareFunc osiGetUserNameReturn epicsShareAPI osiGetUserName (char *pBuf, unsigned bufSizeIn)
+LIBCOM_API osiGetUserNameReturn epicsStdCall osiGetUserName (char *pBuf, unsigned bufSizeIn)
 {
     DWORD bufsize;
 
@@ -48,20 +47,20 @@ epicsShareFunc osiGetUserNameReturn epicsShareAPI osiGetUserName (char *pBuf, un
     return osiGetUserNameSuccess;
 }
 
-epicsShareFunc osiSpawnDetachedProcessReturn epicsShareAPI osiSpawnDetachedProcess 
+LIBCOM_API osiSpawnDetachedProcessReturn epicsStdCall osiSpawnDetachedProcess 
     ( const char *pProcessName, const char *pBaseExecutableName )
 {
-	BOOL status;
-	STARTUPINFO startupInfo;
-	PROCESS_INFORMATION processInfo;
+    BOOL status;
+    STARTUPINFO startupInfo;
+    PROCESS_INFORMATION processInfo;
 
-	GetStartupInfo ( &startupInfo ); 
-	startupInfo.lpReserved = NULL;
-	startupInfo.lpTitle = (char *) pProcessName;
-	startupInfo.dwFlags = STARTF_USESHOWWINDOW;
-	startupInfo.wShowWindow = SW_SHOWMINNOACTIVE;
-	
-	status =  CreateProcess ( 
+    GetStartupInfo ( &startupInfo );
+    startupInfo.lpReserved = NULL;
+    startupInfo.lpTitle = (char *) pProcessName;
+    startupInfo.dwFlags = STARTF_USESHOWWINDOW;
+    startupInfo.wShowWindow = SW_SHOWMINNOACTIVE;
+
+    status =  CreateProcess (
         NULL, /* pointer to name of executable module (not required if command line is specified) */
         (char *) pBaseExecutableName, /* pointer to command line string */
         NULL, /* pointer to process security attributes */
@@ -72,20 +71,20 @@ epicsShareFunc osiSpawnDetachedProcessReturn epicsShareAPI osiSpawnDetachedProce
         NULL, /* pointer to current directory name  (defaults to caller's current directory) */
         &startupInfo, /* pointer to STARTUPINFO */
         &processInfo /* pointer to PROCESS_INFORMATION */
-    ); 
+    );
     if ( status == 0 ) {
         DWORD W32status;
         LPVOID errStrMsgBuf;
         LPVOID complteMsgBuf;
-        
-        W32status = FormatMessage ( 
+
+        W32status = FormatMessage (
             FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
             NULL,
             GetLastError (),
             MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT), /* Default language */
-            	(LPTSTR) &errStrMsgBuf,
+                (LPTSTR) &errStrMsgBuf,
             0,
-            NULL 
+            NULL
         );
 
         if ( W32status ) {
@@ -94,16 +93,16 @@ epicsShareFunc osiSpawnDetachedProcessReturn epicsShareAPI osiSpawnDetachedProce
             pFmtArgs[1] = (char *) pBaseExecutableName;
             pFmtArgs[2] = errStrMsgBuf;
             pFmtArgs[3] = "Changes may be required in your \"path\" environment variable.";
-            
-            W32status = FormatMessage( 
-                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_STRING | 
+
+            W32status = FormatMessage(
+                FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_STRING |
                     FORMAT_MESSAGE_ARGUMENT_ARRAY | 80,
                 "%1 \"%2\". %3 %4",
                 0,
                 MAKELANGID (LANG_NEUTRAL, SUBLANG_DEFAULT), /* Default language */
                 (LPTSTR) &complteMsgBuf,
                 0,
-                pFmtArgs 
+                pFmtArgs
             );
             if (W32status) {
                 fprintf (stderr, "%s\n", (char *) complteMsgBuf);
@@ -112,7 +111,7 @@ epicsShareFunc osiSpawnDetachedProcessReturn epicsShareAPI osiSpawnDetachedProce
             else {
                 fprintf (stderr, "%s\n", (char *) errStrMsgBuf);
             }
-            
+
             /* Free the buffer. */
             LocalFree (errStrMsgBuf);
         }

@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 Lawrence Berkeley Laboratory,The Control Systems
 *     Group, Systems Engineering Department
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -26,22 +27,11 @@
 #include "epicsExport.h"
 
 /* Create the dset for devSASoft */
-static long init_record(subArrayRecord *prec);
+static long init_record(dbCommon *pcommon);
 static long read_sa(subArrayRecord *prec);
 
-struct {
-    long      number;
-    DEVSUPFUN report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record;
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN read_sa;
-} devSASoft = {
-    5,
-    NULL,
-    NULL,
-    init_record,
-    NULL,
+sadset devSASoft = {
+    {5, NULL, NULL, init_record, NULL},
     read_sa
 };
 epicsExportAddress(dset, devSASoft);
@@ -65,8 +55,9 @@ static void subset(subArrayRecord *prec, long nRequest)
     prec->udf = FALSE;
 }
 
-static long init_record(subArrayRecord *prec)
+static long init_record(dbCommon *pcommon)
 {
+    subArrayRecord *prec = (subArrayRecord *)pcommon;
     long nRequest = prec->indx + prec->nelm;
     long status;
 
@@ -75,7 +66,7 @@ static long init_record(subArrayRecord *prec)
 
     status = dbLoadLinkArray(&prec->inp, prec->ftvl, prec->bptr, &nRequest);
 
-    if (!status && nRequest > 0)
+    if (!status)
         subset(prec, nRequest);
 
     return status;
@@ -125,7 +116,7 @@ static long read_sa(subArrayRecord *prec)
             status = readLocked(&prec->inp, &rt);
     }
 
-    if (!status && rt.nRequest > 0) {
+    if (!status) {
         subset(prec, rt.nRequest);
 
         if (nord != prec->nord)

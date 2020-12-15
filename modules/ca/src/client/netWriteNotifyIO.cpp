@@ -3,9 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
  *
@@ -29,7 +29,7 @@
 #include "nciu.h"
 #include "cac.h"
 
-netWriteNotifyIO::netWriteNotifyIO ( 
+netWriteNotifyIO::netWriteNotifyIO (
     privateInterfaceForIO & ioComplIntf, cacWriteNotify & notifyIn ) :
     notify ( notifyIn ), privateChanForIO ( ioComplIntf )
 {
@@ -41,19 +41,19 @@ netWriteNotifyIO::~netWriteNotifyIO ()
 
 void netWriteNotifyIO::show ( unsigned /* level */ ) const
 {
-    ::printf ( "read write notify IO at %p\n", 
+    ::printf ( "read write notify IO at %p\n",
         static_cast < const void * > ( this ) );
 }
 
-void netWriteNotifyIO::show ( 
-    epicsGuard < epicsMutex > &,  
+void netWriteNotifyIO::show (
+    epicsGuard < epicsMutex > &,
     unsigned level ) const
 {
     this->show ( level );
 }
 
-void netWriteNotifyIO::destroy ( 
-    epicsGuard < epicsMutex > & guard, 
+void netWriteNotifyIO::destroy (
+    epicsGuard < epicsMutex > & guard,
     cacRecycle & recycle )
 {
     this->~netWriteNotifyIO ();
@@ -70,10 +70,10 @@ void netWriteNotifyIO::completion (
     recycle.recycleWriteNotifyIO ( guard, *this );
 }
 
-void netWriteNotifyIO::completion ( 
-    epicsGuard < epicsMutex > & guard, 
+void netWriteNotifyIO::completion (
+    epicsGuard < epicsMutex > & guard,
     cacRecycle & recycle,
-    unsigned /* type */, arrayElementCount /* count */, 
+    unsigned /* type */, arrayElementCount /* count */,
     const void * /* pData */ )
 {
     //this->chan.getClient().printf ( "Write response with data ?\n" );
@@ -82,26 +82,26 @@ void netWriteNotifyIO::completion (
     recycle.recycleWriteNotifyIO ( guard, *this );
 }
 
-void netWriteNotifyIO::exception ( 
+void netWriteNotifyIO::exception (
     epicsGuard < epicsMutex > & guard,
     cacRecycle & recycle,
     int status, const char * pContext )
 {
     this->privateChanForIO.ioCompletionNotify ( guard, *this );
-    this->notify.exception ( 
+    this->notify.exception (
         guard, status, pContext, UINT_MAX, 0u );
     this->~netWriteNotifyIO ();
     recycle.recycleWriteNotifyIO ( guard, *this );
 }
 
-void netWriteNotifyIO::exception ( 
-    epicsGuard < epicsMutex > & guard, 
+void netWriteNotifyIO::exception (
+    epicsGuard < epicsMutex > & guard,
     cacRecycle & recycle,
-    int status, const char *pContext, 
+    int status, const char *pContext,
     unsigned type, arrayElementCount count )
 {
     this->privateChanForIO.ioCompletionNotify ( guard, *this );
-    this->notify.exception ( 
+    this->notify.exception (
         guard, status, pContext, type, count );
     this->~netWriteNotifyIO ();
     recycle.recycleWriteNotifyIO ( guard, *this );

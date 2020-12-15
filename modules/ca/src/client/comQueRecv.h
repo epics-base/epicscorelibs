@@ -3,28 +3,28 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
+/*
  *
- *                              
+ *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
  *               Los Alamos, New Mexico 87545
- *                                  
+ *
  *  Copyright, 1986, The Regents of the University of California.
- *                                  
- *           
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+ *
+ *
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
-#ifndef comQueRecvh  
-#define comQueRecvh
+#ifndef INC_comQueRecv_H
+#define INC_comQueRecv_H
 
 #include "comBuf.h"
 
@@ -54,8 +54,8 @@ private:
     epicsUInt16 multiBufferPopUInt16 ();
     epicsUInt32 multiBufferPopUInt32 ();
     void removeAndDestroyBuf ( comBuf & );
-	comQueRecv ( const comQueRecv & );
-	comQueRecv & operator = ( const comQueRecv & );
+    comQueRecv ( const comQueRecv & );
+    comQueRecv & operator = ( const comQueRecv & );
 };
 
 inline unsigned comQueRecv::occupiedBytes () const
@@ -108,4 +108,4 @@ inline epicsFloat64 comQueRecv::popFloat64 ()
     return AlignedWireRef < epicsFloat64 > ( tmp._fp );
 }
 
-#endif // ifndef comQueRecvh
+#endif // ifndef INC_comQueRecv_H

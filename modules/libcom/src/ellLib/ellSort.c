@@ -2,6 +2,7 @@
 * Copyright (c) 2014 Brookhaven Science Assoc., as Operator of Argonne
 *     National Laboratory.
 * Copyright (c) 2016 Michael Davidsaver
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -12,7 +13,6 @@
  */
 #include <stdlib.h>
 
-#define epicsExportSharedSymbols
 #include "epicsAssert.h"
 #include "ellLib.h"
 

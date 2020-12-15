@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*asTrapWrite.c */
 /* Author:  Marty Kraimer Date:    07NOV2000 */
@@ -19,7 +20,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define epicsExportSharedSymbols
 #include "ellLib.h"
 #include "freeList.h"
 #include "epicsStdio.h"
@@ -46,7 +46,7 @@ typedef struct writeMessage {
     asTrapWriteMessage message;
     ELLLIST listenerPvtList;
 }writeMessage;
-    
+
 
 typedef struct asTrapWritePvt
 {
@@ -71,20 +71,20 @@ static void asTrapWriteInit(void)
     pasTrapWritePvt->lock = epicsMutexMustCreate();
 }
 
-asTrapWriteId epicsShareAPI asTrapWriteRegisterListener(
+asTrapWriteId epicsStdCall asTrapWriteRegisterListener(
     asTrapWriteListener func)
 {
     listener *plistener;
     if(pasTrapWritePvt==0) asTrapWriteInit();
     plistener = callocMustSucceed(1,sizeof(listener),"asTrapWriteRegisterListener");
-    plistener->func = func; 
+    plistener->func = func;
     epicsMutexMustLock(pasTrapWritePvt->lock);
     ellAdd(&pasTrapWritePvt->listenerList,&plistener->node);
     epicsMutexUnlock(pasTrapWritePvt->lock);
     return((asTrapWriteId)plistener);
 }
 
-void epicsShareAPI asTrapWriteUnregisterListener(asTrapWriteId id)
+void epicsStdCall asTrapWriteUnregisterListener(asTrapWriteId id)
 {
     listener *plistener = (listener *)id;
     writeMessage *pwriteMessage;
@@ -111,7 +111,7 @@ void epicsShareAPI asTrapWriteUnregisterListener(asTrapWriteId id)
     epicsMutexUnlock(pasTrapWritePvt->lock);
 }
 
-void * epicsShareAPI asTrapWriteBeforeWithData(
+void * epicsStdCall asTrapWriteBeforeWithData(
     const char *userid, const char *hostid, void *addr,
     int dbrType, int no_elements, void *data)
 {
@@ -149,7 +149,7 @@ void * epicsShareAPI asTrapWriteBeforeWithData(
     return pwriteMessage;
 }
 
-void epicsShareAPI asTrapWriteAfterWrite(void *pvt)
+void epicsStdCall asTrapWriteAfterWrite(void *pvt)
 {
     writeMessage *pwriteMessage = (writeMessage *)pvt;
     listenerPvt *plistenerPvt;

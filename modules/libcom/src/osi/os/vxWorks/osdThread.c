@@ -4,8 +4,9 @@
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
 * Copyright (c) 2012 ITER Organization
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* osi/os/vxWorks/epicsThread.c */
 
@@ -50,7 +51,7 @@
 #endif
 
 
-epicsShareFunc void osdThreadHooksRun(epicsThreadId id);
+LIBCOM_API void osdThreadHooksRun(epicsThreadId id);
 
 #if CPU_FAMILY == MC680X0
 #define ARCH_STACK_FACTOR 1
@@ -59,7 +60,7 @@ epicsShareFunc void osdThreadHooksRun(epicsThreadId id);
 #else
 #define ARCH_STACK_FACTOR 2
 #endif
-static const unsigned stackSizeTable[epicsThreadStackBig+1] = 
+static const unsigned stackSizeTable[epicsThreadStackBig+1] =
    {4000*ARCH_STACK_FACTOR, 6000*ARCH_STACK_FACTOR, 11000*ARCH_STACK_FACTOR};
 
 /* Table and lock for epicsThreadMap() */
@@ -83,7 +84,7 @@ static SEM_ID epicsThreadOnceMutex = 0;
 /* osi =  199 - vx */
 
 static unsigned int getOsiPriorityValue(int ossPriority)
-{   
+{
     if ( ossPriority < 100 ) {
         return epicsThreadPriorityMax;
     }
@@ -134,7 +135,7 @@ static void epicsThreadInit(void)
 void epicsThreadRealtimeLock(void)
 {}
 
-unsigned int epicsThreadGetStackSize (epicsThreadStackSizeClass stackSizeClass) 
+unsigned int epicsThreadGetStackSize (epicsThreadStackSizeClass stackSizeClass)
 {
 
     if (stackSizeClass<epicsThreadStackSmall) {
@@ -457,7 +458,7 @@ void epicsThreadGetName (epicsThreadId id, char *name, size_t size)
     name[size-1] = '\0';
 }
 
-epicsShareFunc void epicsThreadMap ( EPICS_THREAD_HOOK_ROUTINE func )
+LIBCOM_API void epicsThreadMap ( EPICS_THREAD_HOOK_ROUTINE func )
 {
     int noTasks = 0;
     int i;
@@ -468,8 +469,9 @@ epicsShareFunc void epicsThreadMap ( EPICS_THREAD_HOOK_ROUTINE func )
     while (noTasks == 0) {
         noTasks = taskIdListGet(taskIdList, taskIdListSize);
         if (noTasks == taskIdListSize) {
-            taskIdList = realloc(taskIdList, (taskIdListSize+ID_LIST_CHUNK)*sizeof(int));
-            assert(taskIdList);
+            int *newlist = realloc(taskIdList, (taskIdListSize+ID_LIST_CHUNK)*sizeof(int));
+            assert(newlist);
+            taskIdList = newlist;
             taskIdListSize += ID_LIST_CHUNK;
             noTasks = 0;
         }
@@ -500,7 +502,7 @@ void epicsThreadShow(epicsThreadId id, unsigned int level)
  * The array size is equal to the number of epicsThreadPrivateIds created + 1
  * when epicsThreadPrivateSet is called.
  * Until the first call to epicsThreadPrivateCreate by a application papTSD=0
- * After first call papTSD[0] is value of nepicsThreadPrivate when 
+ * After first call papTSD[0] is value of nepicsThreadPrivate when
  * epicsThreadPrivateSet was last called by the thread. This is also
  * the value of epicsThreadPrivateId.
  * The algorithm allows for epicsThreadPrivateCreate being called after
@@ -571,7 +573,7 @@ double epicsThreadSleepQuantum ()
     return 1.0 / HZ;
 }
 
-epicsShareFunc int epicsThreadGetCPUs(void)
+LIBCOM_API int epicsThreadGetCPUs(void)
 {
     return 1;
 }

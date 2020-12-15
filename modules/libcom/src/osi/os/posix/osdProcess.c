@@ -3,12 +3,12 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/* 
+/*
  * Operating System Dependent Implementation of osiProcess.h
  *
  * Author: Jeff Hill
@@ -26,12 +26,11 @@
 #include <sys/types.h>
 #include <pwd.h>
 
-#define epicsExportSharedSymbols
 #include "osiProcess.h"
 #include "errlog.h"
 #include "epicsAssert.h"
 
-epicsShareFunc osiGetUserNameReturn epicsShareAPI osiGetUserName (char *pBuf, unsigned bufSizeIn)
+LIBCOM_API osiGetUserNameReturn epicsStdCall osiGetUserName (char *pBuf, unsigned bufSizeIn)
 {
     struct passwd *p;
 
@@ -58,7 +57,7 @@ epicsShareFunc osiGetUserNameReturn epicsShareAPI osiGetUserName (char *pBuf, un
     }
 }
 
-epicsShareFunc osiSpawnDetachedProcessReturn epicsShareAPI osiSpawnDetachedProcess 
+LIBCOM_API osiSpawnDetachedProcessReturn epicsStdCall osiSpawnDetachedProcess 
     (const char *pProcessName, const char *pBaseExecutableName)
 {
     int status;
@@ -110,7 +109,7 @@ epicsShareFunc osiSpawnDetachedProcessReturn epicsShareAPI osiSpawnDetachedProce
      * Run the specified executable
      */
     status = execlp (pBaseExecutableName, pBaseExecutableName, (char *)NULL);
-    if ( status < 0 ) { 
+    if ( status < 0 ) {
         fprintf ( stderr, "**** The executable \"%s\" couldn't be located\n", pBaseExecutableName );
         fprintf ( stderr, "**** because of errno = \"%s\".\n", strerror (errno) );
         fprintf ( stderr, "**** You may need to modify your PATH environment variable.\n" );

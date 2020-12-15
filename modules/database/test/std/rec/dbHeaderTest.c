@@ -1,11 +1,12 @@
 /*************************************************************************\
 * Copyright (c) 2019 Michael Davidsaver
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* This test includes all public headers from libCom and database modules
- * to ensure they are all syntaxtically correct in C and C++
+ * to ensure they are all syntaxtically correct in both C and C++
  */
 
 #include <aaiRecord.h>
@@ -31,14 +32,12 @@
 #include <cantProceed.h>
 #include <caProto.h>
 #include <caVersion.h>
-#include <caVersionNum.h>
 #include <chfPlugin.h>
 #include <compilerDependencies.h>
 #include <compressRecord.h>
 #include <cvtFast.h>
 #include <cvtTable.h>
 #include <databaseVersion.h>
-#include <databaseVersionNum.h>
 #include <dbAccessDefs.h>
 #include <dbAccess.h>
 #include <dbAddr.h>
@@ -152,7 +151,6 @@
 #endif
 #include <libComRegister.h>
 #include <libComVersion.h>
-#include <libComVersionNum.h>
 #include <link.h>
 #ifdef __cplusplus
 #  include <locationException.h>

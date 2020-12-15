@@ -3,12 +3,12 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
+/*
  *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
@@ -31,7 +31,7 @@ localHostName::localHostName () :
     const char * pErrStr = "<unknown host>";
     int status = -1;
     if ( this->attachedToSockLib ) {
-        status = gethostname ( 
+        status = gethostname (
             this->cache, sizeof ( this->cache ) );
     }
     if ( status ) {
@@ -48,7 +48,7 @@ localHostName::~localHostName ()
     }
 }
 
-unsigned localHostName::getName ( 
+unsigned localHostName::getName (
     char * pBuf, unsigned bufLength ) const
 {
     if ( bufLength ) {

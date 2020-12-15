@@ -2,6 +2,7 @@
 * Copyright (c) 2002 The University of Saskatchewan
 * Copyright (c) 2015 UChicago Argonne LLC, as Operator of Argonne
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -11,7 +12,6 @@
 #include <stdlib.h>
 #include <errno.h>
 
-#define epicsExportSharedSymbols
 #include "envDefs.h"
 #include "epicsReadline.h"
 
@@ -61,7 +61,7 @@ static void osdReadlineEnd(struct readlineContext *rc) {}
 /*
  * Create a command-line context
  */
-void * epicsShareAPI
+void * epicsStdCall
 epicsReadlineBegin(FILE *in)
 {
     struct readlineContext *rc = calloc(1, sizeof(*rc));
@@ -78,7 +78,7 @@ epicsReadlineBegin(FILE *in)
 /*
  * Read a line of input
  */
-char * epicsShareAPI
+char * epicsStdCall
 epicsReadline (const char *prompt, void *context)
 {
     struct readlineContext *rc = context;
@@ -138,7 +138,7 @@ epicsReadline (const char *prompt, void *context)
 /*
  * Destroy a command-line context
  */
-void epicsShareAPI
+void epicsStdCall
 epicsReadlineEnd (void *context)
 {
     if (context) {

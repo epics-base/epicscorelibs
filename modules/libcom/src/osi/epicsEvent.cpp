@@ -3,17 +3,17 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* epicsMutex.c */
-/*	Author: Jeff Hill */
+/*  Author: Jeff Hill */
 
 #include <new>
 #include <exception>
 
-#define epicsExportSharedSymbols
 #include "epicsEvent.h"
 #include "epicsStdio.h"
 #include "cantProceed.h"
@@ -25,17 +25,17 @@ using namespace std;
 class epicsEvent::invalidSemaphore : public exception
 {
     const char * what () const throw ();
-}; 
+};
 
-const char * epicsEvent::invalidSemaphore::what () const throw () 
+const char * epicsEvent::invalidSemaphore::what () const throw ()
 {
     return "epicsEvent::invalidSemaphore()";
 }
 
 //
-// Its probably preferable to not make these inline because they are in 
+// Its probably preferable to not make these inline because they are in
 // the sharable library interface. The use of inline or not here is probably
-// not an issue because all of this ends up in the operating system in system 
+// not an issue because all of this ends up in the operating system in system
 // calls
 //
 
@@ -104,7 +104,7 @@ void epicsEvent::show ( unsigned level ) const
 
 extern "C" {
 
-epicsShareFunc epicsEventId epicsEventMustCreate (
+LIBCOM_API epicsEventId epicsEventMustCreate (
     epicsEventInitialState initialState)
 {
     epicsEventId id = epicsEventCreate (initialState);
@@ -114,14 +114,14 @@ epicsShareFunc epicsEventId epicsEventMustCreate (
     return id;
 }
 
-epicsShareFunc void epicsEventMustTrigger (epicsEventId id) {
+LIBCOM_API void epicsEventMustTrigger (epicsEventId id) {
     epicsEventStatus status = epicsEventTrigger (id);
 
     if (status != epicsEventOK)
         cantProceed ("epicsEventMustTrigger");
 }
 
-epicsShareFunc void epicsEventMustWait (epicsEventId id) {
+LIBCOM_API void epicsEventMustWait (epicsEventId id) {
     epicsEventStatus status = epicsEventWait (id);
 
     if (status != epicsEventOK)

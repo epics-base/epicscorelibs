@@ -3,23 +3,23 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
+/*
  *
- *                              
+ *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
  *               Los Alamos, New Mexico 87545
- *                                  
+ *
  *  Copyright, 1986, The Regents of the University of California.
- *                                  
- *           
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
+ *
+ *
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
  */
 
 #include <algorithm>
@@ -29,7 +29,7 @@
 #include "hostNameCache.h"
 #include "epicsGuard.h"
 
-hostNameCache::hostNameCache ( 
+hostNameCache::hostNameCache (
     const osiSockAddr & addr, ipAddrToAsciiEngine & engine ) :
     dnsTransaction ( engine.createTransaction() ), nameLength ( 0 )
 {
@@ -65,7 +65,7 @@ void hostNameCache::transactionComplete ( const char * pHostNameIn )
     this->nameLength = newNameLen;
 }
 
-unsigned hostNameCache::getName ( 
+unsigned hostNameCache::getName (
     char * pBuf, unsigned bufSize ) const
 {
     if ( bufSize == 0u ) {

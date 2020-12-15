@@ -4,15 +4,16 @@
 *     Los Alamos National Laboratory.
 * Copyright (c) 2011 UChicago Argonne LLC, as Operator of Argonne
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
  *  Author Jeffrey O. Hill
  *  johill@lanl.gov
  */
- 
+
 #ifndef epicsAtomicDefault_h
 #define epicsAtomicDefault_h
 
@@ -22,14 +23,14 @@ extern "C" {
 
 /*
  * struct EpicsAtomicLockKey;
- * epicsShareFunc void epicsAtomicReadMemoryBarrier ();
- * epicsShareFunc void epicsAtomicWriteMemoryBarrier ();
- * epicsShareFunc void epicsAtomicLock ( struct EpicsAtomicLockKey * );
- * epicsShareFunc void epicsAtomicUnock ( struct EpicsAtomicLockKey * );
+ * LIBCOM_API void epicsAtomicReadMemoryBarrier ();
+ * LIBCOM_API void epicsAtomicWriteMemoryBarrier ();
+ * LIBCOM_API void epicsAtomicLock ( struct EpicsAtomicLockKey * );
+ * LIBCOM_API void epicsAtomicUnock ( struct EpicsAtomicLockKey * );
  */
 
 /*
- * incr 
+ * incr
  */
 #ifndef EPICS_ATOMIC_INCR_INTT
 EPICS_ATOMIC_INLINE int epicsAtomicIncrIntT ( int * pTarget )
@@ -58,7 +59,7 @@ EPICS_ATOMIC_INLINE size_t epicsAtomicIncrSizeT ( size_t * pTarget )
 #endif
 
 /*
- * decr 
+ * decr
  */
 #ifndef EPICS_ATOMIC_DECR_INTT
 EPICS_ATOMIC_INLINE int epicsAtomicDecrIntT ( int * pTarget )
@@ -87,7 +88,7 @@ EPICS_ATOMIC_INLINE size_t epicsAtomicDecrSizeT ( size_t * pTarget )
 #endif
 
 /*
- * add/sub 
+ * add/sub
  */
 #ifndef EPICS_ATOMIC_ADD_INTT
 EPICS_ATOMIC_INLINE int epicsAtomicAddIntT ( int * pTarget, int delta )
@@ -148,8 +149,8 @@ EPICS_ATOMIC_INLINE void epicsAtomicSetSizeT ( size_t * pTarget, size_t newVal )
 #endif
 
 #ifndef EPICS_ATOMIC_SET_PTRT
-EPICS_ATOMIC_INLINE void epicsAtomicSetPtrT ( EpicsAtomicPtrT * pTarget, 
-						EpicsAtomicPtrT newVal )
+EPICS_ATOMIC_INLINE void epicsAtomicSetPtrT ( EpicsAtomicPtrT * pTarget,
+                                                EpicsAtomicPtrT newVal )
 {
     *pTarget = newVal;
     epicsAtomicWriteMemoryBarrier ();
@@ -157,7 +158,7 @@ EPICS_ATOMIC_INLINE void epicsAtomicSetPtrT ( EpicsAtomicPtrT * pTarget,
 #endif
 
 /*
- * get 
+ * get
  */
 #ifndef EPICS_ATOMIC_GET_INTT
 EPICS_ATOMIC_INLINE int epicsAtomicGetIntT ( const int * pTarget )
@@ -176,7 +177,7 @@ EPICS_ATOMIC_INLINE size_t epicsAtomicGetSizeT ( const size_t * pTarget )
 #endif
 
 #ifndef EPICS_ATOMIC_GET_PTRT
-EPICS_ATOMIC_INLINE EpicsAtomicPtrT 
+EPICS_ATOMIC_INLINE EpicsAtomicPtrT
         epicsAtomicGetPtrT ( const EpicsAtomicPtrT * pTarget )
 {
     epicsAtomicReadMemoryBarrier ();
@@ -185,7 +186,7 @@ EPICS_ATOMIC_INLINE EpicsAtomicPtrT
 #endif
 
 /*
- * cmp and swap 
+ * cmp and swap
  */
 #ifndef EPICS_ATOMIC_CAS_INTT
 EPICS_ATOMIC_INLINE int epicsAtomicCmpAndSwapIntT ( int * pTarget, int oldval, int newval )
@@ -204,8 +205,8 @@ EPICS_ATOMIC_INLINE int epicsAtomicCmpAndSwapIntT ( int * pTarget, int oldval, i
 #endif
 
 #ifndef EPICS_ATOMIC_CAS_SIZET
-EPICS_ATOMIC_INLINE size_t epicsAtomicCmpAndSwapSizeT ( size_t * pTarget, 
-				size_t oldval, size_t newval )
+EPICS_ATOMIC_INLINE size_t epicsAtomicCmpAndSwapSizeT ( size_t * pTarget,
+                                size_t oldval, size_t newval )
 {
     EpicsAtomicLockKey key;
     size_t cur;
@@ -221,8 +222,8 @@ EPICS_ATOMIC_INLINE size_t epicsAtomicCmpAndSwapSizeT ( size_t * pTarget,
 #endif
 
 #ifndef EPICS_ATOMIC_CAS_PTRT
-EPICS_ATOMIC_INLINE EpicsAtomicPtrT epicsAtomicCmpAndSwapPtrT ( 
-                            EpicsAtomicPtrT * pTarget, 
+EPICS_ATOMIC_INLINE EpicsAtomicPtrT epicsAtomicCmpAndSwapPtrT (
+                            EpicsAtomicPtrT * pTarget,
                             EpicsAtomicPtrT oldval, EpicsAtomicPtrT newval )
 {
     EpicsAtomicLockKey key;

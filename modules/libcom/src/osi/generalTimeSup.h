@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2008 Diamond Light Source Ltd
 * Copyright (c) 2004 Oak Ridge National Laboratory
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -12,7 +13,7 @@
 
 #include "epicsTime.h"
 #include "epicsTimer.h"
-#include "shareLib.h"
+#include "libComAPI.h"
 
 #define LAST_RESORT_PRIORITY 999
 
@@ -23,21 +24,21 @@ extern "C" {
 typedef int (*TIMECURRENTFUN)(epicsTimeStamp *pDest);
 typedef int (*TIMEEVENTFUN)(epicsTimeStamp *pDest, int event);
 
-epicsShareFunc int generalTimeRegisterCurrentProvider(const char *name,
+LIBCOM_API int generalTimeRegisterCurrentProvider(const char *name,
     int priority, TIMECURRENTFUN getTime);
-epicsShareFunc int generalTimeRegisterEventProvider(const char *name,
+LIBCOM_API int generalTimeRegisterEventProvider(const char *name,
     int priority, TIMEEVENTFUN getEvent);
 
 /* Original names, for compatibility */
 #define generalTimeCurrentTpRegister generalTimeRegisterCurrentProvider
 #define generalTimeEventTpRegister generalTimeRegisterEventProvider
 
-epicsShareFunc int generalTimeAddIntCurrentProvider(const char *name,
+LIBCOM_API int generalTimeAddIntCurrentProvider(const char *name,
     int priority, TIMECURRENTFUN getTime);
-epicsShareFunc int generalTimeAddIntEventProvider(const char *name,
+LIBCOM_API int generalTimeAddIntEventProvider(const char *name,
     int priority, TIMEEVENTFUN getEvent);
 
-epicsShareFunc int generalTimeGetExceptPriority(epicsTimeStamp *pDest,
+LIBCOM_API int generalTimeGetExceptPriority(epicsTimeStamp *pDest,
     int *pPrio, int ignorePrio);
 
 #ifdef __cplusplus

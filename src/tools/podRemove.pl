@@ -2,6 +2,7 @@
 #*************************************************************************
 # Copyright (c) 2015 UChicago Argonne LLC, as Operator of Argonne
 #     National Laboratory.
+# SPDX-License-Identifier: EPICS
 # EPICS BASE is distributed subject to a Software License Agreement found
 # in file LICENSE that is included with this distribution.
 #*************************************************************************
@@ -67,6 +68,12 @@ open my $inp, '<', $infile or
     die "podRemove.pl: Can't open $infile: $!\n";
 open my $out, '>', $opt_o or
     die "podRemove.pl: Can't create $opt_o: $!\n";
+
+$SIG{__DIE__} = sub {
+    die @_ if $^S;  # Ignore eval deaths
+    close $out;
+    unlink $opt_o;
+};
 
 my $inPod = 0;
 while (<$inp>) {

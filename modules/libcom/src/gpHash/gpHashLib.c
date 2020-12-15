@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -13,7 +14,6 @@
 #include <stdlib.h>
 #include <stddef.h>
 
-#define epicsExportSharedSymbols
 #include "cantProceed.h"
 #include "epicsMutex.h"
 #include "epicsStdioRedirect.h"
@@ -35,7 +35,7 @@ typedef struct gphPvt {
 #define MAX_SIZE 65536
 
 
-void epicsShareAPI gphInitPvt(gphPvt **ppvt, int size)
+void epicsStdCall gphInitPvt(gphPvt **ppvt, int size)
 {
     gphPvt *pgphPvt;
 
@@ -59,7 +59,7 @@ void epicsShareAPI gphInitPvt(gphPvt **ppvt, int size)
     return;
 }
 
-GPHENTRY * epicsShareAPI gphFindParse(gphPvt *pgphPvt, const char *name, size_t len, void *pvtid)
+GPHENTRY * epicsStdCall gphFindParse(gphPvt *pgphPvt, const char *name, size_t len, void *pvtid)
 {
     ELLLIST **paplist;
     ELLLIST *gphlist;
@@ -90,12 +90,12 @@ GPHENTRY * epicsShareAPI gphFindParse(gphPvt *pgphPvt, const char *name, size_t 
     return pgphNode;
 }
 
-GPHENTRY * epicsShareAPI gphFind(gphPvt *pgphPvt, const char *name, void *pvtid)
+GPHENTRY * epicsStdCall gphFind(gphPvt *pgphPvt, const char *name, void *pvtid)
 {
     return gphFindParse(pgphPvt, name, strlen(name), pvtid);
 }
 
-GPHENTRY * epicsShareAPI gphAdd(gphPvt *pgphPvt, const char *name, void *pvtid)
+GPHENTRY * epicsStdCall gphAdd(gphPvt *pgphPvt, const char *name, void *pvtid)
 {
     ELLLIST **paplist;
     ELLLIST *plist;
@@ -140,7 +140,7 @@ GPHENTRY * epicsShareAPI gphAdd(gphPvt *pgphPvt, const char *name, void *pvtid)
     return (pgphNode);
 }
 
-void epicsShareAPI gphDelete(gphPvt *pgphPvt, const char *name, void *pvtid)
+void epicsStdCall gphDelete(gphPvt *pgphPvt, const char *name, void *pvtid)
 {
     ELLLIST **paplist;
     ELLLIST *plist = NULL;
@@ -174,7 +174,7 @@ void epicsShareAPI gphDelete(gphPvt *pgphPvt, const char *name, void *pvtid)
     return;
 }
 
-void epicsShareAPI gphFreeMem(gphPvt *pgphPvt)
+void epicsStdCall gphFreeMem(gphPvt *pgphPvt)
 {
     ELLLIST **paplist;
     int h;
@@ -204,12 +204,12 @@ void epicsShareAPI gphFreeMem(gphPvt *pgphPvt)
     free(pgphPvt);
 }
 
-void epicsShareAPI gphDump(gphPvt *pgphPvt)
+void epicsStdCall gphDump(gphPvt *pgphPvt)
 {
     gphDumpFP(stdout, pgphPvt);
 }
 
-void epicsShareAPI gphDumpFP(FILE *fp, gphPvt *pgphPvt)
+void epicsStdCall gphDumpFP(FILE *fp, gphPvt *pgphPvt)
 {
     unsigned int empty = 0;
     ELLLIST **paplist;

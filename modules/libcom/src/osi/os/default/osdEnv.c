@@ -1,7 +1,8 @@
 /*************************************************************************\
 * Copyright (c) 2002 The University of Saskatchewan
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* osdEnv.c */
 /*
@@ -18,7 +19,6 @@
 #include <ctype.h>
 #include <errno.h>
 
-#define epicsExportSharedSymbols
 #include "epicsStdio.h"
 #include "errlog.h"
 #include "cantProceed.h"
@@ -32,19 +32,19 @@
  * Leaks memory, but the assumption is that this routine won't be
  * called often enough for the leak to be a problem.
  */
-epicsShareFunc void epicsShareAPI epicsEnvSet (const char *name, const char *value)
+LIBCOM_API void epicsStdCall epicsEnvSet (const char *name, const char *value)
 {
     char *cp;
 
     if (!name) return;
     iocshEnvClear(name);
-    
-	cp = mallocMustSucceed (strlen (name) + strlen (value) + 2, "epicsEnvSet");
-	strcpy (cp, name);
-	strcat (cp, "=");
-	strcat (cp, value);
-	if (putenv (cp) < 0) {
-		errPrintf(
+
+    cp = mallocMustSucceed (strlen (name) + strlen (value) + 2, "epicsEnvSet");
+    strcpy (cp, name);
+    strcat (cp, "=");
+    strcat (cp, value);
+    if (putenv (cp) < 0) {
+        errPrintf(
                 -1L,
                 __FILE__,
                 __LINE__,
@@ -53,7 +53,7 @@ epicsShareFunc void epicsShareAPI epicsEnvSet (const char *name, const char *val
                 value,
                 strerror (errno));
         free (cp);
-	}
+    }
 }
 
 /*
@@ -61,7 +61,7 @@ epicsShareFunc void epicsShareAPI epicsEnvSet (const char *name, const char *val
  * Using putenv with a an existing name but without "=..." deletes
  */
 
-epicsShareFunc void epicsShareAPI epicsEnvUnset (const char *name)
+LIBCOM_API void epicsStdCall epicsEnvUnset (const char *name)
 {
     iocshEnvClear(name);
     if (getenv(name) != NULL)
@@ -71,7 +71,7 @@ epicsShareFunc void epicsShareAPI epicsEnvUnset (const char *name)
 /*
  * Show the value of the specified, or all, environment variables
  */
-epicsShareFunc void epicsShareAPI epicsEnvShow (const char *name)
+LIBCOM_API void epicsStdCall epicsEnvShow (const char *name)
 {
     if (name == NULL) {
         extern char **environ;

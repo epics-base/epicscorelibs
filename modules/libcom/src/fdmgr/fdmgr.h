@@ -3,14 +3,14 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* fdmgr.h
  *
- *      Header file associated with a file descriptor manager 
- *	for use with the UNIX system call select
+ *      Header file associated with a file descriptor manager
+ *      for use with the UNIX system call select
  *
  *      Author  Jeffrey O. Hill
  *              hill@atdiv.lanl.gov
@@ -24,7 +24,7 @@
 #include "bucketLib.h"
 #include "osiSock.h"
 #include "epicsThread.h"
-#include "shareLib.h"
+#include "libComAPI.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +48,7 @@ typedef void (*pCallBackFDMgr)(void *);
  * all versions:
  *
  * #if defined (NEW_FDMGR_ALARMID)
- * fdmgrAlarmId	XXXX
+ * fdmgrAlarmId XXXX
  * #elif defined (NEW_FDMGR_ALARM)
  * fdmgrAlarm   *XXXX;
  * #else
@@ -65,7 +65,7 @@ typedef unsigned fdmgrAlarmId;
  * Initialize a file descriptor manager session
  *
  */
-epicsShareFunc fdctx * epicsShareAPI fdmgr_init(void);
+LIBCOM_API fdctx * epicsStdCall fdmgr_init(void);
 
 /*
  * Specify a function to be called with a specified parameter
@@ -74,20 +74,20 @@ epicsShareFunc fdctx * epicsShareAPI fdmgr_init(void);
  * Returns fdmgrNoAlarm (zero) if alarm cant be created
  */
 #define fdmgrNoAlarm 0
-epicsShareFunc fdmgrAlarmId epicsShareAPI fdmgr_add_timeout(
-fdctx           *pfdctx,	/* fd mgr ctx from fdmgr_init()		*/
-struct timeval  *ptimeout,	/* relative delay from current time	*/
-pCallBackFDMgr  pfunc,		/* function (handler) to call 		*/
-void            *param		/* first parameter passed to the func	*/
+LIBCOM_API fdmgrAlarmId epicsStdCall fdmgr_add_timeout(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init()         */
+struct timeval  *ptimeout,  /* relative delay from current time     */
+pCallBackFDMgr  pfunc,      /* function (handler) to call           */
+void            *param      /* first parameter passed to the func   */
 );
 
 /*
  * Clear a timeout which has not executed its function (handler)
  * yet.
  */
-epicsShareFunc int epicsShareAPI fdmgr_clear_timeout(
-fdctx           *pfdctx,	/* fd mgr ctx from fdmgr_init() 	*/
-fdmgrAlarmId	id		/* alarm to delete                      */
+LIBCOM_API int epicsStdCall fdmgr_clear_timeout(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init()         */
+fdmgrAlarmId    id          /* alarm to delete                      */
 );
 
 /*
@@ -105,61 +105,61 @@ fdmgrAlarmId	id		/* alarm to delete                      */
  *
  * write callbacks are called only once after each call to
  * fdmgr_add_callback()
- * 
+ *
  */
-epicsShareFunc int epicsShareAPI fdmgr_add_callback(
-fdctx *pfdctx,			/* fd mgr ctx from fdmgr_init() 	*/
-SOCKET fd,				/* file descriptor			*/
-enum fdi_type fdi,		/* file descriptor interest type	*/	
-pCallBackFDMgr pfunc,		/* function (handler) to call 		*/
-void *param				/* first parameter passed to the func   */
+LIBCOM_API int epicsStdCall fdmgr_add_callback(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init()         */
+SOCKET          fd,         /* file descriptor                      */
+enum fdi_type   fdi,        /* file descriptor interest type        */
+pCallBackFDMgr  pfunc,      /* function (handler) to call           */
+void            *param      /* first parameter passed to the func   */
 );
 
 /*
- * 
+ *
  * Clear nterest in a type of file descriptor activity (IO).
  *
- */ 
-epicsShareFunc int epicsShareAPI fdmgr_clear_callback(
-fdctx			*pfdctx,	/* fd mgr ctx from fdmgr_init() 	*/
-SOCKET		fd,		/* file descriptor                      */
-enum fdi_type	fdi		/* file descriptor interest type        */
+ */
+LIBCOM_API int epicsStdCall fdmgr_clear_callback(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init()         */
+SOCKET          fd,         /* file descriptor                      */
+enum fdi_type   fdi         /* file descriptor interest type        */
 );
 
 /*
  *
- * Wait a specified delay relative from the current time for file 
- * descriptor activity (IO) or timeouts (timer expiration). Application 
- * specified functions (handlers) will not be called unless the 
+ * Wait a specified delay relative from the current time for file
+ * descriptor activity (IO) or timeouts (timer expiration). Application
+ * specified functions (handlers) will not be called unless the
  * application waits in this function or polls it frequently
- * enough. 
+ * enough.
  *
  */
-epicsShareFunc int epicsShareAPI fdmgr_pend_event(
-fdctx		*pfdctx,	/* fd mgr ctx from fdmgr_init() */
-struct timeval	*ptimeout
+LIBCOM_API int epicsStdCall fdmgr_pend_event(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init() */
+struct timeval  *ptimeout
 );
 
 
 /*
  * obsolete interface
  */
-epicsShareFunc int epicsShareAPI fdmgr_clear_fd(
-fdctx		*pfdctx,		/* fd mgr ctx from fdmgr_init() */
-SOCKET	fd
+LIBCOM_API int epicsStdCall fdmgr_clear_fd(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init() */
+SOCKET          fd
 );
 
 /*
  * obsolete interface
  */
-epicsShareFunc int epicsShareAPI fdmgr_add_fd(
-fdctx   *pfdctx,		/* fd mgr ctx from fdmgr_init() */
-SOCKET  fd,
-pCallBackFDMgr pfunc,		/* function (handler) to call 		*/
-void    *param
+LIBCOM_API int epicsStdCall fdmgr_add_fd(
+fdctx           *pfdctx,    /* fd mgr ctx from fdmgr_init() */
+SOCKET          fd,
+pCallBackFDMgr  pfunc,      /* function (handler) to call   */
+void            *param
 );
 
-epicsShareFunc int epicsShareAPI fdmgr_delete(fdctx *pfdctx);
+LIBCOM_API int epicsStdCall fdmgr_delete(fdctx *pfdctx);
 
 #ifdef __cplusplus
 }

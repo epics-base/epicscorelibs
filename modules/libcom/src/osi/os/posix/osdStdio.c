@@ -3,16 +3,15 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 #include <osiUnistd.h>
-#define epicsExportSharedSymbols
 #include <epicsStdio.h>
 
-epicsShareFunc int epicsShareAPI epicsSnprintf(
+LIBCOM_API int epicsStdCall epicsSnprintf(
     char *str, size_t size, const char *format, ...)
 {
     int nchars;
@@ -24,7 +23,7 @@ epicsShareFunc int epicsShareAPI epicsSnprintf(
     return(nchars);
 }
 
-epicsShareFunc int epicsShareAPI epicsVsnprintf(
+LIBCOM_API int epicsStdCall epicsVsnprintf(
     char *str, size_t size, const char *format, va_list ap)
 {
     return vsnprintf ( str, size, format, ap );

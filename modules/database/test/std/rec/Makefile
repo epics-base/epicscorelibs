@@ -37,6 +37,9 @@ TESTS += arrayOpTest
 
 TESTPROD_HOST += recMiscTest
 recMiscTest_SRCS += recMiscTest.c
+ifeq (NO,$(STATIC_BUILD))
+recMiscTest_CFLAGS += -DLINK_DYNAMIC
+endif
 recMiscTest_SRCS += recTestIoc_registerRecordDeviceDriver.cpp
 testHarness_SRCS += recMiscTest.c
 TESTFILES += ../recMiscTest.db
@@ -155,6 +158,13 @@ asyncproctest_SRCS += asyncproctest.c
 asyncproctest_SRCS += asyncproctest_registerRecordDeviceDriver.cpp
 TESTFILES += $(COMMON_DIR)/asyncproctest.dbd ../asyncproctest.db
 TESTS += asyncproctest
+
+TESTPROD_HOST += linkFilterTest
+linkFilterTest_SRCS += linkFilterTest.c
+linkFilterTest_SRCS += recTestIoc_registerRecordDeviceDriver.cpp
+testHarness_SRCS += linkFilterTest.c
+TESTFILES += ../linkFilterTest.db
+TESTS += linkFilterTest
 
 # dbHeader* is only a compile test
 # no need to actually run

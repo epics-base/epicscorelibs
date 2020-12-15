@@ -1,5 +1,6 @@
 /*************************************************************************\
 * Copyright (c) 2017 Michael Davidsaver
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -9,6 +10,7 @@
 #include "dbAccess.h"
 #include "errlog.h"
 #include "dbStaticLib.h"
+#include "iocshRegisterCommon.h"
 #include "dbUnitTest.h"
 #include "testMain.h"
 
@@ -62,13 +64,22 @@ void recTestIoc_registerRecordDeviceDriver(struct dbBase *);
 
 MAIN(recMiscTest)
 {
-    testPlan(10);
+    testPlan(12);
 
     testdbPrepare();
 
     testdbReadDatabase("recTestIoc.dbd", NULL, NULL);
 
+#ifdef LINK_DYNAMIC
+    /* A smoke test of registerAllRecordDeviceDrivers to check for idempotence */
+    testOk1(registerAllRecordDeviceDrivers(pdbbase)==0);
+#else
+    testSkip(2, "only testing registerAllRecordDeviceDrivers() with dynamic linking");
+#endif
     recTestIoc_registerRecordDeviceDriver(pdbbase);
+#ifdef LINK_DYNAMIC
+    testOk1(registerAllRecordDeviceDrivers(pdbbase)==0);
+#endif
 
     testdbReadDatabase("recMiscTest.db", NULL, NULL);
 

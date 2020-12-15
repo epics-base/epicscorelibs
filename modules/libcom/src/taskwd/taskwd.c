@@ -3,21 +3,21 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* taskwd.c */
 
 /* tasks and subroutines for a general purpose task watchdog */
 /*
  *      Original Author:        Marty Kraimer
- *      Date:   	        07-18-91
+ *      Date:                   07-18-91
 */
 
 #include <stddef.h>
 #include <stdlib.h>
 
-#define epicsExportSharedSymbols
 #include "cantProceed.h"
 #include "dbDefs.h"
 #include "epicsEvent.h"
@@ -356,7 +356,7 @@ void taskwdAnyRemove(void *key)
 
 /* Report function */
 
-epicsShareFunc void taskwdShow(int level)
+LIBCOM_API void taskwdShow(int level)
 {
     struct tNode *pt;
     int mCount, fCount, tCount;

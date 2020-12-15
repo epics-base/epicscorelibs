@@ -3,8 +3,8 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
@@ -38,18 +38,18 @@ public:
         dbContextReadNotifyCacheAllocator & allocator, unsigned long size ) :
         _allocator ( allocator ), _p ( allocator.alloc ( size ) ) {}
     ~privateAutoDestroyPtr () { _allocator.free ( _p ); }
-	char * get () const { return _p; }
+    char * get () const { return _p; }
 private:
     dbContextReadNotifyCacheAllocator & _allocator;
     char * _p;
-	privateAutoDestroyPtr ( const privateAutoDestroyPtr & );
-	privateAutoDestroyPtr & operator = ( const privateAutoDestroyPtr & );
+    privateAutoDestroyPtr ( const privateAutoDestroyPtr & );
+    privateAutoDestroyPtr & operator = ( const privateAutoDestroyPtr & );
 };
 
 // extra effort taken here to not hold the lock when calling the callback
 void dbContextReadNotifyCache::callReadNotify (
     epicsGuard < epicsMutex > & guard, struct dbChannel * dbch,
-	unsigned type, unsigned long count, cacReadNotify & notify )
+    unsigned type, unsigned long count, cacReadNotify & notify )
 {
     guard.assertIdenticalMutex ( _mutex );
 

@@ -1,3 +1,11 @@
+#*************************************************************************
+# Copyright (c) 2014 UChicago Argonne LLC, as Operator of Argonne
+#     National Laboratory.
+# SPDX-License-Identifier: EPICS
+# EPICS BASE is distributed subject to a Software License Agreement found
+# in file LICENSE that is included with this distribution.
+#*************************************************************************
+
 # Bootstrap wrapper for the Perl 5 Channel Access client module.
 # This wrapper also contains the POD documentation for the module.
 
@@ -134,7 +142,7 @@ garbage-collected by Perl.
 
 =head2 Object Methods
 
-The following methods are provided for channel objects returned by 
+The following methods are provided for channel objects returned by
 C<< CA->new() >>.
 
 =over 4
@@ -232,7 +240,7 @@ below.
 Callback subroutines should only call Perl's C<exit>, C<die> or similar
 functions if they are expecting the program to exit at that time; attempts to
 C<die> with an exception object in the callback and catch that using C<eval> in
-the main thread are not likely to succeed and will probably result in a crash. 
+the main thread are not likely to succeed and will probably result in a crash.
 Callbacks should not perform any operations that would block for more than a
 fraction of a second as this will hold up network communications with the
 relevant server and could cause the Perl program and/or the Channel Access

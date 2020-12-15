@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2012 ITER Organization
 *
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -9,8 +10,7 @@
 
 /* Null default thread hooks for all platforms that do not do anything special */
 
-#define epicsExportSharedSymbols
 #include "epicsThread.h"
 
-epicsShareDef EPICS_THREAD_HOOK_ROUTINE epicsThreadHookDefault;
-epicsShareDef EPICS_THREAD_HOOK_ROUTINE epicsThreadHookMain;
+EPICS_THREAD_HOOK_ROUTINE epicsThreadHookDefault;
+EPICS_THREAD_HOOK_ROUTINE epicsThreadHookMain;

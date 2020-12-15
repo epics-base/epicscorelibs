@@ -3,8 +3,8 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /*
@@ -17,18 +17,13 @@
  *  Copyright, 1986, The Regents of the University of California.
  *
  *
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
-#ifndef syncGrouph
-#define syncGrouph
-
-#ifdef epicsExportSharedSymbols
-#   define syncGrouph_restore_epicsExportSharedSymbols
-#   undef epicsExportSharedSymbols
-#endif
+#ifndef INC_syncGroup_H
+#define INC_syncGroup_H
 
 #include "tsDLList.h"
 #include "tsFreeList.h"
@@ -36,11 +31,7 @@
 #include "epicsEvent.h"
 #include "compilerDependencies.h"
 
-#ifdef syncGrouph_restore_epicsExportSharedSymbols
-#   define epicsExportSharedSymbols
-#   include "shareLib.h"
-#endif
-
+#include "libCaAPI.h"
 #include "cadef.h"
 #include "cacIO.h"
 
@@ -70,7 +61,7 @@ struct CASG;
 
 class syncGroupReadNotify : public syncGroupNotify, public cacReadNotify {
 public:
-    typedef void ( CASG :: * PRecycleFunc ) 
+    typedef void ( CASG :: * PRecycleFunc )
         ( epicsGuard < epicsMutex > &, syncGroupReadNotify & );
     static syncGroupReadNotify * factory (
         tsFreeList < class syncGroupReadNotify, 128, epicsMutexNOOP > &,
@@ -115,7 +106,7 @@ private:
 
 class syncGroupWriteNotify : public syncGroupNotify, public cacWriteNotify {
 public:
-    typedef void ( CASG :: * PRecycleFunc ) 
+    typedef void ( CASG :: * PRecycleFunc )
         ( epicsGuard < epicsMutex > &, syncGroupWriteNotify & );
     static syncGroupWriteNotify * factory (
         tsFreeList < class syncGroupWriteNotify, 128, epicsMutexNOOP > &,
@@ -150,7 +141,7 @@ private:
     void completion ( epicsGuard < epicsMutex > & );
     void exception (
         epicsGuard < epicsMutex > &, int status, const char *pContext,
-		unsigned type, arrayElementCount count );
+        unsigned type, arrayElementCount count );
     syncGroupWriteNotify ( const syncGroupWriteNotify & );
     syncGroupWriteNotify & operator = ( const syncGroupWriteNotify & );
 };
@@ -174,9 +165,9 @@ public:
     void reset ( CallbackGuard &, epicsGuard < epicsMutex > & );
     void show ( epicsGuard < epicsMutex > &, unsigned level ) const;
     void show ( unsigned level ) const;
-    void get ( epicsGuard < epicsMutex > &, chid pChan, 
+    void get ( epicsGuard < epicsMutex > &, chid pChan,
         unsigned type, arrayElementCount count, void * pValue );
-    void put ( epicsGuard < epicsMutex > &, chid pChan, 
+    void put ( epicsGuard < epicsMutex > &, chid pChan,
         unsigned type, arrayElementCount count, const void * pValue );
     void completionNotify (
         epicsGuard < epicsMutex > &, syncGroupNotify & );
@@ -208,9 +199,9 @@ private:
     void destroyCompletedIO (
         CallbackGuard & cbGuard,
         epicsGuard < epicsMutex > & guard );
-    void recycleReadNotifyIO ( epicsGuard < epicsMutex > &, 
+    void recycleReadNotifyIO ( epicsGuard < epicsMutex > &,
                                 syncGroupReadNotify & );
-    void recycleWriteNotifyIO ( epicsGuard < epicsMutex > &, 
+    void recycleWriteNotifyIO ( epicsGuard < epicsMutex > &,
                                 syncGroupWriteNotify & );
 
     CASG ( const CASG & );
@@ -277,4 +268,4 @@ inline bool syncGroupReadNotify::ioPending (
     return ! this->ioComplete;
 }
 
-#endif // ifdef syncGrouph
+#endif // ifdef INC_syncGroup_H

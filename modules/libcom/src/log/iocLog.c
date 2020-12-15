@@ -3,20 +3,19 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /* logClient.c,v 1.25.2.6 2004/10/07 13:37:34 mrk Exp */
 /*
- *      Author:         Jeffrey O. Hill 
- *      Date:           080791 
+ *      Author:         Jeffrey O. Hill
+ *      Date:           080791
  */
 
 #include <stdio.h>
 #include <limits.h>
 
-#define epicsExportSharedSymbols
 #include "envDefs.h"
 #include "errlog.h"
 #include "logClient.h"
@@ -69,7 +68,7 @@ static int getConfig (struct in_addr *pserver_addr, unsigned short *pserver_port
 /*
  *  iocLogFlush ()
  */
-void epicsShareAPI epicsShareAPI iocLogFlush (void)
+void epicsStdCall epicsStdCall iocLogFlush (void)
 {
     if (iocLogClient!=NULL) {
         logClientFlush (iocLogClient);
@@ -119,7 +118,7 @@ static logClientId iocLogClientInit (void)
 /*
  *  iocLogInit()
  */
-int epicsShareAPI iocLogInit (void)
+int epicsStdCall iocLogInit (void)
 {
     /*
      * check for global disable
@@ -145,7 +144,7 @@ int epicsShareAPI iocLogInit (void)
 /*
  *  iocLogShow ()
  */
-void epicsShareAPI iocLogShow (unsigned level)
+void epicsStdCall iocLogShow (unsigned level)
 {
     if (iocLogClient!=NULL) {
         logClientShow (iocLogClient, level);
@@ -155,7 +154,7 @@ void epicsShareAPI iocLogShow (unsigned level)
 /*
  *  logClientInit(); deprecated
  */
-logClientId epicsShareAPI logClientInit (void)
+logClientId epicsStdCall logClientInit (void)
 {
     return iocLogClientInit ();
 }

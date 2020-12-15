@@ -1,6 +1,7 @@
 /*************************************************************************\
 * Copyright (c) 2014 Brookhaven Science Assoc. as operator of Brookhaven
 *               National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
  \*************************************************************************/
@@ -459,7 +460,7 @@ static void testLinkInitFail(void)
     eltc(0);
     testOk(dbReadDatabase(&pdbbase, "dbBadLink.db", "." OSI_PATH_LIST_SEPARATOR
         ".." OSI_PATH_LIST_SEPARATOR "../O.Common" OSI_PATH_LIST_SEPARATOR
-	"O.Common", NULL) != 0, "dbReadDatabase returned error (expected)");
+        "O.Common", NULL) != 0, "dbReadDatabase returned error (expected)");
 
     testIocInitOk();
     eltc(1);

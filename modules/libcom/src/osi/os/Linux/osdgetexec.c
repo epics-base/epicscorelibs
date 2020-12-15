@@ -1,10 +1,14 @@
+/*************************************************************************\
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
+\*************************************************************************/
 
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
 
-#define epicsExportSharedSymbols
 #include <osiFileName.h>
 
 #ifndef PATH_MAX

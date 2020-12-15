@@ -3,19 +3,20 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /*
- * Author: 
+ * Author:
  * Jeffrey O. Hill
  * johill@lanl.gov
  */
 
 #ifndef compilerSpecific_h
 #define compilerSpecific_h
- 
+
 #ifndef __clang__
 #   error compiler/clang/compilerSpecific.h is only for use with the clang compiler
 #endif

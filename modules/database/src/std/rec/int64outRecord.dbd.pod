@@ -74,10 +74,6 @@ that comes with Base.
 The OUT link field contains a database or channel access link or provides
 hardware address information that the device support uses to determine where the
 output data should be sent to.
-The format for the OUT field value depends on the device support layer that is
-selected by the DTYP field.
-See L<Address Specification|...> for a description of the various hardware
-address formats supported.
 
 =head3 Operator Display Parameters
 
@@ -137,6 +133,15 @@ monitoring deadband functionality.
 =cut
 
     include "dbCommon.dbd"
+    %
+    %/* Declare Device Support Entry Table */
+    %struct int64outRecord;
+    %typedef struct int64outdset {
+    %    dset common;
+    %    long (*write_int64out)(struct int64outRecord *prec);
+    %} int64outdset;
+    %#define HAS_int64outdset
+    %
     field(VAL,DBF_INT64) {
         prompt("Desired Output")
         promptgroup("50 - Output")
@@ -279,28 +284,20 @@ monitoring deadband functionality.
         interest(3)
     }
 
-=head3 Simulation Mode
+=head3 Simulation Mode Parameters
 
-The record provides several fields to support simulation of absent hardware.
-If the SIML field is set it is used to read a value into the SIMM field,
-which controls whether simulation is used or not:
+The following fields are used to operate the record in simulation mode.
 
-=over
+If SIMM (fetched through SIML) is YES, the record is put in SIMS
+severity and the value is written through SIOL.
+SSCN sets a different SCAN mechanism to use in simulation mode.
+SDLY sets a delay (in sec) that is used for asynchronous simulation
+processing.
 
-=item *
-SIMM must be zero (C<NO>) for the record to write a value to the device
-support.
+See L<Output Simulation Fields|dbCommonOutput/Output Simulation Fields>
+for more information on simulation mode and its fields.
 
-=item *
-If SIMM is C<YES> and the SIOL link field is set, the value in engineering
-units is written using the link.
-
-=back
-
-The SIMS field can be set to give the record an alarm severity while it is in
-simulation mode.
-
-=fields SIML, SIMM, SIOL, SIMS
+=fields SIML, SIMM, SIOL, SIMS, SDLY, SSCN
 
 =cut
 
@@ -462,7 +459,7 @@ by at least HYST between level alarm status and severity changes.
 
 =item 4.
 
-Check severity and write the new value. See L<Invalid Alarm Output Action>
+Check severity and write the new value. See L<Invalid Output Action Fields|dbCommonOutput/Invalid Output Action Fields>
 for details on how invalid alarms affect output records.
 
 =item 5.

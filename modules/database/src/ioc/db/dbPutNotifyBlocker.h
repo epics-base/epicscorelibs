@@ -3,15 +3,15 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
+* SPDX-License-Identifier: EPICS
+* EPICS Base is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
- *	Author Jeffrey O. Hill
- *	johill@lanl.gov
- *	505 665 1831
+/*
+ *  Author Jeffrey O. Hill
+ *  johill@lanl.gov
+ *  505 665 1831
  */
 
 #ifndef dbPutNotifyBlockerh
@@ -75,8 +75,8 @@ private:
         epicsGuard < epicsMutex > &, unsigned long newSize );
     friend void putNotifyCompletion ( processNotify * ppn );
     friend int  putNotifyPut ( processNotify *ppn, notifyPutType type );
-	dbPutNotifyBlocker ( const dbPutNotifyBlocker & );
-	dbPutNotifyBlocker & operator = ( const dbPutNotifyBlocker & );
+    dbPutNotifyBlocker ( const dbPutNotifyBlocker & );
+    dbPutNotifyBlocker & operator = ( const dbPutNotifyBlocker & );
     virtual ~dbPutNotifyBlocker ();
     void operator delete ( void * );
 };

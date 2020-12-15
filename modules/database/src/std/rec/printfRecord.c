@@ -1,8 +1,9 @@
 /*************************************************************************\
 * Copyright (c) 2012 UChicago Argonne LLC, as Operator of Argonne
 *     National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
 /* Printf record type */
@@ -130,7 +131,7 @@ static void doPrintf(printfRecord *prec)
                         flags |= F_BADLNK;
                     break;
                 case 'h':
-		    if (flags & (F_LONGLONG | F_LONG | F_CHAR))
+                    if (flags & (F_LONGLONG | F_LONG | F_CHAR))
                         flags |= F_BADFMT;
                     else if (flags & F_SHORT)
                         flags = (flags & ~F_SHORT) | F_CHAR;
@@ -138,11 +139,11 @@ static void doPrintf(printfRecord *prec)
                         flags |= F_SHORT;
                     break;
                 case 'l':
-		    if (flags & (F_LONGLONG | F_SHORT | F_CHAR))
+                    if (flags & (F_LONGLONG | F_SHORT | F_CHAR))
                         flags |= F_BADFMT;
-		    else if (flags & F_LONG)
+                    else if (flags & F_LONG)
                         flags = (flags & ~F_LONG) | F_LONGLONG;
-		    else
+                    else
                         flags |= F_LONG;
                     break;
                 default:
@@ -336,13 +337,13 @@ static long init_record(struct dbCommon *pcommon, int pass)
     if (!pdset)
         return 0;       /* Device support is optional */
 
-    if (pdset->number < 5) {
+    if (pdset->common.number < 5) {
         recGblRecordError(S_dev_missingSup, prec, "printf::init_record");
         return S_dev_missingSup;
     }
 
-    if (pdset->init_record) {
-        long status = pdset->init_record(prec);
+    if (pdset->common.init_record) {
+        long status = pdset->common.init_record(pcommon);
         if (status)
             return status;
     }
@@ -368,7 +369,7 @@ static long process(struct dbCommon *pcommon)
     /* Call device support */
     pdset = (printfdset *) prec->dset;
     if (pdset &&
-        pdset->number >= 5 &&
+        pdset->common.number >= 5 &&
         pdset->write_string) {
         status = pdset->write_string(prec);
 

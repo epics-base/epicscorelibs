@@ -6,6 +6,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -65,10 +66,11 @@ epicsShareFunc void db_event_change_priority ( dbEventCtx ctx, unsigned epicsPri
 
 #ifdef EPICS_PRIVATE_API
 epicsShareFunc void db_cleanup_events(void);
+epicsShareFunc void db_init_event_freelists (void);
 #endif
 
 typedef void EVENTFUNC (void *user_arg, struct dbChannel *chan,
-	int eventsRemaining, struct db_field_log *pfl);
+    int eventsRemaining, struct db_field_log *pfl);
 
 typedef void * dbEventSubscription;
 epicsShareFunc dbEventSubscription db_add_event (

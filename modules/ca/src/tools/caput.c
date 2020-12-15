@@ -7,6 +7,7 @@
 *     Operator of Los Alamos National Laboratory.
 * Copyright (c) 2002 Berliner Elektronenspeicherringgesellschaft fuer
 *     Synchrotronstrahlung.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -110,18 +111,18 @@ void put_event_handler ( struct event_handler_args args )
 
 /*+**************************************************************************
  *
- * Function:	caget
+ * Function:    caget
  *
- * Description:	Issue read request, wait for incoming data
- * 		and print the data
+ * Description: Issue read request, wait for incoming data
+ *              and print the data
  *
- * Arg(s) In:	pvs       -  Pointer to an array of pv structures
+ * Arg(s) In:   pvs       -  Pointer to an array of pv structures
  *              nPvs      -  Number of elements in the pvs array
  *              format    -  Output format
  *              dbrType   -  Requested dbr type
  *              reqElems  -  Requested number of (array) elements
  *
- * Return(s):	Error code: 0 = OK, 1 = Error
+ * Return(s):   Error code: 0 = OK, 1 = Error
  *
  **************************************************************************-*/
 
@@ -241,17 +242,17 @@ int caget (pv *pvs, int nPvs, OutputT format,
 
 /*+**************************************************************************
  *
- * Function:	main
+ * Function:    main
  *
- * Description:	caput main()
- * 		Evaluate command line options, set up CA, connect the
- * 		channel, put and print the data
+ * Description: caput main()
+ *              Evaluate command line options, set up CA, connect the
+ *              channel, put and print the data
  *
- * Arg(s) In:	[options] <pv-name> <pv-value> ...
+ * Arg(s) In:   [options] <pv-name> <pv-value> ...
  *
- * Arg(s) Out:	none
+ * Arg(s) Out:  none
  *
- * Return(s):	Standard return code (0=success, 1=error)
+ * Return(s):   Standard return code (0=success, 1=error)
  *
  **************************************************************************-*/
 
@@ -437,6 +438,7 @@ int main (int argc, char *argv[])
     dbuf = calloc (count, sizeof(double));
     if(!sbuf || !dbuf) {
         fprintf(stderr, "Memory allocation failed\n");
+        free(sbuf); free(dbuf);
         return 1;
     }
 
@@ -450,6 +452,7 @@ int main (int argc, char *argv[])
         result = ca_pend_io(caTimeout);
         if (result == ECA_TIMEOUT) {
             fprintf(stderr, "Read operation timed out: ENUM data was not read.\n");
+            free(sbuf); free(dbuf);
             return 1;
         }
 
@@ -460,6 +463,7 @@ int main (int argc, char *argv[])
                 if (*(argv+optind+i) == pend) { /* Conversion didn't work */
                     fprintf(stderr, "Enum index value '%s' is not a number.\n",
                             *(argv+optind+i));
+                    free(sbuf); free(dbuf);
                     return 1;
                 }
                 if (dbuf[i] >= bufGrEnum.no_str) {
@@ -486,6 +490,7 @@ int main (int argc, char *argv[])
                     dbuf[i] = epicsStrtod(sbuf[i], &pend);
                     if (sbuf[i] == pend || enumAsString) {
                         fprintf(stderr, "Enum string value '%s' invalid.\n", sbuf[i]);
+                        free(sbuf); free(dbuf);
                         return 1;
                     }
                     if (dbuf[i] >= bufGrEnum.no_str) {
@@ -503,6 +508,7 @@ int main (int argc, char *argv[])
             ebuf = calloc(len, sizeof(char));
             if(!ebuf) {
                 fprintf(stderr, "Memory allocation failed\n");
+                free(sbuf); free(dbuf); free(ebuf);
                 return 1;
             }
             count = epicsStrnRawFromEscaped(ebuf, len, cbuf, len-1) + 1;
@@ -537,12 +543,14 @@ int main (int argc, char *argv[])
     }
     if (result != ECA_NORMAL) {
         fprintf(stderr, "Error from put operation: %s\n", ca_message(result));
+        free(sbuf); free(dbuf); free(ebuf);
         return 1;
     }
 
     result = ca_pend_io(caTimeout);
     if (result == ECA_TIMEOUT) {
         fprintf(stderr, "Write operation timed out: Data was not written.\n");
+        free(sbuf); free(dbuf); free(ebuf);
         return 1;
     }
     if (request == callback) {   /* Also wait for callbacks */
@@ -556,6 +564,7 @@ int main (int argc, char *argv[])
 
     if (result != ECA_NORMAL) {
         fprintf(stderr, "Error occured writing data: %s\n", ca_message(result));
+        free(sbuf); free(dbuf); free(ebuf);
         return 1;
     }
 
@@ -567,6 +576,7 @@ int main (int argc, char *argv[])
 
                                 /* Shut down Channel Access */
     ca_context_destroy();
+    free(sbuf); free(dbuf); free(ebuf);
 
     return result;
 }

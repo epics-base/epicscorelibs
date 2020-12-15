@@ -3,12 +3,12 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/*  
+/*
  *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
@@ -19,8 +19,8 @@
  *  Author: Jeff Hill
  */
 
-#ifndef inetAddrIDh
-#define inetAddrIDh
+#ifndef INC_inetAddrID_H
+#define INC_inetAddrID_H
 
 #include "osiSock.h"
 #include "resourceLib.h"
@@ -58,7 +58,7 @@ inline resTableIndex inetAddrID::hash () const
     index = this->addr.sin_addr.s_addr;
     index ^= this->addr.sin_port;
     index ^= this->addr.sin_port >> 8u;
-    return integerHash ( inetAddrMinIndexBitWidth, 
+    return integerHash ( inetAddrMinIndexBitWidth,
         inetAddrMaxIndexBitWidth, index );
 }
 
@@ -67,6 +67,6 @@ inline void inetAddrID::name ( char *pBuf, unsigned bufSize ) const
     ipAddrToDottedIP ( &this->addr, pBuf, bufSize );
 }
 
-#endif // ifdef inetAddrID
+#endif // ifdef INC_inetAddrID_H
 
 

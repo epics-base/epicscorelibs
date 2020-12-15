@@ -116,7 +116,7 @@ ifneq (,$(filter $(T_A), $(EPICS_HOST_ARCH) $(CROSS_COMPILER_RUNTEST_ARCHS)))
 RUNTESTS_ENABLED = YES
 TESTSCRIPTS.t = $(filter %.t, $(TESTSCRIPTS))
 TAPFILES.t += $(TESTSCRIPTS.t:.t=.tap)
-JUNITFILES.t += $(TESTSCRIPTS.t:.t=.xml)
+JUNITFILES.t += $(TESTSCRIPTS.t:.t=-results.xml)
 TAPFILES += $(TAPFILES.t)
 JUNITFILES += $(JUNITFILES.t)
 endif
@@ -390,7 +390,7 @@ ifdef RUNTESTS_ENABLED
 	$(PERL) $< -tap > $@
 endif
 
-$(JUNITFILES.t): %.xml: %.tap
+$(JUNITFILES.t): %-results.xml: %.tap
 	$(TAPTOJUNIT) --puretap --output $@ --input $< $*
 
 # If there's a perl test script (.plt) available, use it
@@ -405,6 +405,23 @@ $(JUNITFILES.t): %.xml: %.tap
 	$(PERL) $(TOOLS)/makeTestfile.pl $(T_A) $(EPICS_HOST_ARCH) $@ $<
 
 #---------------------------------------------------------------
+# Generate $(API_HEADER) files on request (%API.h)
+
+ifdef API_HEADER
+# Install them
+INC += $(API_HEADER)
+
+# Ensure we generate them early enough
+INSTALL_API_HEADERS = $(addprefix $(INSTALL_INCLUDE)/,$(API_HEADER))
+$(filter-out $(INSTALL_API_HEADERS), $(INSTALL_INC)) $(HDEPENDS_FILES): \
+    | $(INSTALL_API_HEADERS)
+
+# How to make one
+$(COMMON_DIR)/%API.h: $(TOOLS)/makeAPIheader.pl
+	@$(RM) $@
+	$(PERL) $(TOOLS)/makeAPIheader.pl -o $@ $(@:$(COMMON_DIR)/%API.h=%)
+endif
+
 # Generate header with version number from VCS
 
 ifneq ($(GENVERSION),)

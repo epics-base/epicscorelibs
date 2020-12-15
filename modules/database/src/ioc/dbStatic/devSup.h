@@ -3,8 +3,9 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 /** @file devSup.h
  *
@@ -34,7 +35,7 @@ struct link; /* aka DBLINK */
  *
  * In Makefile:
  @code
- USR_CFLAGS += -DUSE_TYPED_RSET -DUSE_TYPED_DSET
+ USR_CPPFLAGS += -DUSE_TYPED_RSET -DUSE_TYPED_DSET
  @endcode
  *
  * In C source file:
@@ -48,10 +49,7 @@ struct link; /* aka DBLINK */
  static long get_iointr_info(int detach, dbCommon *prec, IOCSCANPVT* pscan);
  static long longin_read(longinRecord *prec);
 
- const struct {
-     dset common;
-     long (*read)(longinRecord *prec);
- } devLiDevName = {
+ longindset devLiDevName = {
      {
       5, // 4 from dset + 1 from longinRecord
          NULL,
@@ -133,19 +131,19 @@ typedef struct dsxt {
 
 #ifdef __cplusplus
 extern "C" {
-    typedef long (*DEVSUPFUN)(void *);	/* ptr to device support function*/
+    typedef long (*DEVSUPFUN)(void *);  /* ptr to device support function*/
 #else
-    typedef long (*DEVSUPFUN)();	/* ptr to device support function*/
+    typedef long (*DEVSUPFUN)();        /* ptr to device support function*/
 #endif
 
 #ifndef USE_TYPED_DSET
 
 typedef struct dset {   /* device support entry table */
-    long	number;		/*number of support routines*/
-    DEVSUPFUN	report;		/*print report*/
-    DEVSUPFUN	init;		/*init support layer*/
-    DEVSUPFUN	init_record;	/*init device for particular record*/
-    DEVSUPFUN	get_ioint_info;	/* get io interrupt information*/
+    long        number;         /*number of support routines*/
+    DEVSUPFUN   report;         /*print report*/
+    DEVSUPFUN   init;           /*init support layer*/
+    DEVSUPFUN   init_record;    /*init device for particular record*/
+    DEVSUPFUN   get_ioint_info; /* get io interrupt information*/
     /*other functions are record dependent*/
 } dset;
 

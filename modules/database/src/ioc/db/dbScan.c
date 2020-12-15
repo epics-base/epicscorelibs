@@ -5,6 +5,7 @@
 *     Operator of Los Alamos National Laboratory.
 * Copyright (c) 2013 Helmholtz-Zentrum Berlin
 *     für Materialien und Energie GmbH.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -1075,13 +1076,10 @@ static void addToList(struct dbCommon *precord, scan_list *psl)
     pse->pscan_list = psl;
     ptemp = (scan_element *)ellLast(&psl->list);
     while (ptemp) {
-        if (ptemp->precord->phas <= precord->phas) {
-            ellInsert(&psl->list, &ptemp->node, &pse->node);
-            break;
-        }
+        if (ptemp->precord->phas <= precord->phas) break;
         ptemp = (scan_element *)ellPrevious(&ptemp->node);
     }
-    if (ptemp == NULL) ellAdd(&psl->list, (void *)pse);
+    ellInsert(&psl->list, (ptemp ? &ptemp->node : NULL), &pse->node);
     psl->modified = TRUE;
     epicsMutexUnlock(psl->lock);
 }
@@ -1107,7 +1105,7 @@ static void deleteFromList(struct dbCommon *precord, scan_list *psl)
         return;
     }
     pse->pscan_list = NULL;
-    ellDelete(&psl->list, (void *)pse);
+    ellDelete(&psl->list, &pse->node);
     psl->modified = TRUE;
     epicsMutexUnlock(psl->lock);
 }

@@ -3,12 +3,12 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
-* EPICS BASE Versions 3.13.7
-* and higher are distributed subject to a Software License Agreement found
-* in file LICENSE that is included with this distribution. 
+* SPDX-License-Identifier: EPICS
+* EPICS BASE is distributed subject to a Software License Agreement found
+* in file LICENSE that is included with this distribution.
 \*************************************************************************/
 
-/* 
+/*
  *
  *                    L O S  A L A M O S
  *              Los Alamos National Laboratory
@@ -23,7 +23,7 @@
 
 #define epicsAssertAuthor "Jeff Hill johill@lanl.gov"
 
-#include "envDefs.h" 
+#include "envDefs.h"
 #include "errlog.h"
 #include "osiWireFormat.h"
 
@@ -40,8 +40,8 @@ public:
     void release ( void * );
 private:
     tsFreeList < class bhe, 0x100 > freeList;
-	bheFreeStoreMgr ( const bheFreeStoreMgr & );
-	bheFreeStoreMgr & operator = ( const bheFreeStoreMgr & );
+    bheFreeStoreMgr ( const bheFreeStoreMgr & );
+    bheFreeStoreMgr & operator = ( const bheFreeStoreMgr & );
 };
 
 void * bheFreeStoreMgr::allocate ( size_t size )
@@ -108,7 +108,7 @@ int main ( int argc, char ** argv )
     sock = epicsSocketCreate ( AF_INET, SOCK_DGRAM, IPPROTO_UDP );
     if ( sock == INVALID_SOCKET ) {
         char sockErrBuf[64];
-        epicsSocketConvertErrnoToString ( 
+        epicsSocketConvertErrnoToString (
             sockErrBuf, sizeof ( sockErrBuf ) );
         errlogPrintf ("casw: unable to create datagram socket because = \"%s\"\n",
             sockErrBuf );
@@ -122,7 +122,7 @@ int main ( int argc, char ** argv )
     status = bind ( sock, &addr.sa, sizeof (addr) );
     if ( status < 0 ) {
         char sockErrBuf[64];
-        epicsSocketConvertErrnoToString ( 
+        epicsSocketConvertErrnoToString (
             sockErrBuf, sizeof ( sockErrBuf ) );
         epicsSocketDestroy ( sock );
         errlogPrintf ( "casw: unable to bind to an unconstrained address because = \"%s\"\n",
@@ -134,7 +134,7 @@ int main ( int argc, char ** argv )
     status = socket_ioctl ( sock, FIONBIO, &yes );
     if ( status < 0 ) {
         char sockErrBuf[64];
-        epicsSocketConvertErrnoToString ( 
+        epicsSocketConvertErrnoToString (
             sockErrBuf, sizeof ( sockErrBuf ) );
         epicsSocketDestroy ( sock );
         errlogPrintf ( "casw: unable to set socket to nonblocking state because \"%s\"\n",
@@ -169,7 +169,7 @@ int main ( int argc, char ** argv )
     status = socket_ioctl ( sock, FIONBIO, &no );
     if ( status < 0 ) {
         char sockErrBuf[64];
-        epicsSocketConvertErrnoToString ( 
+        epicsSocketConvertErrnoToString (
             sockErrBuf, sizeof ( sockErrBuf ) );
         epicsSocketDestroy ( sock );
         errlogPrintf ( "casw: unable to set socket to blocking state because \"%s\"\n",
@@ -185,7 +185,7 @@ int main ( int argc, char ** argv )
                             &addr.sa, &addrSize );
         if ( status <= 0 ) {
             char sockErrBuf[64];
-            epicsSocketConvertErrnoToString ( 
+            epicsSocketConvertErrnoToString (
                 sockErrBuf, sizeof ( sockErrBuf ) );
             epicsSocketDestroy ( sock );
             errlogPrintf ("casw: error from recv was = \"%s\"\n",
@@ -196,7 +196,7 @@ int main ( int argc, char ** argv )
         if ( addr.sa.sa_family != AF_INET ) {
             continue;
         }
-        
+
         unsigned byteCount = static_cast <unsigned> ( status );
         pCurMsg = reinterpret_cast < const caHdr * > ( ( pCurBuf = buf ) );
         while ( byteCount ) {
@@ -213,9 +213,9 @@ int main ( int argc, char ** argv )
                 epicsTime previousTime;
                 struct sockaddr_in ina;
 
-                /* 
+                /*
                  * this allows a fan-out server to potentially
-                 * insert the true address of the CA server 
+                 * insert the true address of the CA server
                  *
                  * old servers:
                  *   1) set this field to one of the ip addresses of the host _or_
@@ -252,8 +252,8 @@ int main ( int argc, char ** argv )
                 bhe *pBHE = beaconTable.lookup ( ina );
                 if ( pBHE ) {
                     previousTime = pBHE->updateTime ( guard );
-                    anomaly = pBHE->updatePeriod ( 
-                        guard, programBeginTime, 
+                    anomaly = pBHE->updatePeriod (
+                        guard, programBeginTime,
                         currentTime, beaconNumber, protocolRevision );
                 }
                 else {
@@ -264,7 +264,7 @@ int main ( int argc, char ** argv )
                      * time that we have seen a server's beacon
                      * shortly after the program started up)
                      */
-                    pBHE = new ( bheFreeList ) 
+                    pBHE = new ( bheFreeList )
                         bhe ( mutex, currentTime, beaconNumber, ina );
                     if ( pBHE ) {
                         if ( beaconTable.add ( *pBHE ) < 0 ) {
@@ -275,7 +275,7 @@ int main ( int argc, char ** argv )
                 }
                 if ( anomaly || interest > 1 ) {
                     char date[64];
-                    currentTime.strftime ( date, sizeof ( date ), 
+                    currentTime.strftime ( date, sizeof ( date ),
                         "%Y-%m-%d %H:%M:%S.%09f");
                     char host[64];
                     ipAddrToA ( &ina, host, sizeof ( host ) );
@@ -288,11 +288,11 @@ int main ( int argc, char ** argv )
                             pPrefix = "  ";
                         }
                     }
-                    printf ( "%s%-40s %s\n", 
+                    printf ( "%s%-40s %s\n",
                         pPrefix, host, date );
                     if ( anomaly && interest > 0 ) {
-                        printf ( "\testimate=%f current=%f\n", 
-                            pBHE->period ( guard ), 
+                        printf ( "\testimate=%f current=%f\n",
+                            pBHE->period ( guard ),
                             currentTime - previousTime );
                     }
                     fflush(stdout);

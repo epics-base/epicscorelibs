@@ -3,6 +3,7 @@
 *     National Laboratory.
 * Copyright (c) 2002 The Regents of the University of California, as
 *     Operator of Los Alamos National Laboratory.
+* SPDX-License-Identifier: EPICS
 * EPICS BASE is distributed subject to a Software License Agreement found
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
@@ -25,7 +26,7 @@
 
 #define SOCKERRNO WSAGetLastError()
 
-#define socket_ioctl(A,B,C)	ioctlsocket(A,B,C)
+#define socket_ioctl(A,B,C) ioctlsocket(A,B,C)
 typedef u_long FAR osiSockIoctl_t;
 typedef int osiSocklen_t;
 typedef BOOL osiSockOptMcastLoop_t;
@@ -43,8 +44,8 @@ typedef DWORD osiSockOptMcastTTL_t;
 #   define SHUT_RDWR SD_BOTH
 #endif
 
-#define MAXHOSTNAMELEN		75
-#define IPPORT_USERRESERVED	5000U
+#define MAXHOSTNAMELEN      75
+#define IPPORT_USERRESERVED 5000U
 
 #define SOCK_EWOULDBLOCK WSAEWOULDBLOCK
 #define SOCK_ENOBUFS WSAENOBUFS
@@ -67,11 +68,11 @@ typedef DWORD osiSockOptMcastTTL_t;
 #define SOCK_EBADF WSAENOTSOCK
 
 /*
- *	Under WIN32, FD_SETSIZE is the max. number of sockets,
- *	not the max. fd value that you use in select().
+ *  Under WIN32, FD_SETSIZE is the max. number of sockets,
+ *  not the max. fd value that you use in select().
  *
- *	Therefore, it is difficult to detemine if any given
- *	fd can be used with FD_SET(), FD_CLR(), and FD_ISSET().
+ *  Therefore, it is difficult to detemine if any given
+ *  fd can be used with FD_SET(), FD_CLR(), and FD_ISSET().
  */
 #define FD_IN_FDSET(FD) (1)
 
@@ -79,7 +80,7 @@ typedef DWORD osiSockOptMcastTTL_t;
 extern "C" {
 #endif
 
-epicsShareFunc unsigned epicsShareAPI wsaMajorVersion ();
+LIBCOM_API unsigned epicsStdCall wsaMajorVersion ();
 
 #ifdef __cplusplus
 }
