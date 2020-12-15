@@ -125,14 +125,13 @@ class GenVersionError(Command):
             with open(outfile, 'w') as F:
                 F.write("""
 #include <stddef.h>
-#define epicsExportSharedSymbols
 #include "envDefs.h"
 """)
 
                 for N, V in defs.items():
-                    F.write('epicsShareDef const ENV_PARAM %s = {"%s", "%s"};\n'%(N,N,V.strip('"')))
+                    F.write('const ENV_PARAM %s = {"%s", "%s"};\n'%(N,N,V.strip('"')))
 
-                F.write('epicsShareDef const ENV_PARAM* env_param_list[] = {\n')
+                F.write('const ENV_PARAM* env_param_list[] = {\n')
                 for N, V in defs.items():
                     F.write('    &%s,\n'%N)
                 F.write('    NULL\n};\n')
@@ -238,6 +237,64 @@ class Expand(Command):
 
 Distribution.x_expand = None
 
+class MakeAPIH(Command):
+    user_options = [
+        ('build-lib=', 't',
+         "directory for temporary files (build by-products)"),
+    ]
+
+    def initialize_options(self):
+        self.build_lib = None
+
+    def finalize_options(self):
+        self.set_undefined_options('build',
+                                   ('build_lib', 'build_lib'),
+                                  )
+
+    def run(self):
+        for stem, outname in self.distribution.x_api_h or []:
+            outname = os.path.join(self.build_lib, 'epicscorelibs', 'include', os.path.basename(outname))
+            log.info('make %s -> %s', stem, outname)
+            out = '''
+#ifndef %(guard)s
+#define %(guard)s
+
+#if defined(_WIN32) || defined(__CYGWIN__)
+
+#  if !defined(epicsStdCall)
+#    define epicsStdCall __stdcall
+#  endif
+
+#  if defined(BUILDING_%(stem)s_API) && defined(EPICS_BUILD_DLL)
+/* Building library as dll */
+#    define %(STEM)s_API __declspec(dllexport)
+#  elif !defined(BUILDING_%(stem)s_API) && defined(EPICS_CALL_DLL)
+/* Calling library in dll form */
+#    define %(STEM)s_API __declspec(dllimport)
+#  endif
+
+#elif __GNUC__ >= 4
+#  define %(STEM)s_API __attribute__ ((visibility("default")))
+#endif
+
+#if !defined(%(STEM)s_API)
+#  define %(STEM)s_API
+#endif
+
+#if !defined(epicsStdCall)
+#  define epicsStdCall
+#endif
+
+#endif /* %(guard)s */
+'''%{'stem':stem, 'STEM':stem.upper(), 'guard':'INC_'+stem+'API_H'}
+
+            if not self.dry_run:
+                self.mkpath(os.path.dirname(outname))
+                with open(outname, 'w') as F:
+                    F.write(out)
+
+Distribution.x_api_h = None
+
 class InstallHeaders(Command):
     user_options = [
         ('build-lib=', 't',
@@ -276,6 +333,7 @@ Distribution.x_headers = None
 
 build_dso.sub_commands.extend([
     ('build_expand', lambda self:True),
+    ('build_apih', lambda self:True),
     ('build_generated', lambda self:True),
     ('install_epics_headers', lambda self:True),
 ])
@@ -335,16 +393,19 @@ def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
     headers.extend(hdr)
 
 build_module('Com', 'modules/libcom/src',
-             defs=[('EPICS_COMMANDLINE_LIBRARY', 'EPICS_COMMANDLINE_LIBRARY_EPICS')],
+             defs=[('BUILDING_libCom_API', None), ('EPICS_COMMANDLINE_LIBRARY', 'EPICS_COMMANDLINE_LIBRARY_EPICS')],
              srcs=['generated.c'],
 )
 build_module('ca', 'modules/ca/src',
+             defs=[('BUILDING_libCa_API', None)],
              deps=['Com'],
 )
 build_module('dbCore', 'modules/database/src/ioc',
+             defs=[('BUILDING_dbCore_API', None)],
              deps=['ca','Com'],
 )
 build_module('dbRecStd', 'modules/database/src/std',
+             defs=[('BUILDING_dbRecStd_API', None)],
              deps=['dbCore', 'ca','Com'],
 )
 build_module('pvData', 'modules/pvData',
@@ -454,7 +515,17 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     ext_modules = [ext],
     x_dsos = modules,
     x_headers = headers,
+    x_api_h = [
+        ('libCom', 'modules/libcom/src/libComAPI.h'),
+        ('libCa', 'modules/ca/src/client/libCaAPI.h'),
+        ('dbCore', 'modules/database/src/ioc/dbCoreAPI.h'),
+        ('dbRecStd', 'modules/database/src/std/dbRecStdAPI.h'),
+    ],
     x_expand = [
+        ('modules/libcom/src/libComVersion.h@', 'modules/libcom/src/libComVersion.h',
+         ['configure/CONFIG_LIBCOM_VERSION']),
+        ('modules/database/src/ioc/databaseVersion.h@', 'modules/database/src/ioc/databaseVersion.h',
+         ['configure/CONFIG_DATABASE_VERSION']),
         ('modules/pvData/src/pv/pvdVersionNum.h@', 'modules/pvData/src/pv/pvdVersionNum.h',
          ['modules/pvData/configure/CONFIG_PVDATA_VERSION']),
         ('modules/pvAccess/src/pva/pvaVersionNum.h@', 'modules/pvAccess/src/pva/pv/pvaVersionNum.h',
@@ -473,6 +544,7 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     cmdclass = {
         'build_generated': GenVersionError,
         'build_expand': Expand,
+        'build_apih': MakeAPIH,
         'install_epics_headers':InstallHeaders,
     },
     zip_safe = False,
