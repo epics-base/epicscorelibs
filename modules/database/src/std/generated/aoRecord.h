@@ -9,6 +9,16 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
+
+/* Declare Device Support Entry Table */
+struct aoRecord;
+typedef struct aodset {
+    dset common; /*init_record returns: (0,2)=>(success,success no convert)*/
+    long (*write_ao)(struct aoRecord *prec); /*(0)=>(success ) */
+    long (*special_linconv)(struct aoRecord *prec, int after);
+} aodset;
+#define HAS_aodset
+
 #include "callback.h"
 
 #ifndef aoOIF_NUM_CHOICES
@@ -54,13 +64,13 @@ typedef struct aoRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

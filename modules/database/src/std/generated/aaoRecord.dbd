@@ -8,8 +8,6 @@
 #*************************************************************************
 
 
-include "menuFtype.dbd"
-
 menu(aaoPOST) {
 	choice(aaoPOST_Always,"Always")
 	choice(aaoPOST_OnChange,"On Change")
@@ -19,6 +17,15 @@ recordtype(aao) {
 
 
 	include "dbCommon.dbd" 
+    %
+    %/* Declare Device Support Entry Table */
+    %struct aaoRecord;
+    %typedef struct aaodset {
+    %    dset common; /*init_record returns: (-1,0)=>(failure,success)*/
+    %    long (*write_aao)(struct aaoRecord *prec); /*returns: (-1,0)=>(failure,success)*/
+    %} aaodset;
+    %#define HAS_aaodset
+    %
 	field(VAL,DBF_NOACCESS) {
 		prompt("Value")
 		asl(ASL0)
@@ -147,5 +154,5 @@ recordtype(aao) {
 		prompt("Hash of OnChange data.")
 		interest(3)
 	}
-}
 
+}

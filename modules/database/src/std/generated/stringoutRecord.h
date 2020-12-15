@@ -9,6 +9,15 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
+
+/* Declare Device Support Entry Table */
+struct stringoutRecord;
+typedef struct stringoutdset {
+    dset common; /*init_record returns: (-1,0)=>(failure,success)*/
+    long (*write_stringout)(struct stringoutRecord *prec); /*(-1,0)=>(failure,success)*/
+} stringoutdset;
+#define HAS_stringoutdset
+
 #include "callback.h"
 
 #ifndef stringoutPOST_NUM_CHOICES
@@ -17,15 +26,6 @@ typedef enum {
     stringoutPOST_Always            /* Always */
 } stringoutPOST;
 #define stringoutPOST_NUM_CHOICES 2
-#endif
-
-#ifndef menuIvoa_NUM_CHOICES
-typedef enum {
-    menuIvoaContinue_normally       /* Continue normally */,
-    menuIvoaDon_t_drive_outputs     /* Don't drive outputs */,
-    menuIvoaSet_output_to_IVOV      /* Set output to IVOV */
-} menuIvoa;
-#define menuIvoa_NUM_CHOICES 3
 #endif
 
 typedef struct stringoutRecord {
@@ -63,13 +63,13 @@ typedef struct stringoutRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

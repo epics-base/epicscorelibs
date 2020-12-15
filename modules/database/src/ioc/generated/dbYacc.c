@@ -6,17 +6,17 @@
 #define YYRECOVERING (yyerrflag!=0)
 static int yyparse(void);
 #define YYPREFIX "yy"
-#line 10 "../dbStatic/dbYacc.y"
+#line 11 "../dbStatic/dbYacc.y"
 static int yyerror();
 static int yy_start;
 static long pvt_yy_parse(void);
 static int yyFailed = 0;
 static int yyAbort = 0;
 #include "dbLexRoutines.c"
-#line 20 "../dbStatic/dbYacc.y"
+#line 21 "../dbStatic/dbYacc.y"
 typedef union
 {
-    char	*Str;
+    char    *Str;
 } YYSTYPE;
 #line 22 "dbYacc.tab.c"
 #define tokenINCLUDE 257
@@ -350,7 +350,7 @@ static YYSTYPE yylval;
 static short yyss[YYSTACKSIZE];
 static YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 354 "../dbStatic/dbYacc.y"
+#line 355 "../dbStatic/dbYacc.y"
 
 #include "dbLex.c"
 
@@ -370,14 +370,14 @@ static int yyerror(char *str)
 }
 static long pvt_yy_parse(void)
 {
-    static int	FirstFlag = 1;
-    long	rtnval;
+    static int  FirstFlag = 1;
+    long        rtnval;
 
     if (!FirstFlag) {
-	yyAbort = FALSE;
-	yyFailed = FALSE;
-	yyreset();
-	yyrestart(NULL);
+        yyAbort = FALSE;
+        yyFailed = FALSE;
+        yyreset();
+        yyrestart(NULL);
     }
     FirstFlag = 0;
     rtnval = yyparse();
@@ -517,331 +517,331 @@ yyreduce:
     switch (yyn)
     {
 case 20:
-#line 65 "../dbStatic/dbYacc.y"
+#line 66 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("include : %s\n",yyvsp[0].Str);
-	dbIncludeNew(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
+    if(dbStaticDebug>2) printf("include : %s\n",yyvsp[0].Str);
+    dbIncludeNew(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
 }
 break;
 case 21:
-#line 71 "../dbStatic/dbYacc.y"
+#line 72 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("path : %s\n",yyvsp[0].Str);
-	dbPathCmd(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
+    if(dbStaticDebug>2) printf("path : %s\n",yyvsp[0].Str);
+    dbPathCmd(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
 }
 break;
 case 22:
-#line 77 "../dbStatic/dbYacc.y"
+#line 78 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("addpath : %s\n",yyvsp[0].Str);
-	dbAddPathCmd(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
+    if(dbStaticDebug>2) printf("addpath : %s\n",yyvsp[0].Str);
+    dbAddPathCmd(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
 }
 break;
 case 23:
-#line 83 "../dbStatic/dbYacc.y"
+#line 84 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("menu_head %s\n",yyvsp[-1].Str);
-	dbMenuHead(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("menu_head %s\n",yyvsp[-1].Str);
+    dbMenuHead(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 24:
-#line 89 "../dbStatic/dbYacc.y"
+#line 90 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("menu_body\n");
-	dbMenuBody();
+    if(dbStaticDebug>2) printf("menu_body\n");
+    dbMenuBody();
 }
 break;
 case 27:
-#line 97 "../dbStatic/dbYacc.y"
+#line 98 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("choice %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbMenuChoice(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("choice %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbMenuChoice(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 29:
-#line 104 "../dbStatic/dbYacc.y"
+#line 105 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("recordtype_head %s\n",yyvsp[-1].Str);
-	dbRecordtypeHead(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("recordtype_head %s\n",yyvsp[-1].Str);
+    dbRecordtypeHead(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 30:
-#line 110 "../dbStatic/dbYacc.y"
+#line 111 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("empty recordtype_body\n");
-	dbRecordtypeEmpty();
+    if(dbStaticDebug>2) printf("empty recordtype_body\n");
+    dbRecordtypeEmpty();
 }
 break;
 case 31:
-#line 115 "../dbStatic/dbYacc.y"
+#line 116 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("recordtype_body\n");
-	dbRecordtypeBody();
+    if(dbStaticDebug>2) printf("recordtype_body\n");
+    dbRecordtypeBody();
 }
 break;
 case 35:
-#line 125 "../dbStatic/dbYacc.y"
+#line 126 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("recordtype_cdef %s", yyvsp[0].Str);
-	dbRecordtypeCdef(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
+    if(dbStaticDebug>2) printf("recordtype_cdef %s", yyvsp[0].Str);
+    dbRecordtypeCdef(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
 }
 break;
 case 37:
-#line 132 "../dbStatic/dbYacc.y"
+#line 133 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("recordtype_field_head %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbRecordtypeFieldHead(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("recordtype_field_head %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbRecordtypeFieldHead(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 41:
-#line 143 "../dbStatic/dbYacc.y"
+#line 144 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("recordtype_field_item %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbRecordtypeFieldItem(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("recordtype_field_item %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbRecordtypeFieldItem(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 42:
-#line 148 "../dbStatic/dbYacc.y"
+#line 149 "../dbStatic/dbYacc.y"
 {
 
-	if(dbStaticDebug>2) printf("recordtype_field_item %s (%s)\n","menu",yyvsp[-1].Str);
-	dbRecordtypeFieldItem("menu",yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("recordtype_field_item %s (%s)\n","menu",yyvsp[-1].Str);
+    dbRecordtypeFieldItem("menu",yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 43:
-#line 157 "../dbStatic/dbYacc.y"
+#line 158 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("device %s %s %s %s\n",yyvsp[-7].Str,yyvsp[-5].Str,yyvsp[-3].Str,yyvsp[-1].Str);
-	dbDevice(yyvsp[-7].Str,yyvsp[-5].Str,yyvsp[-3].Str,yyvsp[-1].Str);
-	dbmfFree(yyvsp[-7].Str); dbmfFree(yyvsp[-5].Str);
-	dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("device %s %s %s %s\n",yyvsp[-7].Str,yyvsp[-5].Str,yyvsp[-3].Str,yyvsp[-1].Str);
+    dbDevice(yyvsp[-7].Str,yyvsp[-5].Str,yyvsp[-3].Str,yyvsp[-1].Str);
+    dbmfFree(yyvsp[-7].Str); dbmfFree(yyvsp[-5].Str);
+    dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 44:
-#line 166 "../dbStatic/dbYacc.y"
+#line 167 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("driver %s\n",yyvsp[-1].Str);
-	dbDriver(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("driver %s\n",yyvsp[-1].Str);
+    dbDriver(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 45:
-#line 172 "../dbStatic/dbYacc.y"
+#line 173 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("link %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbLinkType(yyvsp[-3].Str,yyvsp[-1].Str);
-	dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("link %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbLinkType(yyvsp[-3].Str,yyvsp[-1].Str);
+    dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 46:
-#line 179 "../dbStatic/dbYacc.y"
+#line 180 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("registrar %s\n",yyvsp[-1].Str);
-	dbRegistrar(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("registrar %s\n",yyvsp[-1].Str);
+    dbRegistrar(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 47:
-#line 185 "../dbStatic/dbYacc.y"
+#line 186 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("function %s\n",yyvsp[-1].Str);
-	dbFunction(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("function %s\n",yyvsp[-1].Str);
+    dbFunction(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 48:
-#line 191 "../dbStatic/dbYacc.y"
+#line 192 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("variable %s\n",yyvsp[-1].Str);
-	dbVariable(yyvsp[-1].Str,"int"); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("variable %s\n",yyvsp[-1].Str);
+    dbVariable(yyvsp[-1].Str,"int"); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 49:
-#line 196 "../dbStatic/dbYacc.y"
+#line 197 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("variable %s, %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbVariable(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("variable %s, %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbVariable(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 50:
-#line 202 "../dbStatic/dbYacc.y"
+#line 203 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("break_head %s\n",yyvsp[-1].Str);
-	dbBreakHead(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("break_head %s\n",yyvsp[-1].Str);
+    dbBreakHead(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 51:
-#line 208 "../dbStatic/dbYacc.y"
+#line 209 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("break_body\n");
-	dbBreakBody();
+    if(dbStaticDebug>2) printf("break_body\n");
+    dbBreakBody();
 }
 break;
 case 55:
-#line 218 "../dbStatic/dbYacc.y"
+#line 219 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("break_item tokenSTRING %s\n",yyvsp[0].Str);
-	dbBreakItem(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
+    if(dbStaticDebug>2) printf("break_item tokenSTRING %s\n",yyvsp[0].Str);
+    dbBreakItem(yyvsp[0].Str); dbmfFree(yyvsp[0].Str);
 }
 break;
 case 56:
-#line 225 "../dbStatic/dbYacc.y"
+#line 226 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("grecord_head %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbRecordHead(yyvsp[-3].Str,yyvsp[-1].Str,1); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("grecord_head %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbRecordHead(yyvsp[-3].Str,yyvsp[-1].Str,1); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 57:
-#line 231 "../dbStatic/dbYacc.y"
+#line 232 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("record_head %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbRecordHead(yyvsp[-3].Str,yyvsp[-1].Str,0); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("record_head %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbRecordHead(yyvsp[-3].Str,yyvsp[-1].Str,0); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 58:
-#line 237 "../dbStatic/dbYacc.y"
+#line 238 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("null record_body\n");
-	dbRecordBody();
+    if(dbStaticDebug>2) printf("null record_body\n");
+    dbRecordBody();
 }
 break;
 case 59:
-#line 242 "../dbStatic/dbYacc.y"
+#line 243 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("empty record_body\n");
-	dbRecordBody();
+    if(dbStaticDebug>2) printf("empty record_body\n");
+    dbRecordBody();
 }
 break;
 case 60:
-#line 247 "../dbStatic/dbYacc.y"
+#line 248 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("record_body\n");
-	dbRecordBody();
+    if(dbStaticDebug>2) printf("record_body\n");
+    dbRecordBody();
 }
 break;
 case 63:
-#line 256 "../dbStatic/dbYacc.y"
+#line 257 "../dbStatic/dbYacc.y"
 { BEGIN JSON; }
 break;
 case 64:
-#line 256 "../dbStatic/dbYacc.y"
+#line 257 "../dbStatic/dbYacc.y"
 { BEGIN INITIAL; }
 break;
 case 65:
-#line 257 "../dbStatic/dbYacc.y"
+#line 258 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("record_field %s %s\n",yyvsp[-5].Str,yyvsp[-2].Str);
-	dbRecordField(yyvsp[-5].Str,yyvsp[-2].Str); dbmfFree(yyvsp[-5].Str); dbmfFree(yyvsp[-2].Str);
+    if(dbStaticDebug>2) printf("record_field %s %s\n",yyvsp[-5].Str,yyvsp[-2].Str);
+    dbRecordField(yyvsp[-5].Str,yyvsp[-2].Str); dbmfFree(yyvsp[-5].Str); dbmfFree(yyvsp[-2].Str);
 }
 break;
 case 66:
-#line 262 "../dbStatic/dbYacc.y"
+#line 263 "../dbStatic/dbYacc.y"
 { BEGIN JSON; }
 break;
 case 67:
-#line 262 "../dbStatic/dbYacc.y"
+#line 263 "../dbStatic/dbYacc.y"
 { BEGIN INITIAL; }
 break;
 case 68:
-#line 263 "../dbStatic/dbYacc.y"
+#line 264 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("record_info %s %s\n",yyvsp[-5].Str,yyvsp[-2].Str);
-	dbRecordInfo(yyvsp[-5].Str,yyvsp[-2].Str); dbmfFree(yyvsp[-5].Str); dbmfFree(yyvsp[-2].Str);
+    if(dbStaticDebug>2) printf("record_info %s %s\n",yyvsp[-5].Str,yyvsp[-2].Str);
+    dbRecordInfo(yyvsp[-5].Str,yyvsp[-2].Str); dbmfFree(yyvsp[-5].Str); dbmfFree(yyvsp[-2].Str);
 }
 break;
 case 69:
-#line 268 "../dbStatic/dbYacc.y"
+#line 269 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("record_alias %s\n",yyvsp[-1].Str);
-	dbRecordAlias(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("record_alias %s\n",yyvsp[-1].Str);
+    dbRecordAlias(yyvsp[-1].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 71:
-#line 275 "../dbStatic/dbYacc.y"
+#line 276 "../dbStatic/dbYacc.y"
 {
-	if(dbStaticDebug>2) printf("alias %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
-	dbAlias(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
+    if(dbStaticDebug>2) printf("alias %s %s\n",yyvsp[-3].Str,yyvsp[-1].Str);
+    dbAlias(yyvsp[-3].Str,yyvsp[-1].Str); dbmfFree(yyvsp[-3].Str); dbmfFree(yyvsp[-1].Str);
 }
 break;
 case 72:
-#line 281 "../dbStatic/dbYacc.y"
+#line 282 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrdup("{}");
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrdup("{}");
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 73:
-#line 286 "../dbStatic/dbYacc.y"
+#line 287 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrcat3("{", yyvsp[-1].Str, "}");
-	dbmfFree(yyvsp[-1].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrcat3("{", yyvsp[-1].Str, "}");
+    dbmfFree(yyvsp[-1].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 76:
-#line 295 "../dbStatic/dbYacc.y"
+#line 296 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrcat3(yyvsp[-2].Str, ",", yyvsp[0].Str);
-	dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrcat3(yyvsp[-2].Str, ",", yyvsp[0].Str);
+    dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 77:
-#line 302 "../dbStatic/dbYacc.y"
+#line 303 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrcat3(yyvsp[-2].Str, ":", yyvsp[0].Str);
-	dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrcat3(yyvsp[-2].Str, ":", yyvsp[0].Str);
+    dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 79:
-#line 310 "../dbStatic/dbYacc.y"
+#line 311 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrcat3("\"", yyvsp[0].Str, "\"");
-	dbmfFree(yyvsp[0].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrcat3("\"", yyvsp[0].Str, "\"");
+    dbmfFree(yyvsp[0].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 80:
-#line 317 "../dbStatic/dbYacc.y"
+#line 318 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrdup("[]");
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrdup("[]");
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 81:
-#line 322 "../dbStatic/dbYacc.y"
+#line 323 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrcat3("[", yyvsp[-1].Str, "]");
-	dbmfFree(yyvsp[-1].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrcat3("[", yyvsp[-1].Str, "]");
+    dbmfFree(yyvsp[-1].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 83:
-#line 330 "../dbStatic/dbYacc.y"
-{	/* Retain the trailing ',' so link parser can distinguish a
-	 * 1-element const list from a PV name (commas are illegal)
-	 */
-	yyval.Str = dbmfStrcat3(yyvsp[-1].Str, ",", "");
-	dbmfFree(yyvsp[-1].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+#line 331 "../dbStatic/dbYacc.y"
+{   /* Retain the trailing ',' so link parser can distinguish a
+     * 1-element const list from a PV name (commas are illegal)
+     */
+    yyval.Str = dbmfStrcat3(yyvsp[-1].Str, ",", "");
+    dbmfFree(yyvsp[-1].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 84:
-#line 338 "../dbStatic/dbYacc.y"
+#line 339 "../dbStatic/dbYacc.y"
 {
-	yyval.Str = dbmfStrcat3(yyvsp[-2].Str, ",", yyvsp[0].Str);
-	dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
-	if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
+    yyval.Str = dbmfStrcat3(yyvsp[-2].Str, ",", yyvsp[0].Str);
+    dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
+    if (dbStaticDebug>2) printf("json %s\n", yyval.Str);
 }
 break;
 case 85:
-#line 344 "../dbStatic/dbYacc.y"
+#line 345 "../dbStatic/dbYacc.y"
 { yyval.Str = dbmfStrdup("null"); }
 break;
 case 86:
-#line 345 "../dbStatic/dbYacc.y"
+#line 346 "../dbStatic/dbYacc.y"
 { yyval.Str = dbmfStrdup("true"); }
 break;
 case 87:
-#line 346 "../dbStatic/dbYacc.y"
+#line 347 "../dbStatic/dbYacc.y"
 { yyval.Str = dbmfStrdup("false"); }
 break;
 #line 848 "dbYacc.tab.c"

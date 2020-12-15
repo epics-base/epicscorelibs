@@ -9,6 +9,16 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
+
+/* Declare Device Support Entry Table */
+struct aiRecord;
+typedef struct aidset {
+    dset common;
+    long (*read_ai)(struct aiRecord *prec);
+    long (*special_linconv)(struct aiRecord *prec, int after);
+} aidset;
+#define HAS_aidset
+
 #include "callback.h"
 
 typedef struct aiRecord {
@@ -46,13 +56,13 @@ typedef struct aiRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

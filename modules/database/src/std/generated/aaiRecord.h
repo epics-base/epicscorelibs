@@ -9,6 +9,15 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
+
+/* Declare Device Support Entry Table */
+struct aaiRecord;
+typedef struct aaidset {
+    dset common; /*init_record returns: (-1,0)=>(failure,success)*/
+    long (*read_aai)(struct aaiRecord *prec); /*returns: (-1,0)=>(failure,success)*/
+} aaidset;
+#define HAS_aaidset
+
 #include "callback.h"
 
 #ifndef aaiPOST_NUM_CHOICES
@@ -17,24 +26,6 @@ typedef enum {
     aaiPOST_OnChange                /* On Change */
 } aaiPOST;
 #define aaiPOST_NUM_CHOICES 2
-#endif
-
-#ifndef menuFtype_NUM_CHOICES
-typedef enum {
-    menuFtypeSTRING                 /* STRING */,
-    menuFtypeCHAR                   /* CHAR */,
-    menuFtypeUCHAR                  /* UCHAR */,
-    menuFtypeSHORT                  /* SHORT */,
-    menuFtypeUSHORT                 /* USHORT */,
-    menuFtypeLONG                   /* LONG */,
-    menuFtypeULONG                  /* ULONG */,
-    menuFtypeINT64                  /* INT64 */,
-    menuFtypeUINT64                 /* UINT64 */,
-    menuFtypeFLOAT                  /* FLOAT */,
-    menuFtypeDOUBLE                 /* DOUBLE */,
-    menuFtypeENUM                   /* ENUM */
-} menuFtype;
-#define menuFtype_NUM_CHOICES 12
 #endif
 
 typedef struct aaiRecord {
@@ -72,13 +63,13 @@ typedef struct aaiRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

@@ -6,7 +6,7 @@
 #define YYRECOVERING (yyerrflag!=0)
 static int yyparse(void);
 #define YYPREFIX "yy"
-#line 10 "../as/asLib.y"
+#line 11 "../as/asLib.y"
 static int yyerror(char *);
 static int yy_start;
 #include "asLibRoutines.c"
@@ -16,10 +16,10 @@ static UAG *yyUag=NULL;
 static HAG *yyHag=NULL;
 static ASG *yyAsg=NULL;
 static ASGRULE *yyAsgRule=NULL;
-#line 28 "../as/asLib.y"
+#line 29 "../as/asLib.y"
 typedef union
 {
-    int	Int;
+    int Int;
     char *Str;
 } YYSTYPE;
 #line 26 "asLib.tab.c"
@@ -237,10 +237,10 @@ static YYSTYPE yylval;
 static short yyss[YYSTACKSIZE];
 static YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 203 "../as/asLib.y"
- 
+#line 204 "../as/asLib.y"
+
 #include "asLib_lex.c"
- 
+
 static int yyerror(char *str)
 {
     if (strlen(str))
@@ -252,15 +252,15 @@ static int yyerror(char *str)
 }
 static int myParse(ASINPUTFUNCPTR inputfunction)
 {
-    static int	FirstFlag = 1;
-    int		rtnval;
- 
+    static int  FirstFlag = 1;
+    int         rtnval;
+
     my_yyinput = &inputfunction;
     if (!FirstFlag) {
-	line_num=1;
-	yyFailed = FALSE;
-	yyreset();
-	yyrestart(NULL);
+        line_num=1;
+        yyFailed = FALSE;
+        yyreset();
+        yyrestart(NULL);
     }
     FirstFlag = 0;
     rtnval = yyparse();
@@ -400,119 +400,119 @@ yyreduce:
     switch (yyn)
     {
 case 9:
-#line 48 "../as/asLib.y"
+#line 49 "../as/asLib.y"
 {
-		yyUag = asUagAdd(yyvsp[-1].Str);
-		if(!yyUag) yyerror("");
-		free((void *)yyvsp[-1].Str);
-	}
+        yyUag = asUagAdd(yyvsp[-1].Str);
+        if(!yyUag) yyerror("");
+        free((void *)yyvsp[-1].Str);
+    }
 break;
 case 10:
-#line 56 "../as/asLib.y"
+#line 57 "../as/asLib.y"
 {
-		 ;
-	}
+         ;
+    }
 break;
 case 13:
-#line 66 "../as/asLib.y"
+#line 67 "../as/asLib.y"
 {
-		if (asUagAddUser(yyUag,yyvsp[0].Str))
-			yyerror("");
-		free((void *)yyvsp[0].Str);
-	}
+        if (asUagAddUser(yyUag,yyvsp[0].Str))
+            yyerror("");
+        free((void *)yyvsp[0].Str);
+    }
 break;
 case 14:
-#line 74 "../as/asLib.y"
+#line 75 "../as/asLib.y"
 {
-		yyHag = asHagAdd(yyvsp[-1].Str);
-		if(!yyHag) yyerror("");
-		free((void *)yyvsp[-1].Str);
-	}
+        yyHag = asHagAdd(yyvsp[-1].Str);
+        if(!yyHag) yyerror("");
+        free((void *)yyvsp[-1].Str);
+    }
 break;
 case 18:
-#line 89 "../as/asLib.y"
+#line 90 "../as/asLib.y"
 {
-		if (asHagAddHost(yyHag,yyvsp[0].Str))
-			yyerror("");
-		free((void *)yyvsp[0].Str);
-	}
+        if (asHagAddHost(yyHag,yyvsp[0].Str))
+            yyerror("");
+        free((void *)yyvsp[0].Str);
+    }
 break;
 case 19:
-#line 97 "../as/asLib.y"
+#line 98 "../as/asLib.y"
 {
-		yyAsg = asAsgAdd(yyvsp[-1].Str);
-		if(!yyAsg) yyerror("");
-		free((void *)yyvsp[-1].Str);
-	}
+        yyAsg = asAsgAdd(yyvsp[-1].Str);
+        if(!yyAsg) yyerror("");
+        free((void *)yyvsp[-1].Str);
+    }
 break;
 case 20:
-#line 105 "../as/asLib.y"
+#line 106 "../as/asLib.y"
 {
-	}
+    }
 break;
 case 25:
-#line 115 "../as/asLib.y"
+#line 116 "../as/asLib.y"
 {
-		if (asAsgAddInp(yyAsg,yyvsp[-1].Str,yyvsp[-3].Int))
-			yyerror("");
-		free((void *)yyvsp[-1].Str);
-	}
+        if (asAsgAddInp(yyAsg,yyvsp[-1].Str,yyvsp[-3].Int))
+            yyerror("");
+        free((void *)yyvsp[-1].Str);
+    }
 break;
 case 29:
-#line 128 "../as/asLib.y"
+#line 129 "../as/asLib.y"
 {
-		asAccessRights	rights;
+        asAccessRights  rights;
 
-		if((strcmp(yyvsp[0].Str,"NONE")==0)) {
-			rights=asNOACCESS;
-		} else if((strcmp(yyvsp[0].Str,"READ")==0)) {
-			rights=asREAD;
-		} else if((strcmp(yyvsp[0].Str,"WRITE")==0)) {
-			rights=asWRITE;
-		} else {
-			yyerror("Access rights must be NONE, READ or WRITE");
-			rights = asNOACCESS;
-		}
-		yyAsgRule = asAsgAddRule(yyAsg,rights,yyvsp[-2].Int);
-		free((void *)yyvsp[0].Str);
-	}
+        if((strcmp(yyvsp[0].Str,"NONE")==0)) {
+            rights=asNOACCESS;
+        } else if((strcmp(yyvsp[0].Str,"READ")==0)) {
+            rights=asREAD;
+        } else if((strcmp(yyvsp[0].Str,"WRITE")==0)) {
+            rights=asWRITE;
+        } else {
+            yyerror("Access rights must be NONE, READ or WRITE");
+            rights = asNOACCESS;
+        }
+        yyAsgRule = asAsgAddRule(yyAsg,rights,yyvsp[-2].Int);
+        free((void *)yyvsp[0].Str);
+    }
 break;
 case 32:
-#line 150 "../as/asLib.y"
+#line 151 "../as/asLib.y"
 {
-                if((strcmp(yyvsp[-1].Str,"TRAPWRITE")==0)) {
-                        long status;
-                        status = asAsgAddRuleOptions(yyAsgRule,AS_TRAP_WRITE);
-                        if(status) yyerror("");
-                } else if((strcmp(yyvsp[-1].Str,"NOTRAPWRITE")!=0)) {
-                        yyerror("Log options must be TRAPWRITE or NOTRAPWRITE");
-                }
-                free((void *)yyvsp[-1].Str);
+        if((strcmp(yyvsp[-1].Str,"TRAPWRITE")==0)) {
+            long status;
+            status = asAsgAddRuleOptions(yyAsgRule,AS_TRAP_WRITE);
+            if(status) yyerror("");
+        } else if((strcmp(yyvsp[-1].Str,"NOTRAPWRITE")!=0)) {
+            yyerror("Log options must be TRAPWRITE or NOTRAPWRITE");
         }
+        free((void *)yyvsp[-1].Str);
+    }
 break;
 case 38:
-#line 172 "../as/asLib.y"
+#line 173 "../as/asLib.y"
 {
-		if (asAsgRuleCalc(yyAsgRule,yyvsp[-1].Str))
-			yyerror("");
-		free((void *)yyvsp[-1].Str);
-	}
+        if (asAsgRuleCalc(yyAsgRule,yyvsp[-1].Str))
+            yyerror("");
+        free((void *)yyvsp[-1].Str);
+    }
 break;
 case 41:
-#line 184 "../as/asLib.y"
+#line 185 "../as/asLib.y"
 {
-		if (asAsgRuleUagAdd(yyAsgRule,yyvsp[0].Str))
-			yyerror("");
-		free((void *)yyvsp[0].Str);
-	}
+        if (asAsgRuleUagAdd(yyAsgRule,yyvsp[0].Str))
+            yyerror("");
+        free((void *)yyvsp[0].Str);
+    }
 break;
 case 44:
-#line 196 "../as/asLib.y"
+#line 197 "../as/asLib.y"
 {
-		if (asAsgRuleHagAdd(yyAsgRule,yyvsp[0].Str))
-			yyerror("");
-		free((void *)yyvsp[0].Str);
-	}
+        if (asAsgRuleHagAdd(yyAsgRule,yyvsp[0].Str))
+            yyerror("");
+        free((void *)yyvsp[0].Str);
+    }
 break;
 #line 518 "asLib.tab.c"
     }

@@ -9,6 +9,15 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
+
+/* Declare Device Support Entry Table */
+struct stringinRecord;
+typedef struct stringindset {
+    dset common; /*init_record returns: (-1,0)=>(failure,success)*/
+    long (*read_stringin)(struct stringinRecord *prec); /*returns: (-1,0)=>(failure,success)*/
+} stringindset;
+#define HAS_stringindset
+
 #include "callback.h"
 
 #ifndef stringinPOST_NUM_CHOICES
@@ -54,13 +63,13 @@ typedef struct stringinRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

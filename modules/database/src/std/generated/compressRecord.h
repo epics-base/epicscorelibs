@@ -10,6 +10,14 @@
 #include "devSup.h"
 #include "epicsTime.h"
 
+#ifndef bufferingALG_NUM_CHOICES
+typedef enum {
+    bufferingALG_FIFO               /* FIFO Buffer */,
+    bufferingALG_LIFO               /* LIFO Buffer */
+} bufferingALG;
+#define bufferingALG_NUM_CHOICES 2
+#endif
+
 #ifndef compressALG_NUM_CHOICES
 typedef enum {
     compressALG_N_to_1_Low_Value    /* N to 1 Low Value */,
@@ -20,14 +28,6 @@ typedef enum {
     compressALG_N_to_1_Median       /* N to 1 Median */
 } compressALG;
 #define compressALG_NUM_CHOICES 6
-#endif
-
-#ifndef bufferingALG_NUM_CHOICES
-typedef enum {
-    bufferingALG_FIFO               /* FIFO Buffer */,
-    bufferingALG_LIFO               /* LIFO Buffer */
-} bufferingALG;
-#define bufferingALG_NUM_CHOICES 2
 #endif
 
 typedef struct compressRecord {
@@ -65,13 +65,13 @@ typedef struct compressRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

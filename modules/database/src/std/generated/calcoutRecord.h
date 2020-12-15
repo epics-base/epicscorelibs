@@ -9,6 +9,14 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
+/* Declare Device Support Entry Table */
+struct calcoutRecord;
+typedef struct calcoutdset {
+    dset common;
+    long (*write)(struct calcoutRecord *prec);
+} calcoutdset;
+#define HAS_calcoutdset
+
 #include "dbScan.h"
 #include "postfix.h"
 
@@ -77,13 +85,13 @@ typedef struct calcoutRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

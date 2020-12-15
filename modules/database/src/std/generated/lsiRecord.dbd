@@ -11,17 +11,14 @@ recordtype(lsi) {
 
 
     include "dbCommon.dbd"
-    %#include "devSup.h"
     %
     %/* Declare Device Support Entry Table */
+    %struct lsiRecord;
     %typedef struct lsidset {
-    %    long number;
-    %    DEVSUPFUN report;
-    %    DEVSUPFUN init;
-    %    DEVSUPFUN init_record;
-    %    DEVSUPFUN get_ioint_info;
-    %    DEVSUPFUN read_string;
+    %    dset common;
+    %    long (*read_string)(struct lsiRecord *prec);
     %} lsidset;
+    %#define HAS_lsidset
     %
     field(VAL,DBF_NOACCESS) {
         prompt("Current Value")
@@ -29,7 +26,7 @@ recordtype(lsi) {
         pp(TRUE)
         special(SPC_DBADDR)
         extra("char *val")
-        #=type STRING[SIZV]
+        #=type STRING or CHAR[SIZV]
         #=read Yes
         #=write Yes
     }
@@ -38,7 +35,7 @@ recordtype(lsi) {
         special(SPC_DBADDR)
         interest(3)
         extra("char *oval")
-        #=type STRING[SIZV]
+        #=type STRING or [SIZV]
         #=read Yes
         #=write No
     }

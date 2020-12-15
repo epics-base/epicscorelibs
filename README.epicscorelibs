@@ -50,3 +50,8 @@ Generated files
   cp modules/database/src/std/O.Common/*.h \
      modules/database/src/std/O.Common/*.dbd \
      modules/database/src/std/generated/
+
+  rm -f modules/libcom/src/generated/*API.h \
+        modules/database/src/ioc/generated/*API.h \
+        modules/database/src/std/generated/*API.h \
+        modules/database/src/std/generated/softIoc.dbd

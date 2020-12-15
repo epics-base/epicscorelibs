@@ -9,28 +9,16 @@
 #include "ellLib.h"
 #include "devSup.h"
 #include "epicsTime.h"
-#include "devSup.h"
 
 /* Declare Device Support Entry Table */
+struct lsoRecord;
 typedef struct lsodset {
-    long number;
-    DEVSUPFUN report;
-    DEVSUPFUN init;
-    DEVSUPFUN init_record;
-    DEVSUPFUN get_ioint_info;
-    DEVSUPFUN write_string;
+    dset common;
+    long (*write_string)(struct lsoRecord *prec);
 } lsodset;
+#define HAS_lsodset
 
 #include "callback.h"
-
-#ifndef menuIvoa_NUM_CHOICES
-typedef enum {
-    menuIvoaContinue_normally       /* Continue normally */,
-    menuIvoaDon_t_drive_outputs     /* Don't drive outputs */,
-    menuIvoaSet_output_to_IVOV      /* Set output to IVOV */
-} menuIvoa;
-#define menuIvoa_NUM_CHOICES 3
-#endif
 
 typedef struct lsoRecord {
     char                name[61];   /* Record Name */
@@ -67,13 +55,13 @@ typedef struct lsoRecord {
     struct processNotifyRecord *ppnr; /* pprocessNotifyRecord */
     struct scan_element *spvt;      /* Scan Private */
     struct typed_rset   *rset;      /* Address of RSET */
-    unambiguous_dset                *dset; /* DSET address */
+    unambiguous_dset    *dset;      /* DSET address */
     void                *dpvt;      /* Device Private */
     struct dbRecordType *rdes;      /* Address of dbRecordType */
     struct lockRecord   *lset;      /* Lock Set */
     epicsEnum16         prio;       /* Scheduling Priority */
     epicsUInt8          tpro;       /* Trace Processing */
-    char                bkpt;       /* Break Point */
+    epicsUInt8          bkpt;       /* Break Point */
     epicsUInt8          udf;        /* Undefined */
     epicsEnum16         udfs;       /* Undefined Alarm Sevrty */
     epicsTimeStamp      time;       /* Time */

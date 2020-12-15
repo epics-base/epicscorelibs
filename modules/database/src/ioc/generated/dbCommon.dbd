@@ -212,7 +212,7 @@
 		prompt("DSET address")
 		special(SPC_NOMOD)
 		interest(4)
-        extra("unambiguous_dset                *dset")
+		extra("unambiguous_dset    *dset")
 	}
 	field(DPVT,DBF_NOACCESS) {
 		prompt("Device Private")
@@ -248,7 +248,7 @@
 		prompt("Break Point")
 		special(SPC_NOMOD)
 		interest(1)
-		extra("char                bkpt")
+		extra("epicsUInt8          bkpt")
 	}
 	field(UDF,DBF_UCHAR) {
 		prompt("Undefined")

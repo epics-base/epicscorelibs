@@ -7,23 +7,18 @@
 
 
 
-include "menuIvoa.dbd"
-
 recordtype(lso) {
 
 
     include "dbCommon.dbd"
-    %#include "devSup.h"
     %
     %/* Declare Device Support Entry Table */
+    %struct lsoRecord;
     %typedef struct lsodset {
-    %    long number;
-    %    DEVSUPFUN report;
-    %    DEVSUPFUN init;
-    %    DEVSUPFUN init_record;
-    %    DEVSUPFUN get_ioint_info;
-    %    DEVSUPFUN write_string;
+    %    dset common;
+    %    long (*write_string)(struct lsoRecord *prec);
     %} lsodset;
+    %#define HAS_lsodset
     %
     field(VAL,DBF_NOACCESS) {
         prompt("Current Value")
@@ -31,12 +26,18 @@ recordtype(lso) {
         pp(TRUE)
         special(SPC_DBADDR)
         extra("char *val")
+        #=type STRING or CHAR[SIZV]
+        #=read Yes
+        #=write Yes
     }
     field(OVAL,DBF_NOACCESS) {
         prompt("Previous Value")
         special(SPC_DBADDR)
         interest(3)
         extra("char *oval")
+        #=type STRING or [SIZV]
+        #=read Yes
+        #=write No
     }
     field(SIZV,DBF_USHORT) {
         prompt("Size of buffers")
@@ -146,6 +147,5 @@ recordtype(lso) {
         extra("epicsCallback            *simpvt")
     }
 }
-
 
 

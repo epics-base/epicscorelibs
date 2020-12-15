@@ -12,6 +12,14 @@ recordtype(mbbi) {
 
 
 	include "dbCommon.dbd"
+    %/* Declare Device Support Entry Table */
+    %struct mbbiRecord;
+    %typedef struct mbbidset {
+    %    dset common; /* init_record returns: (-1,0) => (failure, success)*/
+    %    long (*read_mbbi)(struct mbbiRecord *prec); /* (0, 2) => (success, success no convert)*/
+    %} mbbidset;
+    %#define HAS_mbbidset
+    %
 	field(VAL,DBF_ENUM) {
 		prompt("Current Value")
 		promptgroup("40 - Input")
@@ -461,7 +469,7 @@ recordtype(mbbi) {
 	}
 
 
-	field(SIOL,DBF_INLINK) {
+        field(SIOL,DBF_INLINK) {
 		prompt("Simulation Input Link")
 		promptgroup("90 - Simulate")
 		interest(1)

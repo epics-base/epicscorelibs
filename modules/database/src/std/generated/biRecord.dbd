@@ -12,6 +12,15 @@ recordtype(bi) {
 
 
 	include "dbCommon.dbd"
+    %
+    %/* Declare Device Support Entry Table */
+    %struct biRecord;
+    %typedef struct bidset {
+    %    dset common;
+    %    long (*read_bi)(struct biRecord *prec);
+    %} bidset;
+    %#define HAS_bidset
+    %
 	field(INP,DBF_INLINK) {
 		prompt("Input Specification")
 		promptgroup("40 - Input")
@@ -84,6 +93,8 @@ recordtype(bi) {
 		special(SPC_NOMOD)
 		interest(3)
 	}
+
+
 	field(SIOL,DBF_INLINK) {
 		prompt("Simulation Input Link")
 		promptgroup("90 - Simulate")
