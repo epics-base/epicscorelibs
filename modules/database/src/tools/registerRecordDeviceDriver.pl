@@ -257,7 +257,7 @@ print $out (<< 'END') if %links;
 END
 
 print $out (<< "END") for @registrars;
-    runRegistrarOnce(pvar_func_$_);
+    pvar_func_$_();
 END
 
 print $out (<< 'END') if %variables;

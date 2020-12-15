@@ -24,14 +24,6 @@ struct dbBase;
 epicsShareFunc void iocshRegisterCommon(void);
 
 epicsShareFunc
-void runRegistrarOnce(void (*reg_func)(void));
-
-#ifdef EPICS_PRIVATE_API
-epicsShareFunc
-void clearRegistrarOnce(void);
-#endif
-
-epicsShareFunc
 long
 dynamic_registerRecordDeviceDriver(struct dbBase *pdbbase);
 
