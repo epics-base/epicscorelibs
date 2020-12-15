@@ -38,7 +38,7 @@ pdbbase = ctypes.c_void_p.in_dll(dbCore, "pdbbase")
 
 # softIoc_registerRecordDeviceDriver(pdbbase)
 #registerRecordDeviceDriver = dbRecStd.softIoc_registerRecordDeviceDriver
-registerRecordDeviceDriver = dbCore.dynamic_registerRecordDeviceDriver
+registerRecordDeviceDriver = dbCore.registerAllRecordDeviceDrivers
 registerRecordDeviceDriver.argtypes = [ctypes.c_void_p]
 
 # dbLoadRecords(file, subs)
