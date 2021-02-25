@@ -17,6 +17,7 @@
 
 #include "epicsUnitTest.h"
 #include "epicsString.h"
+#include "epicsMath.h"
 #include "testMain.h"
 
 static
@@ -74,6 +75,35 @@ void testGlob(void) {
     testOk1(epicsStrGlobMatch("hello","*"));
 }
 
+static
+void testDistance(void) {
+    double dist;
+    testDiag("testDistance()");
+
+#define TEST(EXPECT, A, B) dist = epicsStrSimilarity(A, B); testOk(fabs(dist-(EXPECT))<0.01, "distance \"%s\", \"%s\" %f ~= %f", A, B, dist, EXPECT)
+
+    TEST(1.00, "", "");
+    TEST(1.00, "A", "A");
+    TEST(0.00, "A", "B");
+    TEST(1.00, "exact", "exact");
+    TEST(0.90, "10 second", "10 seconds");
+    TEST(0.71, "Passive", "Pensive");
+    TEST(0.11, "10 second", "Pensive");
+    TEST(0.97, "Set output to IVOV", "Set output To IVOV");
+
+    /* we modify Levenshtein to give half weight to case insensitive matches */
+
+    /* totally unrelated except for 'i' ~= 'I' */
+    TEST(0.06, "Passive", "I/O Intr");
+    TEST(0.06, "I/O Intr", "Pensive");
+    /* 2x subst and 1x case subst, max distance 2xlen("YES") */
+    TEST(0.50, "YES", "yes");
+    TEST(0.00, "YES", "NO");
+    TEST(0.67, "YES", "Yes");
+    TEST(0.67, "Tes", "yes");
+#undef TEST
+}
+
 MAIN(epicsStringTest)
 {
     const char * const empty = "";
@@ -88,7 +118,7 @@ MAIN(epicsStringTest)
     char *s;
     int status;
 
-    testPlan(406);
+    testPlan(401);
 
     testChars();
 
@@ -159,7 +189,7 @@ MAIN(epicsStringTest)
     status = epicsStrnEscapedFromRawSize(ABCD, 4);
     testOk(status == 4, "size(\"ABCD\", 4) -> %d (exp. 4)", status);
     status = epicsStrnEscapedFromRawSize(ABCD, 5);
-    testOk(status == 8, "size(\"ABCD\", 5) -> %d (exp. 8)", status);
+    testOk(status == 6, "size(\"ABCD\", 5) -> %d (exp. 8)", status);
 
     testDiag("Testing esc = epicsStrnEscapedFromRaw(out, 4, ...)");
 
@@ -177,7 +207,7 @@ MAIN(epicsStringTest)
 
     memset(result, 'x', sizeof(result));
     status = epicsStrnEscapedFromRaw(result, 4, ABCD, 5);
-    testOk(status == 8,      "esc(\"ABCD\", 5) -> %d (exp. 8)", status);
+    testOk(status == 6,      "esc(\"ABCD\", 5) -> %d (exp. 8)", status);
     testOk(result[3] == 0,   "  0-terminated");
     testOk(result[4] == 'x', "  No overrun");
 
@@ -235,49 +265,6 @@ MAIN(epicsStringTest)
     testOk(result[status] == 0, "  0-terminated");
 
     memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\123", 1);
-    testOk(status == 0,      "raw(\"\\123\", 1) -> %d (exp. 0)", status);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\123", 2);
-    testOk(status == 1,      "raw(\"\\123\", 2) -> %d (exp. 1)", status);
-    testOk(result[0] == 1,   "  Octal escape (got \\%03o)", result[0]);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\123", 3);
-    testOk(status == 1,      "raw(\"\\123\", 3) -> %d (exp. 1)", status);
-    testOk(result[0] == 012, "  Octal escape (got \\%03o)", result[0]);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\123", 4);
-    testOk(status == 1,      "raw(\"\\123\", 4) -> %d (exp. 1)", status);
-    testOk(result[0] == 0123, "  Octal escape (got \\%03o)", result[0]);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\812", 2);
-    testOk(status == 1,      "raw(\"\\812\", 2) -> %d (exp. 1)", status);
-    testOk(result[0] == '8', "  Escaped '%c')", result[0]);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\182", 3);
-    testOk(status == 2,      "raw(\"\\182\", 3) -> %d (exp. 2)", status);
-    testOk(result[0] == 1,   "  Octal escape (got \\%03o)", result[0]);
-    testOk(result[1] == '8', "  Terminated with '%c'", result[1]);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
-    status = epicsStrnRawFromEscaped(result, 4, "\\128", 4);
-    testOk(status == 2,      "raw(\"\\128\", 4) -> %d (exp. 2)", status);
-    testOk(result[0] == 012, "  Octal escape (got \\%03o)", result[0]);
-    testOk(result[1] == '8', "  Terminator char got '%c'", result[1]);
-    testOk(result[status] == 0, "  0-terminated");
-
-    memset(result, 'x', sizeof(result));
     status = epicsStrnRawFromEscaped(result, 4, "\\x12", 1);
     testOk(status == 0,      "raw(\"\\x12\", 1) -> %d (exp. 0)", status);
     testOk(result[status] == 0, "  0-terminated");
@@ -307,14 +294,17 @@ MAIN(epicsStringTest)
 
     memset(result, 'x', sizeof(result));
     status = epicsStrnRawFromEscaped(result, 4, "\\x012", 5);
-    testOk(status == 1,      "raw(\"\\x012\", 5) -> %d (exp. 1)", status);
-    testOk(result[0] == 0x12,"  Hex escape (got \\x%x)", result[0]);
+    testOk(status == 2,      "raw(\"\\x012\", 5) -> %d (exp. 2)", status);
+    testOk(result[0] == 0x1,"  Hex escape (got \\x%x)", result[0]);
+    testOk(result[1] == '2', "  Terminator char got '%c'", result[1]);
     testOk(result[status] == 0, "  0-terminated");
 
     memset(result, 'x', sizeof(result));
     status = epicsStrnRawFromEscaped(result, 4, "\\x0012", 6);
-    testOk(status == 1,      "raw(\"\\x0012\", 6) -> %d (exp. 1)", status);
-    testOk(result[0] == 0x12,"  Hex escape (got \\x%x)", result[0]);
+    testOk(status == 3,      "raw(\"\\x0012\", 6) -> %d (exp. 3)", status);
+    testOk(result[0] == 0,"  Hex escape (got \\x%x)", result[0]);
+    testOk(result[1] == '1', "  Terminator char got '%c'", result[1]);
+    testOk(result[2] == '2', "  Following char got '%c'", result[2]);
     testOk(result[status] == 0, "  0-terminated");
 
     memset(result, 'x', sizeof(result));
@@ -323,6 +313,8 @@ MAIN(epicsStringTest)
     testOk(result[0] == 1, "  Hex escape (got \\x%x)", result[0]);
     testOk(result[1] == 'g', "  Terminator char got '%c'", result[1]);
     testOk(result[status] == 0, "  0-terminated");
+
+    testDistance();
 
     return testDone();
 }

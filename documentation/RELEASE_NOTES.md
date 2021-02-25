@@ -17,6 +17,85 @@ should also be read to understand what has changed since earlier releases.
 
 <!-- Insert new items immediately below here ... -->
 
+
+
+### Add epicsStrSimilarity()
+
+Add epicsStrSimilarity() to epicsString.h which uses edit distance as an approximate comparison.
+Enables a new "Did you mean ..." suggestion when a .db file provides an invalid value for a DBF_MENU or DBF_DEVICE field.
+
+### Build System: New `VALID_BUILDS` type "Command"
+
+Target architectures that support command-line programs that run the `main()`
+routine can now be marked as such in their `VALID_BUILDS` definition. This
+enables a new set of Makefile target variables `PROD_CMD` (similar to
+`PROD_HOST`), `LIBRARY_CMD` (like `LIBRARY_HOST`, etc.), `LOADABLE_LIBRARY_CMD`,
+`OBJS_CMD`, `SCRIPTS_CMD`, `TARGETS_CMD`, `TESTLIBRARY_CMD`, `TESTSCRIPTS_CMD`
+and `TESTPROD_CMD`. The CA client tools and programs such as `caRepeater` are now built for all such targets (previously they were built for all targets except where the OS was VxWorks, RTEMS and iOS).
+
+If you have created your own site-specific target architectures you may need to
+update the `VALID_BUILDS` variable if it gets set in your locally added
+`configure/os/CONFIG.Common.<arch>` files. This is usually only needed for
+cross-compiled targets though since `CONFIG.Common.UnixCommon` sets it.
+
+The other `VALID_BUILDS` types are "Host" for target architectures that can
+compile and run their own programs (`PROD_HOST` etc.), and "Ioc" for targets
+that can run IOCs (`PROD_IOC` etc.).
+
+### Support for JSON5
+
+The YAJL parser and generator routines in libcom and in the IOC's dbStatic
+parser now support the JSON5 standard. This adds various features to JSON
+without altering the API for the code other than adding a new option to the
+YAJL parser which can be used to disable JSON5 support if desired. The new
+features include:
+
+- The ability to handle numeric values `Infinity`, `-Infinity` and `NaN`.
+- String values and map keys may be enclosed in single quotes `'`, inside which
+  the double-quote character `"` doesn't have to be escaped with a back-slash
+  `\`, although a single-quote character `'` (or apostrophy) must be escaped
+  inside a single-quoted string.
+- Numbers may start with a plus sign, `+`.
+- Integers may be expressed in hexadecimal with a leading `0x` or `0X`.
+- Floating-point numbers may start or end with their decimal point `.`
+  (after the sign or before the exponent respectively if present).
+- Map keys that match the regex `[A-Za-z_][A-Za-z_0-9]*` don't have to be
+  enclosed in quotes at all. The dbStatic parser adds `.+-` to the characters
+  allowed but will add quotes around such keys before passing them to YAJL.
+- Arrays and maps allow a comma before the closing bracket/brace character.
+- The YAJL parser will elide a backslash followed by a newline characters from
+  a string value. The dbStatic parser doesn't allow that however.
+
+Code that must also compile against the older API can use the new C macro
+`HAS_JSON5` to detect the new version. This macro is defined on including
+either the `yajl_parse.h` or `yajl_gen.h` headers, which also provide the
+new configuration options to turn on JSON5 support.
+
+All APIs in the IOC that previously accepted JSON will now accept JSON5.
+This includes JSON field modifiers (channel filters), JSON link addresses,
+constant input link array values and database info-tag values. JSON values
+that get parsed by the dbLoadRecords() routine are still more liberal than
+the other uses as the ability to use unquoted strings that was called
+"relaxed JSON" is still supported, whereas the JSON5 standard and the YAJL
+parser only allow unquoted strings to be used for keys in a JSON map.
+
+This also fixes [lauchpad bug #1714455](https://bugs.launchpad.net/bugs/1714455).
+
+
+### Character Escape Changes
+
+- The libCom routines `epicsStrnRawFromEscaped()` and `dbTranslateEscape()`
+  declared in epicsString.h no longer accept octal escaped characters such as
+  `\123` or `\41`.
+- The routine `epicsStrnEscapedFromRaw()` now generates hex
+  excaped characters for unprintable characters such as `\x1f`.
+- Hex escape character sequences `\xXX` must now contain exactly 2 hex digits.
+- An escape sequence `\0` now generates a zero byte in the raw string, but the
+  other digits `1-9` should not appear after a back-slash.
+
+These changes are to more closely follow the JSON5 standard, which doesn't
+support octal character escapes or the `\a` (Bel, `\x07`) escape sequence.
+
 ### Filters in database input links
 
 Input database links can now use channel filters, it is not necessary to

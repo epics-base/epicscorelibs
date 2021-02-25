@@ -23,9 +23,11 @@
 #include <errno.h>
 #include <ctype.h>
 
+#include "epicsAssert.h"
 #include "epicsStdio.h"
 #include "cantProceed.h"
 #include "epicsString.h"
+#include "epicsMath.h"
 
 /* Deprecated, use epicsStrnRawFromEscaped() instead */
 int dbTranslateEscape(char *dst, const char *src)
@@ -66,55 +68,34 @@ int epicsStrnRawFromEscaped(char *dst, size_t dstlen, const char *src,
         case '\\': OUT('\\'); break;
         case '\'': OUT('\''); break;
         case '\"': OUT('\"'); break;
-
-        case '0' :case '1' :case '2' :case '3' :
-        case '4' :case '5' :case '6' :case '7' :
-            { /* \ooo */
-                unsigned int u = c - '0';
-
-                if (!srclen-- || !(c = *src++)) {
-                    OUT(u); goto done;
-                }
-                if (c < '0' || c > '7') {
-                    OUT(u); goto input;
-                }
-                u = u << 3 | (c - '0');
-
-                if (!srclen-- || !(c = *src++)) {
-                    OUT(u); goto done;
-                }
-                if (c < '0' || c > '7') {
-                    OUT(u); goto input;
-                }
-                u = u << 3 | (c - '0');
-
-                if (u > 0377) {
-                    /* Undefined behaviour! */
-                }
-                OUT(u);
-            }
-            break;
+        case '0':  OUT('\0'); break;
 
         case 'x' :
-            { /* \xXXX... */
+            { /* \xXX */
                 unsigned int u = 0;
 
                 if (!srclen-- || !(c = *src++ & 0xff))
                     goto done;
 
-                while (isxdigit(c)) {
-                    u = u << 4 | ((c > '9') ? toupper(c) - 'A' + 10 : c - '0');
-                    if (u > 0xff) {
-                        /* Undefined behaviour! */
-                    }
-                    if (!srclen-- || !(c = *src++ & 0xff)) {
-                        OUT(u);
-                        goto done;
-                    }
+                if (!isxdigit(c))
+                    goto input;
+
+                u = u << 4 | ((c > '9') ? toupper(c) - 'A' + 10 : c - '0');
+
+                if (!srclen-- || !(c = *src++ & 0xff)) {
+                    OUT(u);
+                    goto done;
                 }
+
+                if (!isxdigit(c)) {
+                    OUT(u);
+                    goto input;
+                }
+
+                u = u << 4 | ((c > '9') ? toupper(c) - 'A' + 10 : c - '0');
                 OUT(u);
-                goto input;
             }
+            break;
 
         default:
             OUT(c);
@@ -137,6 +118,7 @@ int epicsStrnEscapedFromRaw(char *dst, size_t dstlen, const char *src,
         return -1;
 
     while (srclen--) {
+        static const char hex[] = "0123456789abcdef";
         int c = *src++;
         #define OUT(chr) ndst++; if (--rem > 0) *dst++ = chr
 
@@ -151,15 +133,15 @@ int epicsStrnEscapedFromRaw(char *dst, size_t dstlen, const char *src,
         case '\\': OUT('\\'); OUT('\\'); break;
         case '\'': OUT('\\'); OUT('\''); break;
         case '\"': OUT('\\'); OUT('\"'); break;
+        case '\0': OUT('\\'); OUT('0');  break;
         default:
             if (isprint(c & 0xff)) {
                 OUT(c);
                 break;
             }
-            OUT('\\');
-            OUT('0' + ((c & 0300) >> 6));
-            OUT('0' + ((c & 0070) >> 3));
-            OUT('0' +  (c & 0007));
+            OUT('\\'); OUT('x');
+            OUT(hex[(c >> 4) & 0x0f]);
+            OUT(hex[ c       & 0x0f]);
         }
         #undef OUT
     }
@@ -178,7 +160,7 @@ size_t epicsStrnEscapedFromRawSize(const char *src, size_t srclen)
         switch (c) {
         case '\a': case '\b': case '\f': case '\n':
         case '\r': case '\t': case '\v': case '\\':
-        case '\'': case '\"':
+        case '\'': case '\"': case '\0':
             ndst++;
             break;
         default:
@@ -258,7 +240,7 @@ int epicsStrPrintEscaped(FILE *fp, const char *s, size_t len)
            if (isprint(0xff & (int)c))
                nout += fprintf(fp, "%c", c);
            else
-               nout += fprintf(fp, "\\%03o", (unsigned char)c);
+               nout += fprintf(fp, "\\x%02x", (unsigned char)c);
            break;
        }
    }
@@ -377,4 +359,72 @@ unsigned int epicsMemHash(const char *str, size_t length, unsigned int seed)
         hash ^= (hash << 7) ^ *str++ ^ (hash >> 3);
     }
     return hash;
+}
+
+/* Compute normalized Levenshtein distance
+ *
+ * https://en.wikipedia.org/wiki/Levenshtein_distance
+ *
+ * We modify this to give half weight to case insensitive substitution.
+ * All normal integer weights are multiplied by two, with case
+ * insensitive added in as one.
+ */
+double epicsStrSimilarity(const char *A, const char *B)
+{
+    double ret = 0;
+    size_t lA, lB, a, b;
+    size_t norm;
+    size_t *dist0, *dist1, *stemp;
+
+    lA = strlen(A);
+    lB = strlen(B);
+
+    /* max number of edits to change A into B is max(lA, lB) */
+    norm = lA > lB ? lA : lB;
+    /* take into account our weighting */
+    norm *= 2u;
+
+    dist0 = calloc(1+lB, sizeof(*dist0));
+    dist1 = calloc(1+lB, sizeof(*dist1));
+    if(!dist0 || !dist1) {
+        ret = -1.0;
+        goto done;
+    }
+
+    for(b=0; b<1+lB; b++)
+        dist0[b] = 2*b;
+
+    for(a=0; a<lA; a++) {
+        dist1[0] = 2*(a+1);
+
+        for(b=0; b<lB; b++) {
+            size_t delcost = dist0[b+1] + 2,
+                   inscost = dist1[b] + 2,
+                   subcost = dist0[b],
+                   mincost = delcost;
+            char ca = A[a], cb = B[b];
+
+            if(ca!=cb)
+                subcost++;
+            if(toupper((int)ca)!=toupper((int)cb))
+                subcost++;
+
+            if(mincost > inscost)
+                mincost = inscost;
+            if(mincost > subcost)
+                mincost = subcost;
+
+            dist1[b+1] = mincost;
+        }
+
+        stemp = dist0;
+        dist0 = dist1;
+        dist1 = stemp;
+    }
+
+    ret = norm ? (norm - dist0[lB]) / (double)norm : 1.0;
+done:
+    free(dist0);
+    free(dist1);
+    return ret;
 }
