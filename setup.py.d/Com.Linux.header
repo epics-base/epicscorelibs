@@ -2,7 +2,6 @@
 osi/os/Linux/osdSock.h
 osi/os/Linux/osdThread.h
 osi/os/Linux/osdTime.h
-osi/os/Linux/osiFileName.h
 osi/os/Linux/osiUnistd.h
 
 osi/os/posix/epicsAtomicOSD.h

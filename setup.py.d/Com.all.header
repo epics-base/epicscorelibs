@@ -46,7 +46,6 @@ misc/epicsUnitTest.h
 misc/ipAddrToAsciiAsynchronous.h
 misc/locationException.h
 misc/shareLib.h
-misc/unixFileName.h
 osi/compilerDependencies.h
 osi/devLib.h
 osi/devLibVME.h
@@ -72,6 +71,7 @@ osi/epicsThread.h
 osi/epicsTime.h
 osi/generalTimeSup.h
 osi/osiClockTime.h
+osi/osiFileName.h
 osi/osiPoolStatus.h
 osi/osiProcess.h
 osi/osiSock.h

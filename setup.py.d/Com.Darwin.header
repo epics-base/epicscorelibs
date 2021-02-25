@@ -2,7 +2,6 @@
 osi/os/Darwin/epicsMath.h
 osi/os/Darwin/osdSock.h
 osi/os/Darwin/osdTime.h
-osi/os/Darwin/osiFileName.h
 
 osi/os/posix/osiUnistd.h
 osi/os/posix/osdThread.h

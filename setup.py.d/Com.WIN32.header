@@ -10,7 +10,6 @@ osi/os/WIN32/osdStrtod.h
 osi/os/WIN32/osdThread.h
 osi/os/WIN32/osdTime.h
 osi/os/WIN32/osdWireConfig.h
-osi/os/WIN32/osiFileName.h
 osi/os/WIN32/osiUnistd.h
 
 osi/os/default/epicsMMIO.h

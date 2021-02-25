@@ -1,6 +1,7 @@
 
 osi/os/Linux/osdBackTrace.cpp
 osi/os/Linux/osdFindAddr.c
+osi/os/Linux/osdNetIntf.c
 osi/os/Linux/osdSockUnsentCount.c
 osi/os/Linux/osdThreadExtra.c
 
@@ -25,7 +26,6 @@ osi/os/default/osdAssert.c
 osi/os/default/osdEnv.c
 osi/os/default/osdInterrupt.c
 osi/os/default/osdMessageQueue.cpp
-osi/os/default/osdNetIntf.c
 osi/os/default/osdPoolStatus.c
 osi/os/default/osdThreadHooks.c
 osi/os/default/osdSockAddrReuse.cpp
