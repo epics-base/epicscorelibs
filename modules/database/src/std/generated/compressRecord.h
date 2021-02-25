@@ -10,14 +10,6 @@
 #include "devSup.h"
 #include "epicsTime.h"
 
-#ifndef bufferingALG_NUM_CHOICES
-typedef enum {
-    bufferingALG_FIFO               /* FIFO Buffer */,
-    bufferingALG_LIFO               /* LIFO Buffer */
-} bufferingALG;
-#define bufferingALG_NUM_CHOICES 2
-#endif
-
 #ifndef compressALG_NUM_CHOICES
 typedef enum {
     compressALG_N_to_1_Low_Value    /* N to 1 Low Value */,
@@ -28,6 +20,14 @@ typedef enum {
     compressALG_N_to_1_Median       /* N to 1 Median */
 } compressALG;
 #define compressALG_NUM_CHOICES 6
+#endif
+
+#ifndef bufferingALG_NUM_CHOICES
+typedef enum {
+    bufferingALG_FIFO               /* FIFO Buffer */,
+    bufferingALG_LIFO               /* LIFO Buffer */
+} bufferingALG;
+#define bufferingALG_NUM_CHOICES 2
 #endif
 
 typedef struct compressRecord {
