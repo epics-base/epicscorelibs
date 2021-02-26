@@ -8,12 +8,13 @@ include src/python/epicscorelibs/*.pxd
 
 include setup.py.d/*
 
-recursive-include modules/libcom/src *.h *.c *.cpp
+recursive-include modules/libcom/src *.h *.h@ *.c *.cpp
 prune modules/libcom/src/osi/os/RTEMS
 prune modules/libcom/src/osi/os/vxWorks
 prune modules/libcom/src/O.*
 
 include modules/ca/src/client/*.h
+include modules/ca/src/client/*.h@
 include modules/ca/src/client/*.c
 include modules/ca/src/client/*.cpp
 prune modules/ca/src/O.*
@@ -23,7 +24,7 @@ include modules/database/src/std/*/*.dbd
 include modules/pvAccess/src/ioc/*.dbd
 include modules/pva2pva/pdbApp/qsrv-new.dbd
 
-recursive-include modules/database/src/ioc *.h *.c *.cpp
+recursive-include modules/database/src/ioc *.h *.h@ *.c *.cpp
 prune modules/database/src/ioc/O.*
 
 recursive-include modules/database/src/std *.h *.c *.cpp
