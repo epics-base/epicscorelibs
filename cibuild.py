@@ -64,7 +64,10 @@ def build(args):
     shutil.rmtree('build', ignore_errors=True)
 
     call_py(['setup.py', 'sdist'])
-    call_py(['setup.py', '-v', 'bdist_wheel', '-p', tag])
+    results = glob('dist/*.gz')
+    assert len(results)==1, results
+    # build wheel from source tar to ensure complete MANIFEST
+    call_py(['-m', 'pip', 'wheel', '-v', '-w', 'dist', '--no-build-isolation', '--no-use-pep517', '--no-deps', '--no-index', '--build-option', '--plat-name='+tag, results[0]])
 
     results = glob('dist/*.whl')
     print('RESULT', results)
