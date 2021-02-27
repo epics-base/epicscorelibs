@@ -1,5 +1,5 @@
 include LICENSE
-include configure/CONFIG_BASE_VERSION
+include configure/CONFIG_*_VERSION
 include configure/CONFIG_ENV
 include configure/CONFIG_SITE_ENV
 include pyproject.toml
