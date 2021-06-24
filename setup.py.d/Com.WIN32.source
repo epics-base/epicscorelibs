@@ -3,6 +3,7 @@ osi/os/WIN32/epicsSocketConvertErrnoToString.cpp
 osi/os/WIN32/epicsTempFile.c
 osi/os/WIN32/forceBadAllocException.cpp
 osi/os/WIN32/osdBackTrace.cpp
+osi/os/WIN32/osdEnv.c
 osi/os/WIN32/osdEvent.c
 osi/os/WIN32/osdFindSymbol.c
 osi/os/WIN32/osdMonotonic.c
@@ -22,7 +23,6 @@ osi/os/WIN32/systemCallIntMech.cpp
 
 osi/os/default/devLibVMEOSD.c
 osi/os/default/osdAssert.c
-osi/os/default/osdEnv.c
 osi/os/default/osdInterrupt.c
 osi/os/default/osdMessageQueue.cpp
 osi/os/default/osdThreadHooks.c

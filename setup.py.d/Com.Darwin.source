@@ -1,6 +1,5 @@
 
 osi/os/Darwin/osdBackTrace.cpp
-osi/os/Darwin/osdEnv.c
 osi/os/Darwin/osdFindAddr.c
 osi/os/Darwin/osdMonotonic.c
 osi/os/Darwin/osdNetIntf.c
@@ -24,6 +23,7 @@ osi/os/posix/systemCallIntMech.cpp
 osi/os/default/devLibVMEOSD.c
 osi/os/default/epicsSocketConvertErrnoToString.cpp
 osi/os/default/osdAssert.c
+osi/os/default/osdEnv.c
 osi/os/default/osdInterrupt.c
 osi/os/default/osdMessageQueue.cpp
 osi/os/default/osdPoolStatus.c

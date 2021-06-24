@@ -3,6 +3,7 @@ filters/dbnd.c
 filters/decimate.c
 filters/sync.c
 filters/ts.c
+filters/utag.c
 
 dev/devMbbiSoftCallback.c
 dev/devLsoSoft.c
