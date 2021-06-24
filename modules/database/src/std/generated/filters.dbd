@@ -13,3 +13,6 @@ registrar(syncInitialize)
 
 registrar(decInitialize)
 
+
+registrar(utagInitialize)
+
