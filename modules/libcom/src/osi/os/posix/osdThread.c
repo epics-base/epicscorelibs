@@ -24,8 +24,14 @@
 #include <sched.h>
 #include <unistd.h>
 
-#if defined(_POSIX_MEMLOCK) && _POSIX_MEMLOCK > 0
-#include <sys/mman.h>
+#if (defined(_POSIX_MEMLOCK) && (_POSIX_MEMLOCK > 0) && !defined(__rtems__))
+#  define USE_MEMLOCK 1
+#else
+#  define USE_MEMLOCK 0
+#endif
+
+#if USE_MEMLOCK
+#include <sys/mman.h> 
 #endif
 
 #include "epicsStdio.h"
@@ -328,9 +334,9 @@ static void once(void)
     int status;
 
     pthread_key_create(&getpthreadInfo,0);
-    status = osdPosixMutexInit(&onceLock,0);
+    status = osdPosixMutexInit(&onceLock,PTHREAD_MUTEX_DEFAULT);
     checkStatusOnceQuit(status,"osdPosixMutexInit","epicsThreadInit");
-    status = osdPosixMutexInit(&listLock,0);
+    status = osdPosixMutexInit(&listLock,PTHREAD_MUTEX_DEFAULT);
     checkStatusOnceQuit(status,"osdPosixMutexInit","epicsThreadInit");
     pcommonAttr = calloc(1,sizeof(commonAttr));
     if(!pcommonAttr) checkStatusOnceQuit(errno,"calloc","epicsThreadInit");
@@ -426,7 +432,8 @@ static void epicsThreadInit(void)
 LIBCOM_API
 void epicsThreadRealtimeLock(void)
 {
-#if defined(_POSIX_MEMLOCK) && _POSIX_MEMLOCK > 0
+#if USE_MEMLOCK
+#ifndef RTEMS_LEGACY_STACK // seems to be part of libbsd?
     if (pcommonAttr->maxPriority > pcommonAttr->minPriority) {
         int status = mlockall(MCL_CURRENT | MCL_FUTURE);
 
@@ -451,6 +458,7 @@ void epicsThreadRealtimeLock(void)
             }
         }
     }
+#endif // LEGACY STACK
 #endif
 }
 
@@ -687,6 +695,10 @@ LIBCOM_API void epicsStdCall epicsThreadExitMain(void)
     epicsThreadOSD *pthreadInfo;
 
     epicsThreadInit();
+
+    cantProceed("epicsThreadExitMain() has been deprecated for lack of usage."
+                "  Please report if you see this message.");
+
     pthreadInfo = (epicsThreadOSD *)pthread_getspecific(getpthreadInfo);
     if(pthreadInfo==NULL)
         pthreadInfo = createImplicit();
