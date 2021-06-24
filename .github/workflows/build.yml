@@ -4,97 +4,121 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: ${{ matrix.os }}/${{ matrix.python }}/${{ matrix.pyver }}/${{ matrix.piparch }}/${{ matrix.profile }}
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
+          # Check build from .tar
+          - name: Source
+            os: ubuntu-latest
+            python: "3.7"
+            source: true
 
           # Linux py builds x64
-          - os: ubuntu-latest
+          - name: linux 2.7 amd64
+            os: ubuntu-latest
             pyver: cp27-cp27m
             piparch: manylinux1_x86_64
             source: true
 
-          - os: ubuntu-latest
+          - name: linux 2.7u amd64
+            os: ubuntu-latest
             pyver: cp27-cp27mu
             piparch: manylinux1_x86_64
 
-          - os: ubuntu-latest
+          - name: linux 3.5 amd64
+            os: ubuntu-latest
             pyver: cp35-cp35m
             piparch: manylinux1_x86_64
 
-          - os: ubuntu-latest
+          - name: linux 3.6 amd64
+            os: ubuntu-latest
             pyver: cp36-cp36m
             piparch: manylinux1_x86_64
 
-          - os: ubuntu-latest
+          - name: linux 3.7 amd64
+            os: ubuntu-latest
             pyver: cp37-cp37m
             piparch: manylinux1_x86_64
 
-          - os: ubuntu-latest
+          - name: linux 3.8 amd64
+            os: ubuntu-latest
             pyver: cp38-cp38
             piparch: manylinux1_x86_64
 
-          - os: ubuntu-latest
+          - name: linux 3.9 amd64
+            os: ubuntu-latest
             pyver: cp39-cp39
-            piparch: manylinux1_x86_64
+            piparch: manylinux2010_i686
 
           # Linux py builds x64
-          - os: ubuntu-latest
+          - name: linux 2.7 i686
+            os: ubuntu-latest
             pyver: cp27-cp27m
             piparch: manylinux1_i686
             pre: linux32
 
-          - os: ubuntu-latest
+          - name: linux 2.7u i686
+            os: ubuntu-latest
             pyver: cp27-cp27mu
             piparch: manylinux1_i686
             pre: linux32
 
-          - os: ubuntu-latest
+          - name: linux 3.5 i686
+            os: ubuntu-latest
             pyver: cp35-cp35m
             piparch: manylinux1_i686
             pre: linux32
 
-          - os: ubuntu-latest
+          - name: linux 3.6 i686
+            os: ubuntu-latest
             pyver: cp36-cp36m
             piparch: manylinux1_i686
             pre: linux32
 
-          - os: ubuntu-latest
+          - name: linux 3.7 i686
+            os: ubuntu-latest
             pyver: cp37-cp37m
             piparch: manylinux1_i686
             pre: linux32
 
-          - os: ubuntu-latest
+          - name: linux 3.8 i686
+            os: ubuntu-latest
             pyver: cp38-cp38
             piparch: manylinux1_i686
             pre: linux32
 
-          - os: ubuntu-latest
+          - name: linux 3.9 i686
+            os: ubuntu-latest
             pyver: cp39-cp39
-            piparch: manylinux1_i686
+            piparch: manylinux2010_i686
             pre: linux32
 
           # OSX py builds
-          - os: macos-latest
+          - name: osx 2.7 intel
+            os: macos-latest
             python: "2.7"
             piparch: macosx_10_9_intel
 
-          - os: macos-latest
+          - name: osx 3.6 intel
+            os: macos-latest
             python: "3.6"
             piparch: macosx_10_9_intel
 
-          - os: macos-latest
+          - name: osx 3.7 intel
+            os: macos-latest
             python: "3.7"
             piparch: macosx_10_9_intel
 
-          - os: macos-latest
+          - name: osx 3.8 intel
+            os: macos-latest
             python: "3.8"
             piparch: macosx_10_9_intel
 
-          - os: macos-latest
+          - name: osx 3.9 intel
+            os: macos-latest
             python: "3.9"
             piparch: macosx_10_9_intel
 
@@ -105,25 +129,34 @@ jobs:
           #  python: "2.7"
           #  piparch: win_amd64
 
-          - os: windows-latest
+          - name: win64 3.5
+            os: windows-latest
             python: "3.5"
             piparch: win_amd64
 
-          - os: windows-latest
+          - name: win64 3.6
+            os: windows-latest
             python: "3.6"
             piparch: win_amd64
 
-          - os: windows-latest
+          - name: win64 3.7
+            os: windows-latest
             python: "3.7"
             piparch: win_amd64
 
-          - os: windows-latest
+          - name: win64 3.8
+            os: windows-latest
             python: "3.8"
             piparch: win_amd64
 
-          - os: windows-latest
+          - name: win64 3.9
+            os: windows-latest
             python: "3.9"
             piparch: win_amd64
+
+    env:
+      # set to "--pre" to allow use of pre-release dependencies
+      PRE: "--pre"
 
     steps:
       - uses: actions/checkout@v2
@@ -136,7 +169,7 @@ jobs:
           python-version: ${{ matrix.python || '3.7' }}
           #architecture: x64
 
-      - name: Native Info
+      - name: Native Prep/Info
         run: |
           python -m pip install --upgrade pip
           python -m pip install setuptools wheel twine
@@ -144,19 +177,56 @@ jobs:
           python --version
           python -m pip --version
           python -m twine -h
+          python ./gha-set-pre.py
+
+      - name: PY Source
+        run: |
+          echo "PRE=$PRE"
+          python -m pip install $PRE setuptools wheel setuptools-dso
+          python setup.py sdist --formats=gztar
+          ls dist/*
+
+      - name: PEP537 Build
+        if: matrix.source
+        run: |
+          python -m pip wheel -v -w dist $PRE dist/*.tar.*
 
       - name: Native PY build
-        if: matrix.python
+        if: matrix.python && !matrix.source
+        shell: bash
         run: |
-          python cibuild.py prepare build ${{ matrix.piparch }}
+          python -m pip wheel -v -w dist --no-index --no-deps \
+           --no-build-isolation --no-use-pep517 \
+           --build-option --plat-name=${{ matrix.piparch }} \
+           $PRE \
+           dist/*.tar.*
 
       - name: Docker PY build
-        if: matrix.pyver
+        if: matrix.pyver && !matrix.source
         run: |
+          # can't use GHA native docker support since GHA magic binaries need .so absent from old manylinux images :(
+          cat <<EOF > runit.sh
+          #!/bin/sh
+          set -e -x
+          cd /io
+          [ -d dist ]
+          ls dist/*
+          export PATH="/opt/python/${{ matrix.pyver }}/bin:\$PATH"
+          which python
+          python -m pip install -U pip
+          python -m pip install $PRE setuptools wheel setuptools-dso
+          python -m pip install --only-binary numpy numpy
+          python -m pip wheel -v -w dist --no-index --no-deps \
+           --no-build-isolation --no-use-pep517 \
+           --build-option --plat-name=${{ matrix.piparch }} \
+           $PRE \
+           dist/*.tar.*
+
+          EOF
+          cat runit.sh
+          chmod +x runit.sh
           docker pull quay.io/pypa/${{ matrix.piparch }}
-          docker run --rm -v `pwd`:/io quay.io/pypa/${{ matrix.piparch }} \
-           ${{ matrix.pre }} "/opt/python/${{ matrix.pyver }}/bin/python" /io/cibuild.py \
-            docker prepare build ${{ matrix.piparch }}
+          docker run --rm -v `pwd`:/io quay.io/pypa/${{ matrix.piparch }} ${{ matrix.pre }} /io/runit.sh
 
       - name: List Artifacts
         run: ls dist/*
@@ -168,7 +238,7 @@ jobs:
           path: dist/*
 
       - name: Upload wheels
-        if: github.event_name=='push' && github.ref=='refs/heads/master'
+        if: github.event_name=='push' && github.ref=='refs/heads/master' && !matrix.source
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
