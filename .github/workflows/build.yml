@@ -21,7 +21,6 @@ jobs:
             os: ubuntu-latest
             pyver: cp27-cp27m
             piparch: manylinux1_x86_64
-            source: true
 
           - name: linux 2.7u amd64
             os: ubuntu-latest
@@ -51,7 +50,7 @@ jobs:
           - name: linux 3.9 amd64
             os: ubuntu-latest
             pyver: cp39-cp39
-            piparch: manylinux2010_i686
+            piparch: manylinux2010_x86_64
 
           # Linux py builds x64
           - name: linux 2.7 i686
@@ -154,10 +153,6 @@ jobs:
             python: "3.9"
             piparch: win_amd64
 
-    env:
-      # set to "--pre" to allow use of pre-release dependencies
-      PRE: "--pre"
-
     steps:
       - uses: actions/checkout@v2
         with:
@@ -182,11 +177,12 @@ jobs:
       - name: PY Source
         run: |
           echo "PRE=$PRE"
-          python -m pip install $PRE setuptools wheel setuptools-dso
+          python -m pip install setuptools wheel nose
+          python -m pip install $PRE setuptools-dso
           python setup.py sdist --formats=gztar
           ls dist/*
 
-      - name: PEP537 Build
+      - name: PEP517 Build
         if: matrix.source
         run: |
           python -m pip wheel -v -w dist $PRE dist/*.tar.*
@@ -201,6 +197,10 @@ jobs:
            $PRE \
            dist/*.tar.*
 
+          cd dist
+          python -m pip install epicscorelibs*.whl
+          python -m nose -v epicscorelibs
+
       - name: Docker PY build
         if: matrix.pyver && !matrix.source
         run: |
@@ -214,13 +214,17 @@ jobs:
           export PATH="/opt/python/${{ matrix.pyver }}/bin:\$PATH"
           which python
           python -m pip install -U pip
-          python -m pip install $PRE setuptools wheel setuptools-dso
-          python -m pip install --only-binary numpy numpy
+          python -m pip install --only-binary numpy setuptools wheel nose numpy
+          python -m pip install $PRE setuptools-dso
           python -m pip wheel -v -w dist --no-index --no-deps \
            --no-build-isolation --no-use-pep517 \
            --build-option --plat-name=${{ matrix.piparch }} \
            $PRE \
            dist/*.tar.*
+
+          cd dist
+          python -m pip install epicscorelibs*.whl
+          python -m nose -v epicscorelibs
 
           EOF
           cat runit.sh
@@ -243,7 +247,7 @@ jobs:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          python -m twine upload --skip-existing dist/*.whl
+          python -m twine upload --skip-existing dist/epicscorelibs*.whl
 
       - name: Upload source
         if: github.event_name=='push' && github.ref=='refs/heads/master' && matrix.source
@@ -251,4 +255,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          python -m twine upload --skip-existing dist/*.tar.*
+          python -m twine upload --skip-existing dist/epicscorelibs*.tar.*
