@@ -39,7 +39,7 @@ recursive-include modules/pvAccess/src *.h *.h@ *.cpp
 prune modules/pvAccess/src/O.*
 
 include modules/pva2pva/configure/CONFIG_QSRV_VERSION
-recursive-include modules/pva2pva/pdbApp *.h *.h@ *.cpp
+recursive-include modules/pva2pva/pdbApp *.h *.h@ *.cpp *.c
 recursive-include modules/pva2pva/p2pApp *.h *.h@ *.cpp
 recursive-include modules/pva2pva/common *.h *.h@ *.cpp
 prune modules/pva2pva/*/O.*

@@ -1,6 +1,7 @@
 pdbApp/configparse.cpp
 pdbApp/dbf_copy.cpp
 pdbApp/demo.cpp
+pdbApp/imagedemo.c
 pdbApp/pdb.cpp
 pdbApp/pdbgroup.cpp
 pdbApp/pdbsingle.cpp
