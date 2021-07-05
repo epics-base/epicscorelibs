@@ -498,10 +498,17 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     python_requires='>=2.7',
     install_requires=[
         'setuptools', # needed at runtime for 'pkg_resources'
+        'setuptools_dso>=2.0a1', # 'setuptools_dso.runtime' used in 'epicscorelibs.path'
         'numpy', # needed for epicscorelibs.ca.dbr
     ],
 
-    packages=['epicscorelibs', 'epicscorelibs.path', 'epicscorelibs.test', 'epicscorelibs.ca'],
+    packages=[
+        'epicscorelibs',
+        'epicscorelibs.lib',
+        'epicscorelibs.path',
+        'epicscorelibs.test',
+        'epicscorelibs.ca',
+    ],
     package_dir={'':os.path.join('src','python')},
     package_data={
         '':['*.pxd'],
