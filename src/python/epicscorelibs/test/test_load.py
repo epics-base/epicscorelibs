@@ -53,3 +53,13 @@ def test_ca_loading():
     from epicscorelibs.ca import cadef, dbr
     assert cadef
     assert dbr
+
+def test_qsrv_loading():
+    from setuptools_dso.runtime import find_dso
+    fname = find_dso('...lib.qsrv')
+    lib = ctypes.CDLL(fname, ctypes.RTLD_GLOBAL)
+    qsrvVersion = lib.qsrvVersion
+    qsrvVersion.restype = ctypes.c_uint
+
+    qver = qsrvVersion()
+    assert qver>=0, qver

@@ -7,6 +7,7 @@ import code
 import argparse
 import sys
 import os
+import atexit
 
 from . import path
 
@@ -18,8 +19,17 @@ else:
     Com = ctypes.CDLL(path.get_lib("Com"), mode=ctypes.RTLD_GLOBAL)
 dbCore = ctypes.CDLL(path.get_lib("dbCore"), mode=ctypes.RTLD_GLOBAL)
 dbRecStd = ctypes.CDLL(path.get_lib("dbRecStd"), mode=ctypes.RTLD_GLOBAL)
+pvAccessIOC = ctypes.CDLL(path.get_lib("pvAccessIOC"), mode=ctypes.RTLD_GLOBAL)
+qsrv = ctypes.CDLL(path.get_lib("qsrv"), mode=ctypes.RTLD_GLOBAL)
 
 # The functions we need from those libraries
+
+epicsExitCallAtExits = Com.epicsExitCallAtExits
+epicsExitCallAtExits.restype = None
+
+@atexit.register
+def baseCleanup():
+    epicsExitCallAtExits()
 
 iocshCmd = Com.iocshCmd
 iocshCmd.restype = ctypes.c_int
@@ -66,9 +76,10 @@ def start_ioc(database=None, macros='', dbs=None):
     iocshRegisterCommon()
 
     out('IOC Starting w/ %s \n', dbs)
-    dbd = os.path.join(path.base_path, "dbd")
-    if dbLoadDatabase(b"base.dbd", dbd.encode(), None):
-        raise RuntimeError('Error loading '+dbd)
+    dbdpath = os.path.join(path.base_path, "dbd")
+    for dbd in [b'base.dbd', b'PVAServerRegister.dbd', b'qsrv.dbd']:
+        if dbLoadDatabase(dbd, dbdpath.encode(), None):
+            raise RuntimeError('Error loading '+dbdpath)
 
     out('IOC dbd loaded\n')
     if registerRecordDeviceDriver(pdbbase):
