@@ -177,7 +177,7 @@ jobs:
       - name: PY Source
         run: |
           echo "PRE=$PRE"
-          python -m pip install setuptools wheel nose
+          python -m pip install setuptools wheel nose2
           python -m pip install $PRE setuptools-dso
           python setup.py sdist --formats=gztar
           ls dist/*
@@ -199,7 +199,8 @@ jobs:
 
           cd dist
           python -m pip install epicscorelibs*.whl
-          python -m nose -v epicscorelibs
+          python -c 'import epicscorelibs; print("IMPORT", epicscorelibs.__file__)'
+          python -m nose2 -v epicscorelibs
 
       - name: Docker PY build
         if: matrix.pyver && !matrix.source
@@ -214,7 +215,7 @@ jobs:
           export PATH="/opt/python/${{ matrix.pyver }}/bin:\$PATH"
           which python
           python -m pip install -U pip
-          python -m pip install --only-binary numpy setuptools wheel nose numpy
+          python -m pip install --only-binary numpy setuptools wheel nose2 numpy
           python -m pip install $PRE setuptools-dso
           python -m pip wheel -v -w dist --no-index --no-deps \
            --no-build-isolation --no-use-pep517 \
@@ -224,7 +225,8 @@ jobs:
 
           cd dist
           python -m pip install epicscorelibs*.whl
-          python -m nose -v epicscorelibs
+          python -c 'import epicscorelibs; print("IMPORT", epicscorelibs.__file__)'
+          python -m nose2 -v epicscorelibs
 
           EOF
           cat runit.sh
