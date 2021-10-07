@@ -59,7 +59,7 @@ typedef epicsInt32      epicsStatus;
 #define MAX_STRING_SIZE 40
 
 /**
- * \brief !! Dont use this - it may vanish in the future !!
+ * \brief !! Don't use this - it may vanish in the future !!
  */
 typedef struct {
     unsigned    length;
@@ -67,7 +67,7 @@ typedef struct {
 } epicsString;
 
 /**
- * \brief !! Dont use this - it may vanish in the future !!
+ * \brief !! Don't use this - it may vanish in the future !!
  *
  * Provided only for backwards compatibility with
  * db_access.h
@@ -102,8 +102,8 @@ typedef union epics_any {
  * \brief Corresponding Type Codes
  * (this enum must start at zero)
  *
- * !! Update \ref epicsTypeToDBR_XXXX[] and \ref DBR_XXXXToEpicsType
- *  in db_access.h if you edit this enum !!
+ * \note Update \a epicsTypeToDBR_XXXX[] and \a DBR_XXXXToEpicsType
+ *  in db_access.h if you edit this enum
  */
 typedef enum {
     epicsInt8T,
