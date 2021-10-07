@@ -52,6 +52,7 @@ osi/devLibVME.h
 osi/devLibVMEImpl.h
 osi/epicsAssert.h
 osi/epicsAtomic.h
+osi/epicsAtomicGCC.h
 osi/epicsAtomicDefault.h
 osi/epicsEndian.h
 osi/epicsEvent.h
