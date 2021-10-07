@@ -52,6 +52,11 @@ jobs:
             pyver: cp39-cp39
             piparch: manylinux2010_x86_64
 
+          - name: linux 3.10 amd64
+            os: ubuntu-latest
+            pyver: cp310-cp310
+            piparch: manylinux2014_x86_64
+
           # Linux py builds x64
           - name: linux 2.7 i686
             os: ubuntu-latest
@@ -95,6 +100,8 @@ jobs:
             piparch: manylinux2010_i686
             pre: linux32
 
+          # numpy builds for >=3.10 do no include i686
+
           # OSX py builds
           - name: osx 2.7 intel
             os: macos-latest
@@ -120,6 +127,11 @@ jobs:
             os: macos-latest
             python: "3.9"
             piparch: macosx_10_9_intel
+
+          - name: osx 3.10 intel
+            os: macos-latest
+            python: "3.10"
+            piparch: macosx_10_10_intel
 
           # Windows py builds
 
@@ -151,6 +163,11 @@ jobs:
           - name: win64 3.9
             os: windows-latest
             python: "3.9"
+            piparch: win_amd64
+
+          - name: win64 3.10
+            os: windows-latest
+            python: "3.10"
             piparch: win_amd64
 
     steps:
@@ -209,6 +226,7 @@ jobs:
           cat <<EOF > runit.sh
           #!/bin/sh
           set -e -x
+          ls /opt/python/
           cd /io
           [ -d dist ]
           ls dist/*
