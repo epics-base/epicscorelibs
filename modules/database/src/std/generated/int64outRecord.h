@@ -76,7 +76,7 @@ typedef struct int64outRecord {
     DBLINK              flnk;       /**< @brief Forward Process Link */
     epicsInt64          val;        /**< @brief Desired Output */
     DBLINK              out;        /**< @brief Output Specification */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     char                egu[16];    /**< @brief Units name */
     epicsInt64          drvh;       /**< @brief Drive High Limit */

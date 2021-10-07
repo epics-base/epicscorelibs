@@ -76,7 +76,7 @@ typedef struct boRecord {
     DBLINK              flnk;       /**< @brief Forward Process Link */
     epicsEnum16         val;        /**< @brief Current Value */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     DBLINK              out;        /**< @brief Output Specification */
     epicsFloat64        high;       /**< @brief Seconds to Hold High */
     char                znam[26];   /**< @brief Zero Name */

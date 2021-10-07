@@ -87,7 +87,7 @@ typedef struct dfanoutRecord {
     DBLINK              outf;       /**< @brief Output Spec F */
     DBLINK              outg;       /**< @brief Output Spec G */
     DBLINK              outh;       /**< @brief Output Spec H */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     char                egu[16];    /**< @brief Engineering Units */
     epicsInt16          prec;       /**< @brief Display Precision */

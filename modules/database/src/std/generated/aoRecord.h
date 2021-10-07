@@ -89,7 +89,7 @@ typedef struct aoRecord {
     epicsFloat64        oval;       /**< @brief Output Value */
     DBLINK              out;        /**< @brief Output Specification */
     epicsFloat64        oroc;       /**< @brief Output Rate of Change */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     epicsEnum16         oif;        /**< @brief Out Full/Incremental */
     epicsInt16          prec;       /**< @brief Display Precision */

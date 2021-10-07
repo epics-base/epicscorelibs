@@ -34,6 +34,18 @@ typedef enum {
 #define calcoutDOPT_NUM_CHOICES 2
 #endif
 
+#ifndef calcoutINAV_NUM_CHOICES
+/** @brief Enumerated type from menu calcoutINAV */
+typedef enum {
+    calcoutINAV_EXT_NC              /**< @brief State string "Ext PV NC" */,
+    calcoutINAV_EXT                 /**< @brief State string "Ext PV OK" */,
+    calcoutINAV_LOC                 /**< @brief State string "Local PV" */,
+    calcoutINAV_CON                 /**< @brief State string "Constant" */
+} calcoutINAV;
+/** @brief Number of states defined for menu calcoutINAV */
+#define calcoutINAV_NUM_CHOICES 4
+#endif
+
 #ifndef calcoutOOPT_NUM_CHOICES
 /** @brief Enumerated type from menu calcoutOOPT */
 typedef enum {
@@ -46,18 +58,6 @@ typedef enum {
 } calcoutOOPT;
 /** @brief Number of states defined for menu calcoutOOPT */
 #define calcoutOOPT_NUM_CHOICES 6
-#endif
-
-#ifndef calcoutINAV_NUM_CHOICES
-/** @brief Enumerated type from menu calcoutINAV */
-typedef enum {
-    calcoutINAV_EXT_NC              /**< @brief State string "Ext PV NC" */,
-    calcoutINAV_EXT                 /**< @brief State string "Ext PV OK" */,
-    calcoutINAV_LOC                 /**< @brief State string "Local PV" */,
-    calcoutINAV_CON                 /**< @brief State string "Constant" */
-} calcoutINAV;
-/** @brief Number of states defined for menu calcoutINAV */
-#define calcoutINAV_NUM_CHOICES 4
 #endif
 
 /** @brief Declaration of calcout record type. */

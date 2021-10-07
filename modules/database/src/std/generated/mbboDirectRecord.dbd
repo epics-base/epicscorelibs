@@ -29,7 +29,6 @@ recordtype(mbboDirect) {
     field(OMSL,DBF_MENU) {
         prompt("Output Mode Select")
         promptgroup("50 - Output")
-        special(SPC_RESET)
         pp(TRUE)
         interest(1)
         menu(menuOmsl)
@@ -41,7 +40,7 @@ recordtype(mbboDirect) {
         interest(1)
     }
     field(DOL,DBF_INLINK) {
-        prompt("Desired Output Loc")
+        prompt("Desired Output Link")
         promptgroup("40 - Input")
         interest(1)
     }
@@ -76,6 +75,11 @@ recordtype(mbboDirect) {
     }
     field(MLST,DBF_LONG) {
         prompt("Last Value Monitored")
+        special(SPC_NOMOD)
+        interest(3)
+    }
+    field(OBIT,DBF_LONG) {
+        prompt("Last Bit mask Monitored")
         special(SPC_NOMOD)
         interest(3)
     }

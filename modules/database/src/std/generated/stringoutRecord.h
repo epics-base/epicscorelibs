@@ -86,7 +86,7 @@ typedef struct stringoutRecord {
     DBLINK              flnk;       /**< @brief Forward Process Link */
     char                val[40];    /**< @brief Current Value */
     char                oval[40];   /**< @brief Previous Value */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     DBLINK              out;        /**< @brief Output Specification */
     epicsEnum16         mpst;       /**< @brief Post Value Monitors */

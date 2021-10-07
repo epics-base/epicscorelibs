@@ -76,7 +76,7 @@ typedef struct mbboDirectRecord {
     epicsInt32          val;        /**< @brief Word */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     epicsInt16          nobt;       /**< @brief Number of Bits */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     DBLINK              out;        /**< @brief Output Specification */
     epicsUInt32         rval;       /**< @brief Raw Value */
     epicsUInt32         oraw;       /**< @brief Prev Raw Value */
@@ -84,6 +84,7 @@ typedef struct mbboDirectRecord {
     epicsUInt32         orbv;       /**< @brief Prev Readback Value */
     epicsUInt32         mask;       /**< @brief Hardware Mask */
     epicsInt32          mlst;       /**< @brief Last Value Monitored */
+    epicsInt32          obit;       /**< @brief Last Bit mask Monitored */
     epicsUInt16         shft;       /**< @brief Shift */
     DBLINK              siol;       /**< @brief Simulation Output Link */
     DBLINK              siml;       /**< @brief Simulation Mode Link */
@@ -189,49 +190,50 @@ typedef enum {
 	mbboDirectRecordORBV = 56,
 	mbboDirectRecordMASK = 57,
 	mbboDirectRecordMLST = 58,
-	mbboDirectRecordSHFT = 59,
-	mbboDirectRecordSIOL = 60,
-	mbboDirectRecordSIML = 61,
-	mbboDirectRecordSIMM = 62,
-	mbboDirectRecordSIMS = 63,
-	mbboDirectRecordOLDSIMM = 64,
-	mbboDirectRecordSSCN = 65,
-	mbboDirectRecordSDLY = 66,
-	mbboDirectRecordSIMPVT = 67,
-	mbboDirectRecordIVOA = 68,
-	mbboDirectRecordIVOV = 69,
-	mbboDirectRecordB0 = 70,
-	mbboDirectRecordB1 = 71,
-	mbboDirectRecordB2 = 72,
-	mbboDirectRecordB3 = 73,
-	mbboDirectRecordB4 = 74,
-	mbboDirectRecordB5 = 75,
-	mbboDirectRecordB6 = 76,
-	mbboDirectRecordB7 = 77,
-	mbboDirectRecordB8 = 78,
-	mbboDirectRecordB9 = 79,
-	mbboDirectRecordBA = 80,
-	mbboDirectRecordBB = 81,
-	mbboDirectRecordBC = 82,
-	mbboDirectRecordBD = 83,
-	mbboDirectRecordBE = 84,
-	mbboDirectRecordBF = 85,
-	mbboDirectRecordB10 = 86,
-	mbboDirectRecordB11 = 87,
-	mbboDirectRecordB12 = 88,
-	mbboDirectRecordB13 = 89,
-	mbboDirectRecordB14 = 90,
-	mbboDirectRecordB15 = 91,
-	mbboDirectRecordB16 = 92,
-	mbboDirectRecordB17 = 93,
-	mbboDirectRecordB18 = 94,
-	mbboDirectRecordB19 = 95,
-	mbboDirectRecordB1A = 96,
-	mbboDirectRecordB1B = 97,
-	mbboDirectRecordB1C = 98,
-	mbboDirectRecordB1D = 99,
-	mbboDirectRecordB1E = 100,
-	mbboDirectRecordB1F = 101
+	mbboDirectRecordOBIT = 59,
+	mbboDirectRecordSHFT = 60,
+	mbboDirectRecordSIOL = 61,
+	mbboDirectRecordSIML = 62,
+	mbboDirectRecordSIMM = 63,
+	mbboDirectRecordSIMS = 64,
+	mbboDirectRecordOLDSIMM = 65,
+	mbboDirectRecordSSCN = 66,
+	mbboDirectRecordSDLY = 67,
+	mbboDirectRecordSIMPVT = 68,
+	mbboDirectRecordIVOA = 69,
+	mbboDirectRecordIVOV = 70,
+	mbboDirectRecordB0 = 71,
+	mbboDirectRecordB1 = 72,
+	mbboDirectRecordB2 = 73,
+	mbboDirectRecordB3 = 74,
+	mbboDirectRecordB4 = 75,
+	mbboDirectRecordB5 = 76,
+	mbboDirectRecordB6 = 77,
+	mbboDirectRecordB7 = 78,
+	mbboDirectRecordB8 = 79,
+	mbboDirectRecordB9 = 80,
+	mbboDirectRecordBA = 81,
+	mbboDirectRecordBB = 82,
+	mbboDirectRecordBC = 83,
+	mbboDirectRecordBD = 84,
+	mbboDirectRecordBE = 85,
+	mbboDirectRecordBF = 86,
+	mbboDirectRecordB10 = 87,
+	mbboDirectRecordB11 = 88,
+	mbboDirectRecordB12 = 89,
+	mbboDirectRecordB13 = 90,
+	mbboDirectRecordB14 = 91,
+	mbboDirectRecordB15 = 92,
+	mbboDirectRecordB16 = 93,
+	mbboDirectRecordB17 = 94,
+	mbboDirectRecordB18 = 95,
+	mbboDirectRecordB19 = 96,
+	mbboDirectRecordB1A = 97,
+	mbboDirectRecordB1B = 98,
+	mbboDirectRecordB1C = 99,
+	mbboDirectRecordB1D = 100,
+	mbboDirectRecordB1E = 101,
+	mbboDirectRecordB1F = 102
 } mbboDirectFieldIndex;
 
 #ifdef GEN_SIZE_OFFSET
@@ -245,10 +247,10 @@ static int mbboDirectRecordSizeOffset(dbRecordType *prt)
 {
     mbboDirectRecord *prec = 0;
 
-    if (prt->no_fields != 102) {
+    if (prt->no_fields != 103) {
         cantProceed("IOC build or installation error:\n"
             "    The mbboDirectRecord defined in the DBD file has %d fields,\n"
-            "    but the record support code was built with 102.\n",
+            "    but the record support code was built with 103.\n",
             prt->no_fields);
     }
     prt->papFldDes[mbboDirectRecordNAME]->size = sizeof(prec->name);
@@ -369,6 +371,8 @@ static int mbboDirectRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[mbboDirectRecordMASK]->offset = (unsigned short)((char *)&prec->mask - (char *)prec);
     prt->papFldDes[mbboDirectRecordMLST]->size = sizeof(prec->mlst);
     prt->papFldDes[mbboDirectRecordMLST]->offset = (unsigned short)((char *)&prec->mlst - (char *)prec);
+    prt->papFldDes[mbboDirectRecordOBIT]->size = sizeof(prec->obit);
+    prt->papFldDes[mbboDirectRecordOBIT]->offset = (unsigned short)((char *)&prec->obit - (char *)prec);
     prt->papFldDes[mbboDirectRecordSHFT]->size = sizeof(prec->shft);
     prt->papFldDes[mbboDirectRecordSHFT]->offset = (unsigned short)((char *)&prec->shft - (char *)prec);
     prt->papFldDes[mbboDirectRecordSIOL]->size = sizeof(prec->siol);

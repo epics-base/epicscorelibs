@@ -74,7 +74,7 @@ typedef struct mbboRecord {
     epicsUInt64         utag;       /**< @brief Time Tag */
     DBLINK              flnk;       /**< @brief Forward Process Link */
     epicsEnum16         val;        /**< @brief Desired Value */
-    DBLINK              dol;        /**< @brief Desired Output Loc */
+    DBLINK              dol;        /**< @brief Desired Output Link */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     epicsUInt16         nobt;       /**< @brief Number of Bits */
     DBLINK              out;        /**< @brief Output Specification */
