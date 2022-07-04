@@ -53,7 +53,7 @@ record(stringin, "%s") {
         )
 
         # Effectively do a caget with these parameters
-        datatype = dbr.DBR_STRING
+        datatype = str
         format = dbr.FORMAT_RAW
         count = 0
         results = Queue()
@@ -85,7 +85,10 @@ record(stringin, "%s") {
 
         # Check that we get result in 1s
         cadef.ca_pend_event(1.0)
-        assert results.get(timeout=1.0) == "blah"
+        value = results.get(timeout=1.0)
+
+        assert value == "blah"
+        assert value.datatype == dbr.DBR_STRING
 
     finally:
         print('close IOC stdin')
