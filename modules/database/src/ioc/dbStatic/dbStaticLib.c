@@ -441,6 +441,9 @@ void dbFreeBase(dbBase *pdbbase)
     DBENTRY             dbentry;
     long status;
 
+    if(!pdbbase)
+        return;
+
     dbInitEntry(pdbbase,&dbentry);
     status = dbFirstRecordType(&dbentry);
     while(!status) {
@@ -2275,7 +2278,7 @@ long dbParseLink(const char *str, short ftype, dbLinkInfo *pinfo)
         }
 
         /* generalized extraction of ID character and integer pairs (eg. "#C15 S14") */
-        ret = sscanf(pinfo->target, "# %c%d %c%d %c%d %c%d %c%d %c",
+        ret = sscanf(pinfo->target, "# %c%i %c%i %c%i %c%i %c%i %c",
                      &pinfo->hwid[0], &pinfo->hwnums[0],
                      &pinfo->hwid[1], &pinfo->hwnums[1],
                      &pinfo->hwid[2], &pinfo->hwnums[2],
@@ -3293,11 +3296,11 @@ void dbDumpRecordType(DBBASE *pdbbase,const char *recordTypeName)
         printf("name(%s) no_fields(%hd) no_prompt(%hd) no_links(%hd)\n",
             pdbRecordType->name,pdbRecordType->no_fields,
             pdbRecordType->no_prompt,pdbRecordType->no_links);
-        printf("index name\tsortind sortname\n");
+        printf("index offset size name\tsortind sortname\n");
         for(i=0; i<pdbRecordType->no_fields; i++) {
             pdbFldDes = pdbRecordType->papFldDes[i];
-            printf("%5d %s\t%7d %s\n",
-                i,pdbFldDes->name,
+            printf("%5d %6u %4u %s\t%7d %s\n",
+                i,pdbFldDes->offset,pdbFldDes->size, pdbFldDes->name,
                 pdbRecordType->sortFldInd[i],pdbRecordType->papsortFldName[i]);
         }
         printf("link_ind ");
