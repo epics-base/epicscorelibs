@@ -189,9 +189,12 @@ ERRSYMTAB_ID errSymTbl = &symTbl;
             with open(outfile, 'w') as F:
                 F.write("""
 #ifndef EPICS_VCS_VERSION
-  #define EPICS_VCS_VERSION "%s"
+  #define EPICS_VCS_VERSION "%(ver)s"
 #endif
-"""%package_version)
+#ifndef EPICS_VCS_VERSION_DATE
+  #define EPICS_VCS_VERSION_DATE "%(ver)s"
+#endif
+"""%{"ver":package_version})
         
 
 Distribution.x_errtable = None
