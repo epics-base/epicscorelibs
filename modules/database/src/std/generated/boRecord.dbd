@@ -144,7 +144,7 @@ recordtype(bo) {
 		prompt("Simulation Mode")
 		special(SPC_MOD)
 		interest(1)
-		menu(menuYesNo)
+                menu(menuSimm)
 	}
 	field(SIMS,DBF_MENU) {
 		prompt("Simulation Mode Severity")

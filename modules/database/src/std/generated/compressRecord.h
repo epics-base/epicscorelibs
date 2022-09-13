@@ -14,16 +14,6 @@
 #include "devSup.h"
 #include "epicsTime.h"
 
-#ifndef bufferingALG_NUM_CHOICES
-/** @brief Enumerated type from menu bufferingALG */
-typedef enum {
-    bufferingALG_FIFO               /**< @brief State string "FIFO Buffer" */,
-    bufferingALG_LIFO               /**< @brief State string "LIFO Buffer" */
-} bufferingALG;
-/** @brief Number of states defined for menu bufferingALG */
-#define bufferingALG_NUM_CHOICES 2
-#endif
-
 #ifndef compressALG_NUM_CHOICES
 /** @brief Enumerated type from menu compressALG */
 typedef enum {
@@ -36,6 +26,16 @@ typedef enum {
 } compressALG;
 /** @brief Number of states defined for menu compressALG */
 #define compressALG_NUM_CHOICES 6
+#endif
+
+#ifndef bufferingALG_NUM_CHOICES
+/** @brief Enumerated type from menu bufferingALG */
+typedef enum {
+    bufferingALG_FIFO               /**< @brief State string "FIFO Buffer" */,
+    bufferingALG_LIFO               /**< @brief State string "LIFO Buffer" */
+} bufferingALG;
+/** @brief Number of states defined for menu bufferingALG */
+#define bufferingALG_NUM_CHOICES 2
 #endif
 
 /** @brief Declaration of compress record type. */
@@ -109,7 +109,7 @@ typedef struct compressRecord {
     double		*wptr;                  /**< @brief Working Buffer Ptr */
     epicsInt32          inpn;       /**< @brief Number of elements in Working Buffer */
     epicsFloat64        cvb;        /**< @brief Compress Value Buffer */
-    epicsUInt32         inx;        /**< @brief Compressed Array Inx */
+    epicsUInt32         inx;        /**< @brief Current number of readings */
 } compressRecord;
 
 typedef enum {

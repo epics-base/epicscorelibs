@@ -87,6 +87,8 @@ typedef struct aaoRecord {
     void *		val;                    /**< @brief Value */
     epicsInt16          prec;       /**< @brief Display Precision */
     DBLINK              out;        /**< @brief Output Specification */
+    DBLINK              dol;        /**< @brief Desired Output Link */
+    epicsEnum16         omsl;       /**< @brief Output Mode Select */
     char                egu[16];    /**< @brief Engineering Units */
     epicsFloat64        hopr;       /**< @brief High Operating Range */
     epicsFloat64        lopr;       /**< @brief Low Operating Range */
@@ -159,24 +161,26 @@ typedef enum {
 	aaoRecordVAL = 48,
 	aaoRecordPREC = 49,
 	aaoRecordOUT = 50,
-	aaoRecordEGU = 51,
-	aaoRecordHOPR = 52,
-	aaoRecordLOPR = 53,
-	aaoRecordNELM = 54,
-	aaoRecordFTVL = 55,
-	aaoRecordNORD = 56,
-	aaoRecordBPTR = 57,
-	aaoRecordSIML = 58,
-	aaoRecordSIMM = 59,
-	aaoRecordSIMS = 60,
-	aaoRecordSIOL = 61,
-	aaoRecordOLDSIMM = 62,
-	aaoRecordSSCN = 63,
-	aaoRecordSDLY = 64,
-	aaoRecordSIMPVT = 65,
-	aaoRecordMPST = 66,
-	aaoRecordAPST = 67,
-	aaoRecordHASH = 68
+	aaoRecordDOL = 51,
+	aaoRecordOMSL = 52,
+	aaoRecordEGU = 53,
+	aaoRecordHOPR = 54,
+	aaoRecordLOPR = 55,
+	aaoRecordNELM = 56,
+	aaoRecordFTVL = 57,
+	aaoRecordNORD = 58,
+	aaoRecordBPTR = 59,
+	aaoRecordSIML = 60,
+	aaoRecordSIMM = 61,
+	aaoRecordSIMS = 62,
+	aaoRecordSIOL = 63,
+	aaoRecordOLDSIMM = 64,
+	aaoRecordSSCN = 65,
+	aaoRecordSDLY = 66,
+	aaoRecordSIMPVT = 67,
+	aaoRecordMPST = 68,
+	aaoRecordAPST = 69,
+	aaoRecordHASH = 70
 } aaoFieldIndex;
 
 #ifdef GEN_SIZE_OFFSET
@@ -190,10 +194,10 @@ static int aaoRecordSizeOffset(dbRecordType *prt)
 {
     aaoRecord *prec = 0;
 
-    if (prt->no_fields != 69) {
+    if (prt->no_fields != 71) {
         cantProceed("IOC build or installation error:\n"
             "    The aaoRecord defined in the DBD file has %d fields,\n"
-            "    but the record support code was built with 69.\n",
+            "    but the record support code was built with 71.\n",
             prt->no_fields);
     }
     prt->papFldDes[aaoRecordNAME]->size = sizeof(prec->name);
@@ -298,6 +302,10 @@ static int aaoRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[aaoRecordPREC]->offset = (unsigned short)((char *)&prec->prec - (char *)prec);
     prt->papFldDes[aaoRecordOUT]->size = sizeof(prec->out);
     prt->papFldDes[aaoRecordOUT]->offset = (unsigned short)((char *)&prec->out - (char *)prec);
+    prt->papFldDes[aaoRecordDOL]->size = sizeof(prec->dol);
+    prt->papFldDes[aaoRecordDOL]->offset = (unsigned short)((char *)&prec->dol - (char *)prec);
+    prt->papFldDes[aaoRecordOMSL]->size = sizeof(prec->omsl);
+    prt->papFldDes[aaoRecordOMSL]->offset = (unsigned short)((char *)&prec->omsl - (char *)prec);
     prt->papFldDes[aaoRecordEGU]->size = sizeof(prec->egu);
     prt->papFldDes[aaoRecordEGU]->offset = (unsigned short)((char *)&prec->egu - (char *)prec);
     prt->papFldDes[aaoRecordHOPR]->size = sizeof(prec->hopr);

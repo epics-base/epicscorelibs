@@ -47,6 +47,17 @@ recordtype(aao) {
 		promptgroup("50 - Output")
 		interest(1)
 	}
+	field(DOL,DBF_INLINK) {
+		prompt("Desired Output Link")
+		promptgroup("40 - Input")
+		interest(1)
+	}
+	field(OMSL,DBF_MENU) {
+		prompt("Output Mode Select")
+		promptgroup("50 - Output")
+		interest(1)
+		menu(menuOmsl)
+	}
 	field(EGU,DBF_STRING) {
 		prompt("Engineering Units")
 		promptgroup("80 - Display")

@@ -149,7 +149,7 @@ recordtype(compress) {
 		interest(3)
 	}
 	field(INX,DBF_ULONG) {
-		prompt("Compressed Array Inx")
+		prompt("Current number of readings")
 		special(SPC_NOMOD)
 		interest(3)
 	}

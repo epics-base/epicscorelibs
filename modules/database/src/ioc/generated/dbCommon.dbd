@@ -104,6 +104,8 @@
 	}
 	field(DISP,DBF_UCHAR) {
 		prompt("Disable putField")
+		promptgroup("10 - Common")
+		interest(1)
 	}
 	field(PROC,DBF_UCHAR) {
 		prompt("Force Processing")
