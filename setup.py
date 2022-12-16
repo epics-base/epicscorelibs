@@ -8,11 +8,8 @@ from collections import defaultdict
 
 from setuptools import Command, Distribution
 from setuptools.command import install
-from distutils.command import build
 
 from setuptools_dso import Extension, setup, DSO, build_dso
-
-from distutils import log
 
 
 mydir = os.path.abspath(os.path.dirname(__file__))
@@ -76,7 +73,7 @@ class GenVersionError(Command):
                                   )
 
     def run(self):
-        log.info("In GetVersionError")
+        print("In GetVersionError")
         self.mkpath(self.build_temp)
         defs = {}
         readmake(defs, 'configure', 'CONFIG_BASE_VERSION')
@@ -84,9 +81,9 @@ class GenVersionError(Command):
 
         outfile = os.path.join(self.build_temp, 'epicsVersion.h')
         if self.dry_run:
-            log.info("Would write %s", outfile)
+            print("Would write %s", outfile)
         else:
-            log.info("Writing %s", outfile)
+            print("Writing %s", outfile)
             with open(outfile, 'w') as F:
                 F.write("""
 #ifndef INC_epicsVersion_H
@@ -119,9 +116,9 @@ class GenVersionError(Command):
 
         outfile = os.path.join(self.build_temp, 'generated.c')
         if self.dry_run:
-            log.info("Would write %s", outfile)
+            print("Would write %s", outfile)
         else:
-            log.info("Writing %s", outfile)
+            print("Writing %s", outfile)
             with open(outfile, 'w') as F:
                 F.write("""
 #include <stddef.h>
@@ -157,7 +154,7 @@ class GenVersionError(Command):
                                 defS.append(D)
 
                 if len(defM)==0 or len(defS)==0:
-                    log.warn("Warning: generated error string table is empty!")
+                    print("Warning: generated error string table is empty!")
                     # MSVC doesn't like zero length C arrays
                     # so give it something
                     defS.append({'macro':'S_generic', 'value':'1', 'desc':'placeholder'})
@@ -183,9 +180,9 @@ ERRSYMTAB_ID errSymTbl = &symTbl;
 
         outfile = os.path.join(self.build_temp, 'epicsVCS.h')
         if self.dry_run:
-            log.info("Would write %s", outfile)
+            print("Would write %s", outfile)
         else:
-            log.info("Writing %s", outfile)
+            print("Writing %s", outfile)
             with open(outfile, 'w') as F:
                 F.write("""
 #ifndef EPICS_VCS_VERSION
@@ -214,12 +211,12 @@ class Expand(Command):
                                   )
 
     def run(self):
-        log.info("In Expand")
+        print("In Expand")
         for template, outname, files in self.distribution.x_expand or []:
             template = os.path.normcase(template)
 
             outname = os.path.join(self.build_temp, os.path.normcase(outname))
-            log.info("expand %s -> %s", template, outname)
+            print("expand %s -> %s", template, outname)
 
             with open(template, 'r') as F:
                 tmpl = F.read()
@@ -257,7 +254,7 @@ class MakeAPIH(Command):
     def run(self):
         for stem, outname in self.distribution.x_api_h or []:
             outname = os.path.join(self.build_lib, 'epicscorelibs', 'include', os.path.basename(outname))
-            log.info('make %s -> %s', stem, outname)
+            print('make %s -> %s', stem, outname)
             out = '''
 #ifndef %(guard)s
 #define %(guard)s
@@ -315,7 +312,7 @@ class InstallHeaders(Command):
                                    ('build_temp', 'build_temp'),
                                   )
     def run(self):
-        log.info("In InstallHeaders")
+        print("In InstallHeaders")
         for pkg, files in (self.distribution.x_headers or {}).items():
             print("Install headers for", pkg)
             pkgdir = os.path.join(*[self.build_lib]+pkg.split('.'))

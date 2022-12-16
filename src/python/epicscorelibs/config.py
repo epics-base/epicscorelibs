@@ -1,12 +1,11 @@
 """Host configuration information using EPICS names and build flags.
 
-Patterned after distutils.sysconfig
+Patterned after sysconfig
 """
 
 from copy import deepcopy
 import platform
 import sysconfig
-import distutils.sysconfig
 
 __all__ = (
     'get_config_var',
@@ -26,7 +25,7 @@ def _makeconf():
     }[platform.system()]
 
     # select epics CMPLR_CLASS
-    CC = sysconfig.get_config_var('CC') or distutils.sysconfig.get_config_var('CC')
+    CC = sysconfig.get_config_var('CC')
     if CC is None and osname=='WIN32':
         cmplrname = conf['CMPLR_CLASS'] = 'msvc'
     elif CC is None:
