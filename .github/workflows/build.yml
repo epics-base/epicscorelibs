@@ -2,6 +2,10 @@ name: epicscorelibs
 
 on: [push, pull_request]
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   build:
     name: ${{ matrix.name }}
@@ -108,11 +112,6 @@ jobs:
           # numpy builds for >=3.10 do no include i686
 
           # OSX py builds
-          - name: osx 2.7 intel
-            os: macos-latest
-            python: "2.7"
-            piparch: macosx_10_9_intel
-
           - name: osx 3.6 intel
             os: macos-latest
             python: "3.6"
@@ -221,7 +220,6 @@ jobs:
 
       - name: Native PY build
         if: matrix.python && !matrix.source
-        shell: bash
         run: |
           python -m pip wheel -v -w dist --no-index --no-deps \
            --no-build-isolation --no-use-pep517 \
