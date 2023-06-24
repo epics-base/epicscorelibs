@@ -84,6 +84,7 @@ def _makeconf():
     return conf
 
 _config = _makeconf()
+del _makeconf
 
 def _makebuild():
     build = {
@@ -121,9 +122,17 @@ def _makebuild():
         build['CXXFLAGS'] += ['-EHsc']
         build['LDADD'] += ['netapi32', 'ws2_32', 'advapi32', 'user32']
 
+    try:
+        from ._config import cxxdefs
+    except ImportError:
+        pass # assume this is the epicscorelibs build
+    else:
+        build['CPPFLAGS'] += cxxdefs
+
     return build
 
 _config.update(_makebuild())
+del _makebuild
 
 def get_config_var(key):
     return deepcopy(_config.get(key))

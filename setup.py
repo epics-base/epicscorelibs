@@ -9,7 +9,7 @@ from collections import defaultdict
 from setuptools import Command, Distribution
 from setuptools.command import install
 
-from setuptools_dso import Extension, setup, DSO, build_dso
+from setuptools_dso import Extension, setup, DSO, build_dso, ProbeToolchain
 
 
 mydir = os.path.abspath(os.path.dirname(__file__))
@@ -62,17 +62,43 @@ class GenVersionError(Command):
     user_options = [
         ('build-temp=', 't',
          "directory for temporary files (build by-products)"),
+        ('build-lib=', 't',
+         "directory for temporary files (build by-products)"),
     ]
 
     def initialize_options(self):
         self.build_temp = None
+        self.build_lib = None
 
     def finalize_options(self):
         self.set_undefined_options('build',
                                    ('build_temp', 'build_temp'),
                                   )
+        self.set_undefined_options('build',
+                                   ('build_lib', 'build_lib'),
+                                  )
 
     def run(self):
+        self.genToolchainConfig()
+        self.genVersionError()
+
+    def genToolchainConfig(self):
+        self.mkpath(os.path.join(self.build_lib, 'epicscorelibs'))
+
+        from pprint import pformat
+
+        outfile = os.path.join(self.build_lib, 'epicscorelibs', '_config.py')
+        if self.dry_run:
+            print("Would write", outfile)
+        else:
+            print("Write", outfile)
+            with open(outfile, 'w') as F:
+                F.write("# Generated file\n")
+                F.write("from collections import OrderedDict\n")
+                F.write("toolchain_macros = %s\n"%pformat(toolchain_macros))
+                F.write("cxxdefs = %s\n"%cxxdefs)
+
+    def genVersionError(self):
         print("In GetVersionError")
         self.mkpath(self.build_temp)
         defs = {}
@@ -362,6 +388,41 @@ def readlists(name, prefix):
 
     return tuple(ret)
 
+probe = ProbeToolchain()
+toolchain_macros = probe.eval_macros([
+    '__cplusplus',
+
+    '__GNUC__',
+    '__GNUC_MINOR__',
+    '__GNUC_PATCHLEVEL__',
+
+    '__clang__',
+    '__clang_version__',
+
+    '_MSC_VER',
+    '_MSC_FULL_VER',
+
+    '__GLIBC__',
+    '__GLIBCXX__',
+    '_GLIBCXX_USE_CXX11_ABI',
+
+    '__UCLIBC__',
+    '__UCLIBC_MAJOR__',
+    '__UCLIBC_MINOR__',
+    '__UCLIBC_SUBLEVEL__',
+
+    '_CPPLIB_VER',
+    '_LIBCPP_VERSION',
+], headers=['string'], language='c++')
+cxxdefs = []
+if toolchain_macros.get('__GNUC__') is not None:
+    # https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
+    #
+    # Attempt to maintain ABI for any dependent builds...
+    cxxabi = toolchain_macros.get('_GLIBCXX_USE_CXX11_ABI') or '0'
+    cxxdefs += [('_GLIBCXX_USE_CXX11_ABI', cxxabi)]
+
+
 modules = []
 headers = ['epicsVersion.h']
 
@@ -378,7 +439,7 @@ def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
         name='epicscorelibs.lib.'+name,
         sources = srcs+src,
         include_dirs = [os.path.join('epicscorelibs', 'include')] + inc + ['.'],
-        define_macros = defs,
+        define_macros = cxxdefs+defs,
         dsos = ['epicscorelibs.lib.'+D for D in deps],
         libraries = get_config_var('LDADD'),
         extra_link_args = get_config_var('LDFLAGS'),
@@ -498,7 +559,7 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     python_requires='>=2.7',
     install_requires=[
         'setuptools', # needed at runtime for 'pkg_resources'
-        'setuptools_dso>=2.0a1', # 'setuptools_dso.runtime' used in 'epicscorelibs.path'
+        'setuptools_dso>=2.9a1', # 'setuptools_dso.runtime' used in 'epicscorelibs.path'
         'numpy', # needed for epicscorelibs.ca.dbr
     ],
 
