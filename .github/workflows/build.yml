@@ -104,15 +104,25 @@ jobs:
             pyver: cp39-cp39
             piparch: manylinux2010_i686
             pre: linux32
+            platform: linux/386
+
+          # Linux py builds aarch64
+          - name: linux 3.10 aarch64
+            os: ubuntu-latest
+            pyver: cp310-cp310
+            piparch: manylinux2014_aarch64
+            platform: linux/arm64
+
+          - name: linux 3.11 aarch64
+            os: ubuntu-latest
+            pyver: cp311-cp311
+            piparch: manylinux2014_aarch64
+            platform: linux/arm64
+            skip_cothread: yes
 
           # numpy builds for >=3.10 do no include i686
 
           # OSX py builds
-          - name: osx 2.7 intel
-            os: macos-latest
-            python: "2.7"
-            piparch: macosx_10_9_intel
-
           - name: osx 3.6 intel
             os: macos-latest
             python: "3.6"
@@ -234,6 +244,11 @@ jobs:
           python -c 'import epicscorelibs; print("IMPORT", epicscorelibs.__file__)'
           python -m nose2 -v epicscorelibs
 
+      - name: Set up QEMU
+        if: matrix.platform
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: 'arm64'
       - name: Docker PY build
         if: matrix.pyver && !matrix.source
         run: |
