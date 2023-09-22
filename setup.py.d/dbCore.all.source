@@ -42,6 +42,7 @@ dbStatic/dbPvdLib.c
 dbStatic/dbStaticIocRegister.c
 dbStatic/dbStaticLib.c
 dbStatic/dbStaticRun.c
+dbStatic/dbCompleteRecord.cpp
 
 dbtemplate/dbtoolsIocRegister.c
 
