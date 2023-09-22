@@ -11,7 +11,7 @@
 recordtype(calc) {
 
 
-	include "dbCommon.dbd" 
+	include "dbCommon.dbd"
 	field(VAL,DBF_DOUBLE) {
 		prompt("Result")
 		promptgroup("50 - Output")

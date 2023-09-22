@@ -14,6 +14,16 @@
 #include "devSup.h"
 #include "epicsTime.h"
 
+#ifndef bufferingALG_NUM_CHOICES
+/** @brief Enumerated type from menu bufferingALG */
+typedef enum {
+    bufferingALG_FIFO               /**< @brief State string "FIFO Buffer" */,
+    bufferingALG_LIFO               /**< @brief State string "LIFO Buffer" */
+} bufferingALG;
+/** @brief Number of states defined for menu bufferingALG */
+#define bufferingALG_NUM_CHOICES 2
+#endif
+
 #ifndef compressALG_NUM_CHOICES
 /** @brief Enumerated type from menu compressALG */
 typedef enum {
@@ -26,16 +36,6 @@ typedef enum {
 } compressALG;
 /** @brief Number of states defined for menu compressALG */
 #define compressALG_NUM_CHOICES 6
-#endif
-
-#ifndef bufferingALG_NUM_CHOICES
-/** @brief Enumerated type from menu bufferingALG */
-typedef enum {
-    bufferingALG_FIFO               /**< @brief State string "FIFO Buffer" */,
-    bufferingALG_LIFO               /**< @brief State string "LIFO Buffer" */
-} bufferingALG;
-/** @brief Number of states defined for menu bufferingALG */
-#define bufferingALG_NUM_CHOICES 2
 #endif
 
 /** @brief Declaration of compress record type. */
@@ -92,6 +92,7 @@ typedef struct compressRecord {
     DBLINK              inp;        /**< @brief Input Specification */
     epicsInt16          res;        /**< @brief Reset */
     epicsEnum16         alg;        /**< @brief Compression Algorithm */
+    epicsEnum16         pbuf;       /**< @brief Use Partial buffers */
     epicsEnum16         balg;       /**< @brief Buffering Algorithm */
     epicsUInt32         nsam;       /**< @brief Number of Values */
     epicsUInt32         n;          /**< @brief N to 1 Compression */
@@ -165,24 +166,25 @@ typedef enum {
 	compressRecordINP = 49,
 	compressRecordRES = 50,
 	compressRecordALG = 51,
-	compressRecordBALG = 52,
-	compressRecordNSAM = 53,
-	compressRecordN = 54,
-	compressRecordIHIL = 55,
-	compressRecordILIL = 56,
-	compressRecordHOPR = 57,
-	compressRecordLOPR = 58,
-	compressRecordPREC = 59,
-	compressRecordEGU = 60,
-	compressRecordOFF = 61,
-	compressRecordNUSE = 62,
-	compressRecordOUSE = 63,
-	compressRecordBPTR = 64,
-	compressRecordSPTR = 65,
-	compressRecordWPTR = 66,
-	compressRecordINPN = 67,
-	compressRecordCVB = 68,
-	compressRecordINX = 69
+	compressRecordPBUF = 52,
+	compressRecordBALG = 53,
+	compressRecordNSAM = 54,
+	compressRecordN = 55,
+	compressRecordIHIL = 56,
+	compressRecordILIL = 57,
+	compressRecordHOPR = 58,
+	compressRecordLOPR = 59,
+	compressRecordPREC = 60,
+	compressRecordEGU = 61,
+	compressRecordOFF = 62,
+	compressRecordNUSE = 63,
+	compressRecordOUSE = 64,
+	compressRecordBPTR = 65,
+	compressRecordSPTR = 66,
+	compressRecordWPTR = 67,
+	compressRecordINPN = 68,
+	compressRecordCVB = 69,
+	compressRecordINX = 70
 } compressFieldIndex;
 
 #ifdef GEN_SIZE_OFFSET
@@ -196,152 +198,154 @@ static int compressRecordSizeOffset(dbRecordType *prt)
 {
     compressRecord *prec = 0;
 
-    if (prt->no_fields != 70) {
+    if (prt->no_fields != 71) {
         cantProceed("IOC build or installation error:\n"
             "    The compressRecord defined in the DBD file has %d fields,\n"
-            "    but the record support code was built with 70.\n",
+            "    but the record support code was built with 71.\n",
             prt->no_fields);
     }
     prt->papFldDes[compressRecordNAME]->size = sizeof(prec->name);
-    prt->papFldDes[compressRecordNAME]->offset = (unsigned short)((char *)&prec->name - (char *)prec);
+    prt->papFldDes[compressRecordNAME]->offset = (unsigned short)offsetof(compressRecord, name);
     prt->papFldDes[compressRecordDESC]->size = sizeof(prec->desc);
-    prt->papFldDes[compressRecordDESC]->offset = (unsigned short)((char *)&prec->desc - (char *)prec);
+    prt->papFldDes[compressRecordDESC]->offset = (unsigned short)offsetof(compressRecord, desc);
     prt->papFldDes[compressRecordASG]->size = sizeof(prec->asg);
-    prt->papFldDes[compressRecordASG]->offset = (unsigned short)((char *)&prec->asg - (char *)prec);
+    prt->papFldDes[compressRecordASG]->offset = (unsigned short)offsetof(compressRecord, asg);
     prt->papFldDes[compressRecordSCAN]->size = sizeof(prec->scan);
-    prt->papFldDes[compressRecordSCAN]->offset = (unsigned short)((char *)&prec->scan - (char *)prec);
+    prt->papFldDes[compressRecordSCAN]->offset = (unsigned short)offsetof(compressRecord, scan);
     prt->papFldDes[compressRecordPINI]->size = sizeof(prec->pini);
-    prt->papFldDes[compressRecordPINI]->offset = (unsigned short)((char *)&prec->pini - (char *)prec);
+    prt->papFldDes[compressRecordPINI]->offset = (unsigned short)offsetof(compressRecord, pini);
     prt->papFldDes[compressRecordPHAS]->size = sizeof(prec->phas);
-    prt->papFldDes[compressRecordPHAS]->offset = (unsigned short)((char *)&prec->phas - (char *)prec);
+    prt->papFldDes[compressRecordPHAS]->offset = (unsigned short)offsetof(compressRecord, phas);
     prt->papFldDes[compressRecordEVNT]->size = sizeof(prec->evnt);
-    prt->papFldDes[compressRecordEVNT]->offset = (unsigned short)((char *)&prec->evnt - (char *)prec);
+    prt->papFldDes[compressRecordEVNT]->offset = (unsigned short)offsetof(compressRecord, evnt);
     prt->papFldDes[compressRecordTSE]->size = sizeof(prec->tse);
-    prt->papFldDes[compressRecordTSE]->offset = (unsigned short)((char *)&prec->tse - (char *)prec);
+    prt->papFldDes[compressRecordTSE]->offset = (unsigned short)offsetof(compressRecord, tse);
     prt->papFldDes[compressRecordTSEL]->size = sizeof(prec->tsel);
-    prt->papFldDes[compressRecordTSEL]->offset = (unsigned short)((char *)&prec->tsel - (char *)prec);
+    prt->papFldDes[compressRecordTSEL]->offset = (unsigned short)offsetof(compressRecord, tsel);
     prt->papFldDes[compressRecordDTYP]->size = sizeof(prec->dtyp);
-    prt->papFldDes[compressRecordDTYP]->offset = (unsigned short)((char *)&prec->dtyp - (char *)prec);
+    prt->papFldDes[compressRecordDTYP]->offset = (unsigned short)offsetof(compressRecord, dtyp);
     prt->papFldDes[compressRecordDISV]->size = sizeof(prec->disv);
-    prt->papFldDes[compressRecordDISV]->offset = (unsigned short)((char *)&prec->disv - (char *)prec);
+    prt->papFldDes[compressRecordDISV]->offset = (unsigned short)offsetof(compressRecord, disv);
     prt->papFldDes[compressRecordDISA]->size = sizeof(prec->disa);
-    prt->papFldDes[compressRecordDISA]->offset = (unsigned short)((char *)&prec->disa - (char *)prec);
+    prt->papFldDes[compressRecordDISA]->offset = (unsigned short)offsetof(compressRecord, disa);
     prt->papFldDes[compressRecordSDIS]->size = sizeof(prec->sdis);
-    prt->papFldDes[compressRecordSDIS]->offset = (unsigned short)((char *)&prec->sdis - (char *)prec);
+    prt->papFldDes[compressRecordSDIS]->offset = (unsigned short)offsetof(compressRecord, sdis);
     prt->papFldDes[compressRecordMLOK]->size = sizeof(prec->mlok);
-    prt->papFldDes[compressRecordMLOK]->offset = (unsigned short)((char *)&prec->mlok - (char *)prec);
+    prt->papFldDes[compressRecordMLOK]->offset = (unsigned short)offsetof(compressRecord, mlok);
     prt->papFldDes[compressRecordMLIS]->size = sizeof(prec->mlis);
-    prt->papFldDes[compressRecordMLIS]->offset = (unsigned short)((char *)&prec->mlis - (char *)prec);
+    prt->papFldDes[compressRecordMLIS]->offset = (unsigned short)offsetof(compressRecord, mlis);
     prt->papFldDes[compressRecordBKLNK]->size = sizeof(prec->bklnk);
-    prt->papFldDes[compressRecordBKLNK]->offset = (unsigned short)((char *)&prec->bklnk - (char *)prec);
+    prt->papFldDes[compressRecordBKLNK]->offset = (unsigned short)offsetof(compressRecord, bklnk);
     prt->papFldDes[compressRecordDISP]->size = sizeof(prec->disp);
-    prt->papFldDes[compressRecordDISP]->offset = (unsigned short)((char *)&prec->disp - (char *)prec);
+    prt->papFldDes[compressRecordDISP]->offset = (unsigned short)offsetof(compressRecord, disp);
     prt->papFldDes[compressRecordPROC]->size = sizeof(prec->proc);
-    prt->papFldDes[compressRecordPROC]->offset = (unsigned short)((char *)&prec->proc - (char *)prec);
+    prt->papFldDes[compressRecordPROC]->offset = (unsigned short)offsetof(compressRecord, proc);
     prt->papFldDes[compressRecordSTAT]->size = sizeof(prec->stat);
-    prt->papFldDes[compressRecordSTAT]->offset = (unsigned short)((char *)&prec->stat - (char *)prec);
+    prt->papFldDes[compressRecordSTAT]->offset = (unsigned short)offsetof(compressRecord, stat);
     prt->papFldDes[compressRecordSEVR]->size = sizeof(prec->sevr);
-    prt->papFldDes[compressRecordSEVR]->offset = (unsigned short)((char *)&prec->sevr - (char *)prec);
+    prt->papFldDes[compressRecordSEVR]->offset = (unsigned short)offsetof(compressRecord, sevr);
     prt->papFldDes[compressRecordAMSG]->size = sizeof(prec->amsg);
-    prt->papFldDes[compressRecordAMSG]->offset = (unsigned short)((char *)&prec->amsg - (char *)prec);
+    prt->papFldDes[compressRecordAMSG]->offset = (unsigned short)offsetof(compressRecord, amsg);
     prt->papFldDes[compressRecordNSTA]->size = sizeof(prec->nsta);
-    prt->papFldDes[compressRecordNSTA]->offset = (unsigned short)((char *)&prec->nsta - (char *)prec);
+    prt->papFldDes[compressRecordNSTA]->offset = (unsigned short)offsetof(compressRecord, nsta);
     prt->papFldDes[compressRecordNSEV]->size = sizeof(prec->nsev);
-    prt->papFldDes[compressRecordNSEV]->offset = (unsigned short)((char *)&prec->nsev - (char *)prec);
+    prt->papFldDes[compressRecordNSEV]->offset = (unsigned short)offsetof(compressRecord, nsev);
     prt->papFldDes[compressRecordNAMSG]->size = sizeof(prec->namsg);
-    prt->papFldDes[compressRecordNAMSG]->offset = (unsigned short)((char *)&prec->namsg - (char *)prec);
+    prt->papFldDes[compressRecordNAMSG]->offset = (unsigned short)offsetof(compressRecord, namsg);
     prt->papFldDes[compressRecordACKS]->size = sizeof(prec->acks);
-    prt->papFldDes[compressRecordACKS]->offset = (unsigned short)((char *)&prec->acks - (char *)prec);
+    prt->papFldDes[compressRecordACKS]->offset = (unsigned short)offsetof(compressRecord, acks);
     prt->papFldDes[compressRecordACKT]->size = sizeof(prec->ackt);
-    prt->papFldDes[compressRecordACKT]->offset = (unsigned short)((char *)&prec->ackt - (char *)prec);
+    prt->papFldDes[compressRecordACKT]->offset = (unsigned short)offsetof(compressRecord, ackt);
     prt->papFldDes[compressRecordDISS]->size = sizeof(prec->diss);
-    prt->papFldDes[compressRecordDISS]->offset = (unsigned short)((char *)&prec->diss - (char *)prec);
+    prt->papFldDes[compressRecordDISS]->offset = (unsigned short)offsetof(compressRecord, diss);
     prt->papFldDes[compressRecordLCNT]->size = sizeof(prec->lcnt);
-    prt->papFldDes[compressRecordLCNT]->offset = (unsigned short)((char *)&prec->lcnt - (char *)prec);
+    prt->papFldDes[compressRecordLCNT]->offset = (unsigned short)offsetof(compressRecord, lcnt);
     prt->papFldDes[compressRecordPACT]->size = sizeof(prec->pact);
-    prt->papFldDes[compressRecordPACT]->offset = (unsigned short)((char *)&prec->pact - (char *)prec);
+    prt->papFldDes[compressRecordPACT]->offset = (unsigned short)offsetof(compressRecord, pact);
     prt->papFldDes[compressRecordPUTF]->size = sizeof(prec->putf);
-    prt->papFldDes[compressRecordPUTF]->offset = (unsigned short)((char *)&prec->putf - (char *)prec);
+    prt->papFldDes[compressRecordPUTF]->offset = (unsigned short)offsetof(compressRecord, putf);
     prt->papFldDes[compressRecordRPRO]->size = sizeof(prec->rpro);
-    prt->papFldDes[compressRecordRPRO]->offset = (unsigned short)((char *)&prec->rpro - (char *)prec);
+    prt->papFldDes[compressRecordRPRO]->offset = (unsigned short)offsetof(compressRecord, rpro);
     prt->papFldDes[compressRecordASP]->size = sizeof(prec->asp);
-    prt->papFldDes[compressRecordASP]->offset = (unsigned short)((char *)&prec->asp - (char *)prec);
+    prt->papFldDes[compressRecordASP]->offset = (unsigned short)offsetof(compressRecord, asp);
     prt->papFldDes[compressRecordPPN]->size = sizeof(prec->ppn);
-    prt->papFldDes[compressRecordPPN]->offset = (unsigned short)((char *)&prec->ppn - (char *)prec);
+    prt->papFldDes[compressRecordPPN]->offset = (unsigned short)offsetof(compressRecord, ppn);
     prt->papFldDes[compressRecordPPNR]->size = sizeof(prec->ppnr);
-    prt->papFldDes[compressRecordPPNR]->offset = (unsigned short)((char *)&prec->ppnr - (char *)prec);
+    prt->papFldDes[compressRecordPPNR]->offset = (unsigned short)offsetof(compressRecord, ppnr);
     prt->papFldDes[compressRecordSPVT]->size = sizeof(prec->spvt);
-    prt->papFldDes[compressRecordSPVT]->offset = (unsigned short)((char *)&prec->spvt - (char *)prec);
+    prt->papFldDes[compressRecordSPVT]->offset = (unsigned short)offsetof(compressRecord, spvt);
     prt->papFldDes[compressRecordRSET]->size = sizeof(prec->rset);
-    prt->papFldDes[compressRecordRSET]->offset = (unsigned short)((char *)&prec->rset - (char *)prec);
+    prt->papFldDes[compressRecordRSET]->offset = (unsigned short)offsetof(compressRecord, rset);
     prt->papFldDes[compressRecordDSET]->size = sizeof(prec->dset);
-    prt->papFldDes[compressRecordDSET]->offset = (unsigned short)((char *)&prec->dset - (char *)prec);
+    prt->papFldDes[compressRecordDSET]->offset = (unsigned short)offsetof(compressRecord, dset);
     prt->papFldDes[compressRecordDPVT]->size = sizeof(prec->dpvt);
-    prt->papFldDes[compressRecordDPVT]->offset = (unsigned short)((char *)&prec->dpvt - (char *)prec);
+    prt->papFldDes[compressRecordDPVT]->offset = (unsigned short)offsetof(compressRecord, dpvt);
     prt->papFldDes[compressRecordRDES]->size = sizeof(prec->rdes);
-    prt->papFldDes[compressRecordRDES]->offset = (unsigned short)((char *)&prec->rdes - (char *)prec);
+    prt->papFldDes[compressRecordRDES]->offset = (unsigned short)offsetof(compressRecord, rdes);
     prt->papFldDes[compressRecordLSET]->size = sizeof(prec->lset);
-    prt->papFldDes[compressRecordLSET]->offset = (unsigned short)((char *)&prec->lset - (char *)prec);
+    prt->papFldDes[compressRecordLSET]->offset = (unsigned short)offsetof(compressRecord, lset);
     prt->papFldDes[compressRecordPRIO]->size = sizeof(prec->prio);
-    prt->papFldDes[compressRecordPRIO]->offset = (unsigned short)((char *)&prec->prio - (char *)prec);
+    prt->papFldDes[compressRecordPRIO]->offset = (unsigned short)offsetof(compressRecord, prio);
     prt->papFldDes[compressRecordTPRO]->size = sizeof(prec->tpro);
-    prt->papFldDes[compressRecordTPRO]->offset = (unsigned short)((char *)&prec->tpro - (char *)prec);
+    prt->papFldDes[compressRecordTPRO]->offset = (unsigned short)offsetof(compressRecord, tpro);
     prt->papFldDes[compressRecordBKPT]->size = sizeof(prec->bkpt);
-    prt->papFldDes[compressRecordBKPT]->offset = (unsigned short)((char *)&prec->bkpt - (char *)prec);
+    prt->papFldDes[compressRecordBKPT]->offset = (unsigned short)offsetof(compressRecord, bkpt);
     prt->papFldDes[compressRecordUDF]->size = sizeof(prec->udf);
-    prt->papFldDes[compressRecordUDF]->offset = (unsigned short)((char *)&prec->udf - (char *)prec);
+    prt->papFldDes[compressRecordUDF]->offset = (unsigned short)offsetof(compressRecord, udf);
     prt->papFldDes[compressRecordUDFS]->size = sizeof(prec->udfs);
-    prt->papFldDes[compressRecordUDFS]->offset = (unsigned short)((char *)&prec->udfs - (char *)prec);
+    prt->papFldDes[compressRecordUDFS]->offset = (unsigned short)offsetof(compressRecord, udfs);
     prt->papFldDes[compressRecordTIME]->size = sizeof(prec->time);
-    prt->papFldDes[compressRecordTIME]->offset = (unsigned short)((char *)&prec->time - (char *)prec);
+    prt->papFldDes[compressRecordTIME]->offset = (unsigned short)offsetof(compressRecord, time);
     prt->papFldDes[compressRecordUTAG]->size = sizeof(prec->utag);
-    prt->papFldDes[compressRecordUTAG]->offset = (unsigned short)((char *)&prec->utag - (char *)prec);
+    prt->papFldDes[compressRecordUTAG]->offset = (unsigned short)offsetof(compressRecord, utag);
     prt->papFldDes[compressRecordFLNK]->size = sizeof(prec->flnk);
-    prt->papFldDes[compressRecordFLNK]->offset = (unsigned short)((char *)&prec->flnk - (char *)prec);
+    prt->papFldDes[compressRecordFLNK]->offset = (unsigned short)offsetof(compressRecord, flnk);
     prt->papFldDes[compressRecordVAL]->size = sizeof(prec->val);
-    prt->papFldDes[compressRecordVAL]->offset = (unsigned short)((char *)&prec->val - (char *)prec);
+    prt->papFldDes[compressRecordVAL]->offset = (unsigned short)offsetof(compressRecord, val);
     prt->papFldDes[compressRecordINP]->size = sizeof(prec->inp);
-    prt->papFldDes[compressRecordINP]->offset = (unsigned short)((char *)&prec->inp - (char *)prec);
+    prt->papFldDes[compressRecordINP]->offset = (unsigned short)offsetof(compressRecord, inp);
     prt->papFldDes[compressRecordRES]->size = sizeof(prec->res);
-    prt->papFldDes[compressRecordRES]->offset = (unsigned short)((char *)&prec->res - (char *)prec);
+    prt->papFldDes[compressRecordRES]->offset = (unsigned short)offsetof(compressRecord, res);
     prt->papFldDes[compressRecordALG]->size = sizeof(prec->alg);
-    prt->papFldDes[compressRecordALG]->offset = (unsigned short)((char *)&prec->alg - (char *)prec);
+    prt->papFldDes[compressRecordALG]->offset = (unsigned short)offsetof(compressRecord, alg);
+    prt->papFldDes[compressRecordPBUF]->size = sizeof(prec->pbuf);
+    prt->papFldDes[compressRecordPBUF]->offset = (unsigned short)offsetof(compressRecord, pbuf);
     prt->papFldDes[compressRecordBALG]->size = sizeof(prec->balg);
-    prt->papFldDes[compressRecordBALG]->offset = (unsigned short)((char *)&prec->balg - (char *)prec);
+    prt->papFldDes[compressRecordBALG]->offset = (unsigned short)offsetof(compressRecord, balg);
     prt->papFldDes[compressRecordNSAM]->size = sizeof(prec->nsam);
-    prt->papFldDes[compressRecordNSAM]->offset = (unsigned short)((char *)&prec->nsam - (char *)prec);
+    prt->papFldDes[compressRecordNSAM]->offset = (unsigned short)offsetof(compressRecord, nsam);
     prt->papFldDes[compressRecordN]->size = sizeof(prec->n);
-    prt->papFldDes[compressRecordN]->offset = (unsigned short)((char *)&prec->n - (char *)prec);
+    prt->papFldDes[compressRecordN]->offset = (unsigned short)offsetof(compressRecord, n);
     prt->papFldDes[compressRecordIHIL]->size = sizeof(prec->ihil);
-    prt->papFldDes[compressRecordIHIL]->offset = (unsigned short)((char *)&prec->ihil - (char *)prec);
+    prt->papFldDes[compressRecordIHIL]->offset = (unsigned short)offsetof(compressRecord, ihil);
     prt->papFldDes[compressRecordILIL]->size = sizeof(prec->ilil);
-    prt->papFldDes[compressRecordILIL]->offset = (unsigned short)((char *)&prec->ilil - (char *)prec);
+    prt->papFldDes[compressRecordILIL]->offset = (unsigned short)offsetof(compressRecord, ilil);
     prt->papFldDes[compressRecordHOPR]->size = sizeof(prec->hopr);
-    prt->papFldDes[compressRecordHOPR]->offset = (unsigned short)((char *)&prec->hopr - (char *)prec);
+    prt->papFldDes[compressRecordHOPR]->offset = (unsigned short)offsetof(compressRecord, hopr);
     prt->papFldDes[compressRecordLOPR]->size = sizeof(prec->lopr);
-    prt->papFldDes[compressRecordLOPR]->offset = (unsigned short)((char *)&prec->lopr - (char *)prec);
+    prt->papFldDes[compressRecordLOPR]->offset = (unsigned short)offsetof(compressRecord, lopr);
     prt->papFldDes[compressRecordPREC]->size = sizeof(prec->prec);
-    prt->papFldDes[compressRecordPREC]->offset = (unsigned short)((char *)&prec->prec - (char *)prec);
+    prt->papFldDes[compressRecordPREC]->offset = (unsigned short)offsetof(compressRecord, prec);
     prt->papFldDes[compressRecordEGU]->size = sizeof(prec->egu);
-    prt->papFldDes[compressRecordEGU]->offset = (unsigned short)((char *)&prec->egu - (char *)prec);
+    prt->papFldDes[compressRecordEGU]->offset = (unsigned short)offsetof(compressRecord, egu);
     prt->papFldDes[compressRecordOFF]->size = sizeof(prec->off);
-    prt->papFldDes[compressRecordOFF]->offset = (unsigned short)((char *)&prec->off - (char *)prec);
+    prt->papFldDes[compressRecordOFF]->offset = (unsigned short)offsetof(compressRecord, off);
     prt->papFldDes[compressRecordNUSE]->size = sizeof(prec->nuse);
-    prt->papFldDes[compressRecordNUSE]->offset = (unsigned short)((char *)&prec->nuse - (char *)prec);
+    prt->papFldDes[compressRecordNUSE]->offset = (unsigned short)offsetof(compressRecord, nuse);
     prt->papFldDes[compressRecordOUSE]->size = sizeof(prec->ouse);
-    prt->papFldDes[compressRecordOUSE]->offset = (unsigned short)((char *)&prec->ouse - (char *)prec);
+    prt->papFldDes[compressRecordOUSE]->offset = (unsigned short)offsetof(compressRecord, ouse);
     prt->papFldDes[compressRecordBPTR]->size = sizeof(prec->bptr);
-    prt->papFldDes[compressRecordBPTR]->offset = (unsigned short)((char *)&prec->bptr - (char *)prec);
+    prt->papFldDes[compressRecordBPTR]->offset = (unsigned short)offsetof(compressRecord, bptr);
     prt->papFldDes[compressRecordSPTR]->size = sizeof(prec->sptr);
-    prt->papFldDes[compressRecordSPTR]->offset = (unsigned short)((char *)&prec->sptr - (char *)prec);
+    prt->papFldDes[compressRecordSPTR]->offset = (unsigned short)offsetof(compressRecord, sptr);
     prt->papFldDes[compressRecordWPTR]->size = sizeof(prec->wptr);
-    prt->papFldDes[compressRecordWPTR]->offset = (unsigned short)((char *)&prec->wptr - (char *)prec);
+    prt->papFldDes[compressRecordWPTR]->offset = (unsigned short)offsetof(compressRecord, wptr);
     prt->papFldDes[compressRecordINPN]->size = sizeof(prec->inpn);
-    prt->papFldDes[compressRecordINPN]->offset = (unsigned short)((char *)&prec->inpn - (char *)prec);
+    prt->papFldDes[compressRecordINPN]->offset = (unsigned short)offsetof(compressRecord, inpn);
     prt->papFldDes[compressRecordCVB]->size = sizeof(prec->cvb);
-    prt->papFldDes[compressRecordCVB]->offset = (unsigned short)((char *)&prec->cvb - (char *)prec);
+    prt->papFldDes[compressRecordCVB]->offset = (unsigned short)offsetof(compressRecord, cvb);
     prt->papFldDes[compressRecordINX]->size = sizeof(prec->inx);
-    prt->papFldDes[compressRecordINX]->offset = (unsigned short)((char *)&prec->inx - (char *)prec);
+    prt->papFldDes[compressRecordINX]->offset = (unsigned short)offsetof(compressRecord, inx);
     prt->rec_size = sizeof(*prec);
     return 0;
 }
