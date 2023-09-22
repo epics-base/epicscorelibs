@@ -1652,6 +1652,7 @@ long dbCreateAlias(DBENTRY *pdbentry, const char *alias)
     dbRecordNode *pnewnode;
     DBENTRY tempEntry;
     PVDENTRY *ppvd;
+    long status;
 
     if (!precordType)
         return S_dbLib_recordTypeNotFound;
@@ -1664,9 +1665,10 @@ long dbCreateAlias(DBENTRY *pdbentry, const char *alias)
         return S_dbLib_recNotFound;
 
     dbInitEntry(pdbentry->pdbbase, &tempEntry);
-    if (!dbFindRecord(&tempEntry, alias))
-        return S_dbLib_recExists;
+    status = dbFindRecord(&tempEntry, alias);
     dbFinishEntry(&tempEntry);
+    if (!status)
+        return S_dbLib_recExists;
 
     pnewnode = dbCalloc(1, sizeof(dbRecordNode));
     pnewnode->recordname = epicsStrDup(alias);
@@ -1676,14 +1678,15 @@ long dbCreateAlias(DBENTRY *pdbentry, const char *alias)
     precnode->flags |= DBRN_FLAGS_HASALIAS;
     ellInit(&pnewnode->infoList);
 
-    ellAdd(&precordType->recList, &pnewnode->node);
-    precordType->no_aliases++;
-
     ppvd = dbPvdAdd(pdbentry->pdbbase, precordType, pnewnode);
     if (!ppvd) {
         errMessage(-1, "dbCreateAlias: Add to PVD failed");
+        free(pnewnode);
         return -1;
     }
+
+    ellAdd(&precordType->recList, &pnewnode->node);
+    precordType->no_aliases++;
 
     return 0;
 }
@@ -2041,13 +2044,17 @@ char *dbGetStringNum(DBENTRY *pdbentry)
 {
     dbFldDes    *pflddes = pdbentry->pflddes;
     void        *pfield = pdbentry->pfield;
-    char        *message;
+    char        *message = getpMessage(pdbentry);
     unsigned char cvttype;
+
+    if (!pfield) {
+        dbMsgCpy(pdbentry, "Field not found");
+        return message;
+    }
 
     /* the following assumes that messagesize is large enough
      * to hold the base 10 encoded value of a 32-bit integer.
      */
-    message = getpMessage(pdbentry);
     cvttype = pflddes->base;
     switch (pflddes->field_type) {
     case DBF_CHAR:
@@ -2109,37 +2116,34 @@ char *dbGetStringNum(DBENTRY *pdbentry)
         {
             dbMenu *pdbMenu = (dbMenu *)pflddes->ftPvt;
             epicsEnum16 choice_ind;
-            char *pchoice;
 
-            if (!pfield) {
-                dbMsgCpy(pdbentry, "Field not found");
-                return message;
-            }
-            choice_ind = *((epicsEnum16 *) pdbentry->pfield);
-            if (!pdbMenu || choice_ind < 0 || choice_ind >= pdbMenu->nChoice)
+            if (!pdbMenu)
                 return NULL;
-            pchoice = pdbMenu->papChoiceValue[choice_ind];
-            dbMsgCpy(pdbentry, pchoice);
+
+            choice_ind = *((epicsEnum16 *) pdbentry->pfield);
+            if (choice_ind >= pdbMenu->nChoice) {
+                dbMsgPrint(pdbentry, "%u", choice_ind);
+            }
+            else {
+                dbMsgCpy(pdbentry, pdbMenu->papChoiceValue[choice_ind]);
+            }
         }
         break;
     case DBF_DEVICE:
         {
-            dbDeviceMenu *pdbDeviceMenu;
+            dbDeviceMenu *pdbDeviceMenu = dbGetDeviceMenu(pdbentry);
             epicsEnum16 choice_ind;
-            char *pchoice;
 
-            if (!pfield) {
-                dbMsgCpy(pdbentry, "Field not found");
-                return message;
+            if (!pdbDeviceMenu) {
+                dbMsgCpy(pdbentry, "");
+                break;
             }
-            pdbDeviceMenu = dbGetDeviceMenu(pdbentry);
-            if (!pdbDeviceMenu)
-                return NULL;
+
             choice_ind = *((epicsEnum16 *) pdbentry->pfield);
-            if (choice_ind<0 || choice_ind>=pdbDeviceMenu->nChoice)
+            if (choice_ind>=pdbDeviceMenu->nChoice)
                 return NULL;
-            pchoice = pdbDeviceMenu->papChoice[choice_ind];
-            dbMsgCpy(pdbentry, pchoice);
+
+            dbMsgCpy(pdbentry, pdbDeviceMenu->papChoice[choice_ind]);
         }
         break;
     default:

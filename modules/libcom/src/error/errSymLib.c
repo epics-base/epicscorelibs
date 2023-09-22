@@ -152,6 +152,9 @@ const char* errSymLookupInternal(long status)
     ERRNUMNODE *pNextNode;
     ERRNUMNODE **phashnode = NULL;
 
+    if (!status)
+        return "Ok";
+
     if (!initialized)
         errSymBld();
 
@@ -257,7 +260,6 @@ void errSymTestPrint(long errNum)
     if ( message[0] == '\0' ) return;
     printf("module %hu number %hu message=\"%s\"\n",
         modnum, errnum, message);
-    return;
 }
 
 /****************************************************************

@@ -29,6 +29,8 @@
 #include "postfix.h"
 #include "asLib.h"
 
+#undef ECHO /* from termios.h */
+
 int asCheckClientIP;
 
 static epicsMutexId asLock;
@@ -357,7 +359,6 @@ void epicsStdCall asPutMemberPvt(ASMEMBERPVT asMemberPvt,void *userPvt)
     if(!asActive) return;
     if(!pasgmember) return;
     pasgmember->userPvt = userPvt;
-    return;
 }
 
 long epicsStdCall asAddClient(ASCLIENTPVT *pasClientPvt,ASMEMBERPVT asMemberPvt,

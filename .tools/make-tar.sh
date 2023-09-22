@@ -20,9 +20,9 @@ maybedie() {
 
 usage() {
    cat <<EOF >&2
-usage: $0 [-v] [-s] <rev> [<outfile> [<prefix>]]
+usage: $0 [-v] [-d] <rev> [<outfile> [<prefix>]]
 
-  <rev> may be any git revision spec. (tag, branch, or commit id).
+  <rev> may be any git revision spec. (tag or, using -d, branch or commit id).
 
   If provided, <outfile> must end with ".tar", ".tar.gz" or ".tar.bz2".
   If <outfile> is omitted, "base-<rev>.tar.gz" will be used.
@@ -140,10 +140,12 @@ sed \
   -e '/\/\.ci-local\//d' \
   -e '/\/\.tools\//d' \
   -e '/\/jenkins\//d' \
-  -e '/\/\.git/d' \
+  -e '/\/\.github\//d' \
+  -e '/\/\.gitmodules$/d' \
   -e '/\/\.hgtags$/d' \
   -e '/\/\.cproject$/d' \
   -e '/\/\.project$/d' \
+  -e '/\/\.lgtm\.yml$/d' \
   -e '/\/\.travis\.yml$/d' \
   -e '/\/\.appveyor\.yml$/d' \
   -e '/\/\.readthedocs\.yml$/d' \
