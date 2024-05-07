@@ -21,7 +21,7 @@ dbCore = ctypes.CDLL(path.get_lib("dbCore"), mode=ctypes.RTLD_GLOBAL)
 dbRecStd = ctypes.CDLL(path.get_lib("dbRecStd"), mode=ctypes.RTLD_GLOBAL)
 pvAccessIOC = ctypes.CDLL(path.get_lib("pvAccessIOC"), mode=ctypes.RTLD_GLOBAL)
 qsrv = ctypes.CDLL(path.get_lib("qsrv"), mode=ctypes.RTLD_GLOBAL)
-
+DEFAULT_DBD_PATH =os.path.join(path.base_path, "dbd")
 # The functions we need from those libraries
 
 epicsExitCallAtExits = Com.epicsExitCallAtExits
@@ -63,7 +63,7 @@ def ioc(cmd):
     '''
     return iocshCmd(cmd.encode())
 
-def start_ioc(database=None, macros='', dbs=None):
+def start_ioc(dbd_load,database=None, macros='', dbs=None):
     if dbs is None:
         dbs = []
     if database is not None:
@@ -76,8 +76,9 @@ def start_ioc(database=None, macros='', dbs=None):
     iocshRegisterCommon()
 
     out('IOC Starting w/ %s \n', dbs)
-    dbdpath = os.path.join(path.base_path, "dbd")
-    for dbd in [b'base.dbd', b'PVAServerRegister.dbd', b'qsrv.dbd']:
+    for dbd,dbdpath in dbd_load:
+        if dbdpath is None:
+            dbdpath = DEFAULT_DBD_PATH
         if dbLoadDatabase(dbd, dbdpath.encode(), None):
             raise RuntimeError('Error loading '+dbdpath)
 
@@ -95,7 +96,7 @@ def start_ioc(database=None, macros='', dbs=None):
     out('IOC Running\n')
 
 
-def main():
+def main(dbd_load=[(b'base.dbd',DEFAULT_DBD_PATH),( b'PVAServerRegister.dbd',DEFAULT_DBD_PATH), (b'qsrv.dbd',DEFAULT_DBD_PATH)]):
     class DbAction(argparse.Action):
         def __call__(self, parser, ns, values, opt):
             ns.database.append((values, ns.macros))
@@ -106,7 +107,7 @@ def main():
     parser.add_argument('-d', '--database', default=[], action=DbAction,
         help="Path to database file to load")
     args = parser.parse_args()
-    start_ioc(dbs=args.database)
+    start_ioc(dbs=args.database,dbd_load=dbd_load)
     code.interact(local={
         'exit':sys.exit,
         'ioc':ioc,
