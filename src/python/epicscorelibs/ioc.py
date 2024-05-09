@@ -63,7 +63,7 @@ def ioc(cmd):
     '''
     return iocshCmd(cmd.encode())
 
-def start_ioc(dbd_load,database=None, macros='', dbs=None):
+def start_ioc(extra_dbd_load,database=None, macros='', dbs=None):
     if dbs is None:
         dbs = []
     if database is not None:
@@ -76,9 +76,10 @@ def start_ioc(dbd_load,database=None, macros='', dbs=None):
     iocshRegisterCommon()
 
     out('IOC Starting w/ %s \n', dbs)
-    for dbd,dbdpath in dbd_load:
-        if dbdpath is None:
-            dbdpath = DEFAULT_DBD_PATH
+    if dbLoadDatabase(b'base.dbd',DEFAULT_DBD_PATH.encode(),None):
+        raise RuntimeError('Error loading '+DEFAULT_DBD_PATH)
+    
+    for dbd,dbdpath in extra_dbd_load:
         if dbLoadDatabase(dbd, dbdpath.encode(), None):
             raise RuntimeError('Error loading '+dbdpath)
 
@@ -96,7 +97,7 @@ def start_ioc(dbd_load,database=None, macros='', dbs=None):
     out('IOC Running\n')
 
 
-def main(dbd_load=[(b'base.dbd',DEFAULT_DBD_PATH),( b'PVAServerRegister.dbd',DEFAULT_DBD_PATH), (b'qsrv.dbd',DEFAULT_DBD_PATH)]):
+def main(extra_dbd_load=[( b"PVAServerRegister.dbd",DEFAULT_DBD_PATH), (b"qsrv.dbd",DEFAULT_DBD_PATH)]):
     class DbAction(argparse.Action):
         def __call__(self, parser, ns, values, opt):
             ns.database.append((values, ns.macros))
@@ -107,7 +108,7 @@ def main(dbd_load=[(b'base.dbd',DEFAULT_DBD_PATH),( b'PVAServerRegister.dbd',DEF
     parser.add_argument('-d', '--database', default=[], action=DbAction,
         help="Path to database file to load")
     args = parser.parse_args()
-    start_ioc(dbs=args.database,dbd_load=dbd_load)
+    start_ioc(dbs=args.database,extra_dbd_load=extra_dbd_load)
     code.interact(local={
         'exit':sys.exit,
         'ioc':ioc,
