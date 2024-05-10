@@ -9,6 +9,8 @@ import sys
 import os
 import atexit
 
+from setuptools_dso import find_dso
+
 from . import path
 
 
@@ -63,7 +65,7 @@ def ioc(cmd):
     '''
     return iocshCmd(cmd.encode())
 
-def start_ioc(extra_dbd_load,database=None, macros='', dbs=None):
+def start_ioc(extra_dbd_load,extra_dso_load,database=None, macros='', dbs=None):
     if dbs is None:
         dbs = []
     if database is not None:
@@ -72,6 +74,9 @@ def start_ioc(extra_dbd_load,database=None, macros='', dbs=None):
     def out(msg, *args):
         sys.stderr.write(msg%args)
         sys.stderr.flush()
+
+    for dso in extra_dso_load:
+        _ = ctypes.CDLL(find_dso(dso), ctypes.RTLD_GLOBAL) 
 
     iocshRegisterCommon()
 
@@ -97,7 +102,7 @@ def start_ioc(extra_dbd_load,database=None, macros='', dbs=None):
     out('IOC Running\n')
 
 
-def main(extra_dbd_load=[( b"PVAServerRegister.dbd",DEFAULT_DBD_PATH), (b"qsrv.dbd",DEFAULT_DBD_PATH)]):
+def main(extra_dbd_load=[( b"PVAServerRegister.dbd",DEFAULT_DBD_PATH), (b"qsrv.dbd",DEFAULT_DBD_PATH)],extra_dso_load=[]):
     class DbAction(argparse.Action):
         def __call__(self, parser, ns, values, opt):
             ns.database.append((values, ns.macros))
@@ -108,7 +113,7 @@ def main(extra_dbd_load=[( b"PVAServerRegister.dbd",DEFAULT_DBD_PATH), (b"qsrv.d
     parser.add_argument('-d', '--database', default=[], action=DbAction,
         help="Path to database file to load")
     args = parser.parse_args()
-    start_ioc(dbs=args.database,extra_dbd_load=extra_dbd_load)
+    start_ioc(dbs=args.database,extra_dbd_load=extra_dbd_load,extra_dso_load=extra_dso_load)
     code.interact(local={
         'exit':sys.exit,
         'ioc':ioc,
