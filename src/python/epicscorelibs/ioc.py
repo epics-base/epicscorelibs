@@ -21,8 +21,7 @@ else:
     Com = ctypes.CDLL(path.get_lib("Com"), mode=ctypes.RTLD_GLOBAL)
 dbCore = ctypes.CDLL(path.get_lib("dbCore"), mode=ctypes.RTLD_GLOBAL)
 dbRecStd = ctypes.CDLL(path.get_lib("dbRecStd"), mode=ctypes.RTLD_GLOBAL)
-pvAccessIOC = ctypes.CDLL(path.get_lib("pvAccessIOC"), mode=ctypes.RTLD_GLOBAL)
-qsrv = ctypes.CDLL(path.get_lib("qsrv"), mode=ctypes.RTLD_GLOBAL)
+
 DEFAULT_DBD_PATH =os.path.join(path.base_path, "dbd")
 # The functions we need from those libraries
 
@@ -75,17 +74,17 @@ def start_ioc(extra_dbd_load,extra_dso_load,database=None, macros='', dbs=None):
         sys.stderr.write(msg%args)
         sys.stderr.flush()
 
-    for dso in extra_dso_load:
-        _ = ctypes.CDLL(find_dso(dso), ctypes.RTLD_GLOBAL) 
+    for kwargs in extra_dso_load:
+        ctypes.CDLL(find_dso(**kwargs), ctypes.RTLD_GLOBAL) 
 
     iocshRegisterCommon()
 
     out('IOC Starting w/ %s \n', dbs)
     if dbLoadDatabase(b'base.dbd',DEFAULT_DBD_PATH.encode(),None):
         raise RuntimeError('Error loading '+DEFAULT_DBD_PATH)
-    
-    for dbd,dbdpath in extra_dbd_load:
-        if dbLoadDatabase(dbd, dbdpath.encode(), None):
+    base_dbd_load = (('base.dbd',DEFAULT_DBD_PATH),)
+    for dbd,dbdpath in base_dbd_load + tuple(extra_dbd_load):
+        if dbLoadDatabase(dbd.encode(), dbdpath.encode(), None):
             raise RuntimeError('Error loading '+dbdpath)
 
     out('IOC dbd loaded\n')
@@ -101,8 +100,12 @@ def start_ioc(extra_dbd_load,extra_dso_load,database=None, macros='', dbs=None):
         raise RuntimeError('Error starting IOC')
     out('IOC Running\n')
 
-
-def main(extra_dbd_load=[( b"PVAServerRegister.dbd",DEFAULT_DBD_PATH), (b"qsrv.dbd",DEFAULT_DBD_PATH)],extra_dso_load=[]):
+pva_dbd_load = (("PVAServerRegister.dbd",DEFAULT_DBD_PATH), ("qsrv.dbd",DEFAULT_DBD_PATH))
+pva_dso_load = (
+    { "dso":"..lib.pvAccessIOC","package":"epicscorelibs.path"}, 
+    { "dso":"..lib.qsrv","package":"epicscorelibs.path"}
+    )
+def main(extra_dbd_load=pva_dbd_load,extra_dso_load=pva_dso_load):
     class DbAction(argparse.Action):
         def __call__(self, parser, ns, values, opt):
             ns.database.append((values, ns.macros))
