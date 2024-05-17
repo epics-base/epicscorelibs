@@ -64,7 +64,7 @@ def ioc(cmd):
     '''
     return iocshCmd(cmd.encode())
 
-def start_ioc(extra_dbd_load,extra_dso_load,database=None, macros='', dbs=None):
+def start_ioc(extra_dbd_load, extra_dso_load, database=None, macros='', dbs=None):
     if dbs is None:
         dbs = []
     if database is not None:
@@ -74,14 +74,13 @@ def start_ioc(extra_dbd_load,extra_dso_load,database=None, macros='', dbs=None):
         sys.stderr.write(msg%args)
         sys.stderr.flush()
 
-    for kwargs in extra_dso_load:
-        ctypes.CDLL(find_dso(**kwargs), ctypes.RTLD_GLOBAL) 
+    for dso in extra_dso_load:
+        ctypes.CDLL(find_dso(dso), ctypes.RTLD_GLOBAL) 
 
     iocshRegisterCommon()
 
     out('IOC Starting w/ %s \n', dbs)
-    if dbLoadDatabase(b'base.dbd',DEFAULT_DBD_PATH.encode(),None):
-        raise RuntimeError('Error loading '+DEFAULT_DBD_PATH)
+    
     base_dbd_load = (('base.dbd',DEFAULT_DBD_PATH),)
     for dbd,dbdpath in base_dbd_load + tuple(extra_dbd_load):
         if dbLoadDatabase(dbd.encode(), dbdpath.encode(), None):
@@ -101,10 +100,7 @@ def start_ioc(extra_dbd_load,extra_dso_load,database=None, macros='', dbs=None):
     out('IOC Running\n')
 
 pva_dbd_load = (("PVAServerRegister.dbd",DEFAULT_DBD_PATH), ("qsrv.dbd",DEFAULT_DBD_PATH))
-pva_dso_load = (
-    { "dso":"..lib.pvAccessIOC","package":"epicscorelibs.path"}, 
-    { "dso":"..lib.qsrv","package":"epicscorelibs.path"}
-    )
+pva_dso_load = ("epicscorelibs.lib.pvAccessIOC", "epicscorelibs.lib.qsrv",)
 def main(extra_dbd_load=pva_dbd_load,extra_dso_load=pva_dso_load):
     class DbAction(argparse.Action):
         def __call__(self, parser, ns, values, opt):
