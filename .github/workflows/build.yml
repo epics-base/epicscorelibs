@@ -210,6 +210,12 @@ jobs:
           python-version: ${{ matrix.python || '3.7' }}
           #architecture: x64
 
+      # TLS 1.0 and 1.1 support was removed from pypi so the cached pip won't work
+      - name: Python 3.5 Fix
+        if: ${{ matrix.python == '3.5' }}
+        run: |
+          curl https://bootstrap.pypa.io/pip/3.5/get-pip.py | python
+
       - name: Native Prep/Info
         run: |
           python -m pip install --upgrade pip
