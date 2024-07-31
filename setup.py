@@ -559,7 +559,7 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
     python_requires='>=2.7',
     install_requires=[
         'setuptools', # needed at runtime for 'pkg_resources'
-        'setuptools_dso>=2.9a1', # 'setuptools_dso.runtime' used in 'epicscorelibs.path'
+        'setuptools-dso>=2.11a2', # 'setuptools_dso.runtime' used in 'epicscorelibs.path'
         'numpy', # needed for epicscorelibs.ca.dbr
     ],
 
