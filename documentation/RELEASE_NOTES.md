@@ -32,6 +32,13 @@ not propagate AMSG, either.
 Channel Access links do not propagate AMSG, regardless of the MSS attribute,
 because the message is not available over Channel Access.
 
+### Allow to load the same alias multiple times
+
+Aliases can now be defined multiple times as long as they still refer to the
+same record, unless the shell variable dbRecordsOnceOnly is set.
+This allows to load database files multiple times, even if they contain
+alias definitions.
+
 ### DBE_PROPERTY event rate changed
 
 Updating property fields now only post DBE_PROPERTY events if the
