@@ -9,6 +9,8 @@ import sys
 import os
 import atexit
 
+from setuptools_dso import find_dso
+
 from . import path
 
 
@@ -19,9 +21,8 @@ else:
     Com = ctypes.CDLL(path.get_lib("Com"), mode=ctypes.RTLD_GLOBAL)
 dbCore = ctypes.CDLL(path.get_lib("dbCore"), mode=ctypes.RTLD_GLOBAL)
 dbRecStd = ctypes.CDLL(path.get_lib("dbRecStd"), mode=ctypes.RTLD_GLOBAL)
-pvAccessIOC = ctypes.CDLL(path.get_lib("pvAccessIOC"), mode=ctypes.RTLD_GLOBAL)
-qsrv = ctypes.CDLL(path.get_lib("qsrv"), mode=ctypes.RTLD_GLOBAL)
 
+DEFAULT_DBD_PATH = os.path.join(path.base_path, "dbd")
 # The functions we need from those libraries
 
 epicsExitCallAtExits = Com.epicsExitCallAtExits
@@ -63,7 +64,7 @@ def ioc(cmd):
     '''
     return iocshCmd(cmd.encode())
 
-def start_ioc(database=None, macros='', dbs=None):
+def start_ioc(extra_dbd_load, extra_dso_load, database=None, macros='', dbs=None):
     if dbs is None:
         dbs = []
     if database is not None:
@@ -73,12 +74,16 @@ def start_ioc(database=None, macros='', dbs=None):
         sys.stderr.write(msg%args)
         sys.stderr.flush()
 
+    for dso in extra_dso_load:
+        ctypes.CDLL(find_dso(dso), ctypes.RTLD_GLOBAL) 
+
     iocshRegisterCommon()
 
     out('IOC Starting w/ %s \n', dbs)
-    dbdpath = os.path.join(path.base_path, "dbd")
-    for dbd in [b'base.dbd', b'PVAServerRegister.dbd', b'qsrv.dbd']:
-        if dbLoadDatabase(dbd, dbdpath.encode(), None):
+    
+    base_dbd_load = (('base.dbd', DEFAULT_DBD_PATH),)
+    for dbd, dbdpath in base_dbd_load + tuple(extra_dbd_load):
+        if dbLoadDatabase(dbd.encode(), dbdpath.encode(), None):
             raise RuntimeError('Error loading '+dbdpath)
 
     out('IOC dbd loaded\n')
@@ -94,8 +99,9 @@ def start_ioc(database=None, macros='', dbs=None):
         raise RuntimeError('Error starting IOC')
     out('IOC Running\n')
 
-
-def main():
+pva_dbd_load = (("PVAServerRegister.dbd", DEFAULT_DBD_PATH), ("qsrv.dbd", DEFAULT_DBD_PATH))
+pva_dso_load = ("epicscorelibs.lib.pvAccessIOC", "epicscorelibs.lib.qsrv",)
+def main(extra_dbd_load=pva_dbd_load, extra_dso_load=pva_dso_load):
     class DbAction(argparse.Action):
         def __call__(self, parser, ns, values, opt):
             ns.database.append((values, ns.macros))
@@ -106,7 +112,7 @@ def main():
     parser.add_argument('-d', '--database', default=[], action=DbAction,
         help="Path to database file to load")
     args = parser.parse_args()
-    start_ioc(dbs=args.database)
+    start_ioc(dbs=args.database, extra_dbd_load=extra_dbd_load, extra_dso_load=extra_dso_load)
     code.interact(local={
         'exit':sys.exit,
         'ioc':ioc,
