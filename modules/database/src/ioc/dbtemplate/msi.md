@@ -1,10 +1,9 @@
-
-#  msi: Macro Substitution and Include Tool
+# msi: Macro Substitution and Include Tool
 
 (msitool)=
 ## Introduction
 
-msi is a general purpose macro substitution/include tool. 
+msi is a general purpose macro substitution/include tool.
 It accepts as input an ascii template file. It looks for lines containing two reserved
 command names: `include` and `substitute`. It also looks for and performs
 substitutions on macros of the form `\$(var)` and `\${var}`. It uses the
@@ -17,7 +16,7 @@ substitution file. This substitution file allows the same format as the
 substitution files accepted by the EPICS IOC's dbLoadTemplate command.
 
 
-## Command Syntax:
+## Command Syntax
 
 `msi -V -g -o _outfile_ -I _dir_ -M _subs_ -S _subfile_ _template_`
 
@@ -54,7 +53,8 @@ Switches have the following meanings:
 
         msi -I /home/mrk/examples:. -I.. template
 
-    specifies that all named files should be searched for in the following locations, in the order given:
+    specifies that all named files should be searched for in the following locations, 
+    in the order given:
 
      1. /home/mrk/examples
      2. . (the current directory)
@@ -90,14 +90,14 @@ an illegal switch, e.g.
     msi -help
 
 
-##  Exit Status
+## Exit Status
 
 - **0**
-    Success. 
+    Success.
 - **1**
-    Can't open/create file, or other I/O error. 
+    Can't open/create file, or other I/O error.
 - **2**
-    Undefined macros encountered with the -V option specified. 
+    Undefined macros encountered with the -V option specified.
 
 
 ## Template File Format
@@ -143,7 +143,7 @@ output the single quote behaviour may not be useful and may even be a
 hinderance. It cannot be disabled in the current version of msi.
 
 
-###  Template file commands
+### Template file commands
 
 In addition to the regular text and variable instances described above,
 the template file may also contain commands which allow the insertion of
@@ -155,8 +155,9 @@ template file itself. These commands are:
 
 Lines containing commands must be in one of these forms:
 
-  * include "_filename_"
-  * substitute "_name1=value1, name2=value2, ..._"
+  - include "_filename_"
+
+  - substitute "_name1=value1, name2=value2, ..._"
 
 White space is allowed before and after the command verb, and after the
 quoted string. If embedded quotes are needed, the backslash character \
@@ -238,7 +239,7 @@ each set of braces containing macro replacement values.
 This produces the same result as the regular format example above.
 
 
-###  dbLoadTemplate Format
+### dbLoadTemplate Format
 
 This format is an extension of the format accepted by the EPICS IOC
 command dbLoadTemplate, and allows templates to be expanded on the host
@@ -258,7 +259,7 @@ file instead. If a template filename is given on the command line it
 will override the filenames listed in the substitutions files.
 
 
-###  Syntax for all formats
+### Syntax for all formats
 
 A comment line may appear anywhere in a substitution file, and will be
 ignored. A comment line is any line beginning with the character #,
@@ -289,11 +290,11 @@ equivalent:
 
 Within a substitutions file, the file name may appear inside double
 quotation marks; these are required if the name contains certain
-characters or environment variable macros of the form ${ENV_VAR} or
-$(ENV_VAR), which will be expanded before the file is opened.
+characters or environment variable macros of the form \${ENV_VAR} or
+\$(ENV_VAR), which will be expanded before the file is opened.
 
 
-###  Regular substitution example
+### Regular substitution example
 
 Let the command be:
 
