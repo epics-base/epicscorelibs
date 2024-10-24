@@ -6,7 +6,7 @@
 msi is a general purpose macro substitution/include tool.
 It accepts as input an ascii template file. It looks for lines containing two reserved
 command names: `include` and `substitute`. It also looks for and performs
-substitutions on macros of the form `\$(var)` and `\${var}`. It uses the
+substitutions on macros of the form `$(var)` and `${var}`. It uses the
 macLib routines from EPICS Base to perform the substitutions, so it also
 accepts the default value and value definition syntax that macLib
 implements.
@@ -18,7 +18,7 @@ substitution files accepted by the EPICS IOC's dbLoadTemplate command.
 
 ## Command Syntax
 
-`msi -V -g -o _outfile_ -I _dir_ -M _subs_ -S _subfile_ _template_`
+`msi -V -g -o outfile -I dir -M subs -S subfile template`
 
 All parameters are optional. The -o, -I, -M, and -S switches may be
 separated from their associated value string by spaces if desired.
@@ -70,9 +70,9 @@ Switches have the following meanings:
 
     specifies that in the template file each occurrence of:
 
-        $(a) or ${a} is replaced by aval
-        $(b) or ${b} is replaced by bval
-        $(c) or ${c} is replaced by cval
+    - `$(a)` or `${a}` is replaced by _aval_
+    - `$(b)` or `${b}` is replaced by _bval_
+    - `$(c)` or `${c}` is replaced by _cval_
 
 - **-S _subfile_**
 
@@ -290,8 +290,8 @@ equivalent:
 
 Within a substitutions file, the file name may appear inside double
 quotation marks; these are required if the name contains certain
-characters or environment variable macros of the form \${ENV_VAR} or
-\$(ENV_VAR), which will be expanded before the file is opened.
+characters or environment variable macros of the form `${ENV_VAR}` or
+`$(ENV_VAR)`, which will be expanded before the file is opened.
 
 
 ### Regular substitution example
