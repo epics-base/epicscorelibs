@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: Checkout Repositories
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: false
 
@@ -44,19 +44,21 @@ jobs:
           sudo apt-get install --yes libreadline-dev
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
           config-file: ./.github/codeql/config.yml
 
       - name: Build C/C++
         run: |
+          echo '*** Building with these versions >>>'
           g++ --version
           make --version
           perl --version
+          echo '<<<'
           make -sj2 || echo '*** Ignoring build failure for CodeQL ***'
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{ matrix.language }}"
