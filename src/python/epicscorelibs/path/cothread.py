@@ -19,13 +19,11 @@ def check_cothread_order():
         return
     cothread = sys.modules.get("cothread")
 
-    ver = ()
-    for c in cothread.__version__.split("."):
-        try:
-            ver = ver + (int(c), )
-        except ValueError:
-            # Ignore setuptools_scm auto-generated trailing parts of a version number e.g. "2.20.1.dev1+g82e2778.d20241105"
-            pass
+    # Slice to first two elements to avoid attempting to parse certain types
+    # of auto-generated version numbers that are generated from setuptools_scm
+    # inside of cothread. e.g. trying to install directly from Github yields a
+    # version like "2.20.1.dev1+g82e2778.d20241105".
+    ver = tuple(int(c) for c in cothread.__version__.split(".")[:2])
 
     # >= 2.16 will attempt to import this module
     if ver < (2, 16):
