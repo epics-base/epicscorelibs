@@ -190,6 +190,7 @@ unsigned short recGblResetAlarms(void *precord)
 
     if(strcmp(pdbc->namsg, pdbc->amsg)!=0) {
         strcpy(pdbc->amsg, pdbc->namsg);
+        pdbc->namsg[0] = '\0';
         stat_mask = DBE_ALARM;
     }
 
