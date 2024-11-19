@@ -22,6 +22,16 @@ should also be read to understand what has changed since earlier releases:
 
 ## Changes made on the 7.0 branch since 7.0.8.1
 
+### The AMSG error message propagates through MSS links
+
+A database link with the MSS attribute will now propagate not only SEVR and
+STAT, but also AMSG. This field contains additional information that complements
+STAT. Links with MS or MSI attributes do not propagate STAT, and therefore do
+not propagate AMSG, either.
+
+Channel Access links do not propagate AMSG, regardless of the MSS attribute,
+because the message is not available over Channel Access.
+
 ### DBE_PROPERTY event rate changed
 
 Updating property fields now only post DBE_PROPERTY events if the
