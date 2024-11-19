@@ -226,9 +226,10 @@ static long dbDbGetValue(struct link *plink, short dbrType, void *pbuffer,
     }
 
     if (!status && precord != dbChannelRecord(chan))
-        recGblInheritSevr(plink->value.pv_link.pvlMask & pvlOptMsMode,
+        recGblInheritSevrMsg(plink->value.pv_link.pvlMask & pvlOptMsMode,
             plink->precord,
-            dbChannelRecord(chan)->stat, dbChannelRecord(chan)->sevr);
+            dbChannelRecord(chan)->stat, dbChannelRecord(chan)->sevr,
+            dbChannelRecord(chan)->amsg);
     return status;
 }
 
@@ -378,8 +379,8 @@ static long dbDbPutValue(struct link *plink, short dbrType,
     dbCommon *pdest = dbChannelRecord(chan);
     long status = dbPut(paddr, dbrType, pbuffer, nRequest);
 
-    recGblInheritSevr(ppv_link->pvlMask & pvlOptMsMode, pdest, psrce->nsta,
-        psrce->nsev);
+    recGblInheritSevrMsg(ppv_link->pvlMask & pvlOptMsMode, pdest, psrce->nsta,
+        psrce->nsev, psrce->namsg);
     if (status)
         return status;
 
