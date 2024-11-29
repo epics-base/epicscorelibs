@@ -232,19 +232,41 @@ static long dbDbGetValue(struct link *plink, short dbrType, void *pbuffer,
     return status;
 }
 
+/* Some records get options (precsision, units, ...) for some fields
+ * from an input link. We need to catch the case that this link
+ * points back to the same field or we will end in an infinite recursion.
+*/
+static long dbDbGetOptionLoopSafe(const struct link *plink, short dbrType,
+    void *pbuffer, long option)
+{
+    /* We need to cast away const to set the flags.
+       That's ok because we know that plink is never actually readonly.
+       And we reset everything to its original state.
+    */
+    struct link *mutable_plink = (struct link *)plink;
+    long status = S_dbLib_badLink;
+    dbChannel *chan = linkChannel(plink);
+    DBADDR *paddr = &chan->addr;
+    long number_elements = 0;
+
+    dbScanLock(paddr->precord);
+    if (!(mutable_plink->flags & DBLINK_FLAG_VISITED)) {
+        mutable_plink->flags |= DBLINK_FLAG_VISITED;
+        status = dbGet(paddr, dbrType, pbuffer, &option, &number_elements, NULL);
+        mutable_plink->flags &= ~DBLINK_FLAG_VISITED;
+    }
+    dbScanUnlock(paddr->precord);
+    return status;
+}
+
 static long dbDbGetControlLimits(const struct link *plink, double *low,
         double *high)
 {
-    dbChannel *chan = linkChannel(plink);
-    DBADDR *paddr = &chan->addr;
     struct buffer {
         DBRctrlDouble
         double value;
     } buffer;
-    long options = DBR_CTRL_DOUBLE;
-    long number_elements = 0;
-    long status = dbGet(paddr, DBR_DOUBLE, &buffer, &options, &number_elements,
-            NULL);
+    long status = dbDbGetOptionLoopSafe(plink, DBR_DOUBLE, &buffer, DBR_CTRL_DOUBLE);
 
     if (status)
         return status;
@@ -257,16 +279,11 @@ static long dbDbGetControlLimits(const struct link *plink, double *low,
 static long dbDbGetGraphicLimits(const struct link *plink, double *low,
         double *high)
 {
-    dbChannel *chan = linkChannel(plink);
-    DBADDR *paddr = &chan->addr;
     struct buffer {
         DBRgrDouble
         double value;
     } buffer;
-    long options = DBR_GR_DOUBLE;
-    long number_elements = 0;
-    long status = dbGet(paddr, DBR_DOUBLE, &buffer, &options, &number_elements,
-            NULL);
+    long status = dbDbGetOptionLoopSafe(plink, DBR_DOUBLE, &buffer, DBR_GR_DOUBLE);
 
     if (status)
         return status;
@@ -279,16 +296,11 @@ static long dbDbGetGraphicLimits(const struct link *plink, double *low,
 static long dbDbGetAlarmLimits(const struct link *plink, double *lolo,
         double *low, double *high, double *hihi)
 {
-    dbChannel *chan = linkChannel(plink);
-    DBADDR *paddr = &chan->addr;
     struct buffer {
         DBRalDouble
         double value;
     } buffer;
-    long options = DBR_AL_DOUBLE;
-    long number_elements = 0;
-    long status = dbGet(paddr, DBR_DOUBLE, &buffer, &options, &number_elements,
-            0);
+    long status = dbDbGetOptionLoopSafe(plink, DBR_DOUBLE, &buffer, DBR_AL_DOUBLE);
 
     if (status)
         return status;
@@ -302,16 +314,11 @@ static long dbDbGetAlarmLimits(const struct link *plink, double *lolo,
 
 static long dbDbGetPrecision(const struct link *plink, short *precision)
 {
-    dbChannel *chan = linkChannel(plink);
-    DBADDR *paddr = &chan->addr;
     struct buffer {
         DBRprecision
         double value;
     } buffer;
-    long options = DBR_PRECISION;
-    long number_elements = 0;
-    long status = dbGet(paddr, DBR_DOUBLE, &buffer, &options, &number_elements,
-            0);
+    long status = dbDbGetOptionLoopSafe(plink, DBR_DOUBLE, &buffer, DBR_PRECISION);
 
     if (status)
         return status;
@@ -322,16 +329,11 @@ static long dbDbGetPrecision(const struct link *plink, short *precision)
 
 static long dbDbGetUnits(const struct link *plink, char *units, int unitsSize)
 {
-    dbChannel *chan = linkChannel(plink);
-    DBADDR *paddr = &chan->addr;
     struct buffer {
         DBRunits
         double value;
     } buffer;
-    long options = DBR_UNITS;
-    long number_elements = 0;
-    long status = dbGet(paddr, DBR_DOUBLE, &buffer, &options, &number_elements,
-            0);
+    long status = dbDbGetOptionLoopSafe(plink, DBR_DOUBLE, &buffer, DBR_UNITS);
 
     if (status)
         return status;
