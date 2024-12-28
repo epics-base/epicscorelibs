@@ -1042,3 +1042,17 @@ int db_put_process(processNotify *ppn, notifyPutType type,
         ppn->status = notifyError;
     return 1;
 }
+
+void db_process(struct dbCommon *prec)
+{
+    if (prec->pact) {
+        if (dbAccessDebugPUTF && prec->tpro)
+            printf("%s: dbPutField to Active '%s', setting RPRO=1\n",
+                   epicsThreadGetNameSelf(), prec->name);
+        prec->rpro = TRUE;
+    } else {
+        /* indicate that dbPutField called dbProcess */
+        prec->putf = TRUE;
+        (void)dbProcess(prec);
+    }
+}
