@@ -22,6 +22,11 @@ should also be read to understand what has changed since earlier releases:
 
 ## Changes made on the 7.0 branch since 7.0.8.1
 
+### Post monitors from compress record when it's reset
+
+Writing into a compress record's `RES` field now posts a monitor event instead
+of only changing `VAL`. Monitor clients will therefore receive an empty array.
+
 ### The AMSG error message propagates through MSS links
 
 A database link with the MSS attribute will now propagate not only SEVR and
