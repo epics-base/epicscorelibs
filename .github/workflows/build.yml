@@ -17,7 +17,7 @@ jobs:
           # Check build from .tar
           - name: Source
             os: ubuntu-latest
-            python: "3.7"
+            python: "3.11"
             source: true
 
           # Linux py builds x64
@@ -207,7 +207,7 @@ jobs:
       - name: Setup native python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python || '3.7' }}
+          python-version: ${{ matrix.python || '3.11' }}
           #architecture: x64
 
       # TLS 1.0 and 1.1 support was removed from pypi so the cached pip won't work
