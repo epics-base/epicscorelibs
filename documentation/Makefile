@@ -65,6 +65,11 @@ libcom_HEADERS += yajl_common
 libcom_HEADERS += yajl_gen
 libcom_HEADERS += yajl_parse
 
+ca_HEADERS += cadef
+ca_HEADERS += caerr
+ca_HEADERS += caeventmask
+ca_HEADERS += db_access
+
 database_HEADERS += chfPlugin
 database_HEADERS += dbChannel
 database_HEADERS += dbCommon
@@ -128,7 +133,7 @@ menu_HEADERS += menuScan
 menu_HEADERS += menuSimm
 menu_HEADERS += menuYesNo
 
-HEADER_TYPES = libcom database record menu
+HEADER_TYPES = libcom ca database record menu
 
 HEADER_MD_FILES = $(foreach t, $(HEADER_TYPES), \
     $(addsuffix _h.md, $($t_HEADERS)))

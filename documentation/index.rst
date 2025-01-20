@@ -25,6 +25,7 @@ EPICS Base Documentation
    :caption: C/C++ Headers
 
    libcom-api
+   ca-api
    database-api
    record-api
    menu-api
