@@ -26,5 +26,6 @@ PROD_LIBS = ca Com
 
 DOCS += caget.md
 DOCS += cainfo.md
+DOCS += camonitor.md
 
 include $(TOP)/configure/RULES
