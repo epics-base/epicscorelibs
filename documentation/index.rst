@@ -21,6 +21,12 @@ EPICS Base Documentation
    ComponentReference
 
 .. toctree::
+   :titlesonly:
+   :caption: Command Line Reference
+
+   msi
+
+.. toctree::
    :maxdepth: 1
    :caption: C/C++ Headers
 
