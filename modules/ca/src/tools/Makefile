@@ -25,5 +25,6 @@ cainfo_SRCS = cainfo.c
 PROD_LIBS = ca Com
 
 DOCS += caget.md
+DOCS += cainfo.md
 
 include $(TOP)/configure/RULES

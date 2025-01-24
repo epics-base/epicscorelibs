@@ -5,4 +5,5 @@
 :caption: Tools
 
 caget
+cainfo
 ```
