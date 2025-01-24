@@ -143,6 +143,7 @@ RTD_SRC = $(COMMON_DIR)/rtd-src
 
 DOCS += README.md
 DOCS += RELEASE_NOTES.md
+DOCS += ca-cli.md
 
 include $(TOP)/configure/RULES
 

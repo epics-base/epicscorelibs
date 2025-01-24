@@ -24,6 +24,7 @@ EPICS Base Documentation
    :titlesonly:
    :caption: Command Line Reference
 
+   ca-cli
    msi
 
 .. toctree::
