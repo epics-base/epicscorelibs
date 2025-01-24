@@ -14,6 +14,7 @@ include $(TOP)/configure/CONFIG
 HTMLS += CAref.html
 DOCS += acctst.md
 DOCS += catime.md
+DOCS += casw.md
 
 #
 #	includes to install from this subproject
