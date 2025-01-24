@@ -12,6 +12,7 @@ TOP = ../../../..
 include $(TOP)/configure/CONFIG
 
 HTMLS += CAref.html
+DOCS += acctst.md
 
 #
 #	includes to install from this subproject
