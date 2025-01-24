@@ -13,6 +13,7 @@ include $(TOP)/configure/CONFIG
 
 HTMLS += CAref.html
 DOCS += acctst.md
+DOCS += catime.md
 
 #
 #	includes to install from this subproject
