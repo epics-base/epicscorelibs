@@ -64,7 +64,7 @@ def ioc(cmd):
     '''
     return iocshCmd(cmd.encode())
 
-def start_ioc(extra_dbd_load, extra_dso_load, database=None, macros='', dbs=None):
+def start_ioc(database=None, macros='', dbs=None, extra_dbd_load=(), extra_dso_load=()):
     if dbs is None:
         dbs = []
     if database is not None:
