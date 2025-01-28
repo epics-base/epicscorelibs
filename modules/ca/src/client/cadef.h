@@ -141,6 +141,11 @@ typedef unsigned CA_SYNC_GID;
  *  External OP codes for CA operations
  */
 
+/**
+ * \name Channel Access operations
+ * @{
+ */
+
 /** \brief GET Channel Access operation. */
 #define CA_OP_GET             0
 /** \brief PUT Channel Access operation. */
@@ -171,6 +176,8 @@ typedef unsigned CA_SYNC_GID;
  * \deprecated
  */
 #define CA_OP_SEARCH        2
+
+/** @} */
 
 /** \brief Provides efficient test and display of channel access errors.
  *
