@@ -30,18 +30,18 @@ STAT. Links with MS or MSI attributes do not propagate STAT, and therefore do
 not propagate AMSG, either.
 
 Channel Access links do not propagate AMSG, regardless of the MSS attribute,
-because the message is not available over Channel Access.
+because the message is not available as Channel metadata.
 
-### Allow to load the same alias multiple times
+### Reloading record aliases
 
-Aliases can now be defined multiple times as long as they still refer to the
-same record, unless the shell variable dbRecordsOnceOnly is set.
-This allows to load database files multiple times, even if they contain
+Aliases can now be defined more than once as long as they still refer to the
+same record, unless the global variable `dbRecordsOnceOnly` is non-zero.
+This allows database files to be loaded multiple times, even if they contain
 alias definitions.
 
-### DBE_PROPERTY event rate changed
+### `DBE_PROPERTY` event rate changed
 
-Updating property fields now only post DBE_PROPERTY events if the
+Updating property fields now only posts `DBE_PROPERTY` events if the
 field actually changed.
 
 ### Changes to msi related to include paths
@@ -74,14 +74,14 @@ From this release, record instances and aliases that have already been loaded
 by an IOC can be removed from the database again before the call to iocInit
 by loading a second instance of the named records but using `"#"` in place of
 the record type. Values for the fields are not required or advised, just use
-an empty record body { }. This is useful when a template defines records that
+an empty record body `{}`. This is useful when a template defines records that
 are not wanted in some IOCs, without having to split or duplicate the original
 template.
 
 For example this will remove the record named "unwanted":
 
 ```
-record("#", "unwanted") { }
+record("#", "unwanted") {}
 ```
 
 ### Only keep readline history for interactive sessions
@@ -428,10 +428,10 @@ changed to `(p)->dtor`.
 The order over operations when processing a waveformRecord is adjusted
 so that updates to NORD is posted with the correct timestamp.
 
-### Automatic COMMANDLINE_LIBRARY w/ newer compilers
+### Automatic `COMMANDLINE_LIBRARY` with newer compilers
 
 When built with a compiler supporting `__has_include<>`, the presence
-of the `<readline/readline.h>` will be used to automatically determine
+of a `readline/readline.h` header will be used to automatically determine
 a default value for `COMMANDLINE_LIBRARY`.
 
 Mingw builds with readline support now link `-ltermcap` instead of `-lcurses`.
@@ -676,7 +676,7 @@ These target architectures have been removed:
 
 + darwin-ppc, darwin-ppcx86
 + linux-386, linux-486, linux-586, linux-686, linux-athlon (cross-build)
-+ linux-cris, linux-cris_v10, linux-cris_v32 (cross-build)
++ linux-cris, linux-cris\_v10, linux-cris\_v32 (cross-build)
 + RTEMS-at91rm9200ek, RTEMS-gen68360, RTEMS-mcp750, RTEMS-mvme167,
 RTEMS-psim (cross-build)
 
@@ -694,9 +694,9 @@ running on RTEMS 5:
 
 - RTEMS-beagleboneblack
 - RTEMS-pc686
-- RTEMS-qoriq_e500 (MVME2500)
-- RTEMS-xilinx_zynq_a9_qemu
-- RTEMS-xilinx_zynq_zedboard
+- RTEMS-qoriq\_e500 (MVME2500)
+- RTEMS-xilinx\_zynq\_a9\_qemu
+- RTEMS-xilinx\_zynq\_zedboard
 
 The EPICS support for RTEMS 4 has always relied on RTEMS-specific
 kernel APIs which cannot be used on an SMP system, so a new port was
@@ -708,7 +708,7 @@ to run `make distclean` if switching a single source tree from one
 to the other (both header files and dependency files are different
 between the two and must be cleaned out).
 
-The configuration variable RTEMS_VERSION in the EPICS config file
+The configuration variable `RTEMS_VERSION` in the EPICS config file
 `configure/os/CONFIG_SITE.Common.RTEMS` must be set to the full 3-
 part version number for RTEMS 4 releases, e.g. `4.9.1`, `4.10.2`
 but for RTEMS 5.1 and later it must only contain the major version
@@ -943,7 +943,7 @@ compile device supports as loadable modules.
 ### Priority inversion safe Posix mutexes
 
 On Posix systems, epicsMutex now support priority inheritance if available.
-The IOC needs to run with SCHED_FIFO engaged to use these.
+The IOC needs to run with `SCHED_FIFO` engaged to use these.
 Support for Posix implementations before POSIX.1-2001 (`_XOPEN_SOURCE < 500`,
 glibc version &lt; 2.3.3) has been dropped.
 
@@ -1076,14 +1076,14 @@ properly handle zero-length arrays. The `caget`, `caput` and `camonitor`
 client programs are known to work with empty arrays as long as they were
 built with this or a later version of EPICS.
 
-#### Change to the db_access.h `dbr_size_n(TYPE, COUNT)` macro
+#### Change to the db\_access.h `dbr_size_n(TYPE, COUNT)` macro
 
 When called with COUNT=0 this macro no longer returns the number of bytes
 required for a scalar (1 element) but for an empty array (0 elements).
 Make sure code that uses this doesn't call it with COUNT=0 when it really
 means COUNT=1.
 
-Note that the db_access.h header file is included by cadef.h so the change
+Note that the db\_access.h header file is included by cadef.h so the change
 can impact Channel Access client programs that use this macro.
 
 #### Channel Access support for zero-length arrays
@@ -1258,7 +1258,7 @@ The following launchpad bugs have fixes included in this release:
   operators on aarch64
 - [lp: 1853148](https://bugs.launchpad.net/bugs/1853148), mingw compiler
   problem with printf/scanf formats
-- [lp: 1852653](https://bugs.launchpad.net/bugs/1852653), USE_TYPED_DSET
+- [lp: 1852653](https://bugs.launchpad.net/bugs/1852653), `USE_TYPED_DSET`
   incompatible with C++
 - [lp: 1862328](https://bugs.launchpad.net/bugs/1862328), Race condition on
   IOC start leaves rsrv unresponsive
@@ -1268,7 +1268,7 @@ The following launchpad bugs have fixes included in this release:
 - [lp: 1868680](https://bugs.launchpad.net/bugs/1868680), Access Security file
   reload (asInit) fails
 
-### \*_API macros in EPICS headers
+### `*_API` macros in EPICS headers
 
 Internally, the Com and ca libraries now express dllimport/export (Windows)
 and symbol visibility (GCC) using library-specific macros (eg. `LIBCOM_API`)
@@ -1502,7 +1502,7 @@ The API functions `epicsGetExecDir()` and `epicsGetExecName()` are also
 added to `osiFileName.h` to provide runtime access to the directory or
 filename of the executable with which the process was started.
 
-### Decouple LINKER_USE_RPATH and STATIC_BUILD
+### Decouple `LINKER_USE_RPATH` and `STATIC_BUILD`
 
 Previously, setting `STATIC_BUILD=NO` implied `LINKER_USE_RPATH=NO`.
 This is no longer the case.  Setting `LINKER_USE_RPATH=YES` will
@@ -2081,7 +2081,7 @@ number instead, like this:
 Channel Access does not (and probably never will) directly support 64-bit
 integer types, so the new field types are presented to the CA server as
 `DBF_DOUBLE` values. This means that field values larger than 2^52
-(0x10_0000_0000_0000 = 4503599627370496) cannot be transported over Channel
+(0x10\_0000\_0000\_0000 = 4503599627370496) cannot be transported over Channel
 Access without their least significant bits being truncated. The EPICS V4
 pvAccess network protocol _can_ transport 64-bit data types however, and a
 future release of the pvaSrv module will connect this ability to the fields of
