@@ -84,6 +84,35 @@ For example this will remove the record named "unwanted":
 record("#", "unwanted") { }
 ```
 
+### Only keep readline history for interactive sessions
+
+Previously, all IOCsh commands were persisited in the libreadline history
+(when readline support is included).
+Going forward, only interactive commands are saved.
+
+### Type change to asTrap serverSpecific data
+
+Change `void*` to `dbChannel*` in `asTrapWriteBeforeWithData()` and
+`asTrapWriteMessage::serverSpecific` to reflect the reality since
+the `dbAddr*` to `dbChannel*` migration.
+External code wishing to support both before and after 3.15 should
+already be conditionally casting to/from the appropriate type.
+
+### Fix issues with `_FORTIFY_SOURCE=3`
+
+This release fixes the false positives failures whhen building with `_FORTIFY_SOURCE` level 3.
+The override introduced with `7.0.8.1` is removed.
+
+### Other
+
+- genVersionHeader: work with git submodules and worktrees.
+- avoid UB with self `pthread_join()`
+- freebsd: Add support for x86 and amd64 builds
+- Clear AMSG when SEVR becomes zero.
+- `seqRecord` fix support for link `DLY0`
+- Add `ABORT_ON_ASSERT` flag to `CONFIG_SITE_ENV`
+- rationalize osdMutex
+
 ## EPICS Release 7.0.8.1
 
 ### Limit to `_FORTIFY_SOURCE=2`
