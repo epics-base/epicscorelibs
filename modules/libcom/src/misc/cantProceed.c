@@ -24,7 +24,7 @@ LIBCOM_API void * callocMustSucceed(size_t count, size_t size, const char *msg)
     void * mem = NULL;
     if (count > 0 && size > 0) {
         while ((mem = calloc(count, size)) == NULL) {
-            errlogPrintf("%s: callocMustSucceed(%lu, %lu) - calloc failed\n",
+            errlogPrintf("%s: callocMustSucceed(%lu, %lu) - " ERL_ERROR " calloc failed\n",
                     msg, (unsigned long)count, (unsigned long)size);
             errlogPrintf("Thread %s (%p) suspending.\n",
                     epicsThreadGetNameSelf(), (void *)epicsThreadGetIdSelf());
@@ -40,7 +40,7 @@ LIBCOM_API void * mallocMustSucceed(size_t size, const char *msg)
     void * mem = NULL;
     if (size > 0) {
         while ((mem = malloc(size)) == NULL) {
-            errlogPrintf("%s: mallocMustSucceed(%lu) - malloc failed\n",
+            errlogPrintf("%s: mallocMustSucceed(%lu) - " ERL_ERROR " malloc failed\n",
                 msg, (unsigned long)size);
             errlogPrintf("Thread %s (%p) suspending.\n",
                     epicsThreadGetNameSelf(), (void *)epicsThreadGetIdSelf());
