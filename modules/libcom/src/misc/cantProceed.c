@@ -59,7 +59,7 @@ LIBCOM_API void cantProceed(const char *msg, ...)
         errlogVprintf(msg, pvar);
     va_end(pvar);
 
-    errlogPrintf("Thread %s (%p) can't proceed, suspending.\n",
+    errlogPrintf(ANSI_RED("CRITICAL ERROR") " Thread %s (%p) can't proceed, suspending.\n",
             epicsThreadGetNameSelf(), (void *)epicsThreadGetIdSelf());
 
     epicsStackTrace();
