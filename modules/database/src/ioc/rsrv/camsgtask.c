@@ -163,11 +163,11 @@ void camsgtask ( void *pParm )
 
 int casClientInitiatingCurrentThread ( char * pBuf, size_t bufSize )
 {
+    struct client * pClient;
     if ( ! rsrvCurrentClient )
         return RSRV_ERROR; /* not yet initialized, or disabled via dbServer */
-    struct client * pClient = ( struct client * )
-        epicsThreadPrivateGet ( rsrvCurrentClient );
 
+    pClient = ( struct client * ) epicsThreadPrivateGet ( rsrvCurrentClient );
     if ( ! pClient )
         return RSRV_ERROR;
 
