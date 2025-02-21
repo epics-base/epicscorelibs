@@ -12,6 +12,14 @@ The external PVA submodules each have their own individual release notes files.
 However the entries describing changes included in those submodules since EPICS
 7.0.5 have now been copied into the appropriate place of this file.
 
+__This version of EPICS has not been released yet.__
+
+## Changes made on the 7.0 branch since 7.0.9
+
+__Add new items below here__
+
+-----
+
 ## EPICS Release 7.0.9
 
 ### Core documentation published at ReadTheDocs
