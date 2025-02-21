@@ -8,19 +8,27 @@ under the 3.15 release to which they were originally committed.** Thus it is
 important to read more than just the first section to understand everything that
 has changed in each release.
 
-The PVA submodules each have their own individual sets of release notes which
-should also be read to understand what has changed since earlier releases:
+The external PVA submodules each have their own individual release notes files.
+However the entries describing changes included in those submodules since EPICS
+7.0.5 have now been copied into the appropriate place of this file.
 
-- [normativeTypes](https://github.com/epics-base/normativeTypesCPP/blob/master/documentation/RELEASE_NOTES.md)
-- [pvAccess](http://epics-base.github.io/pvAccessCPP/pvarelease_notes.html)
-- [pvData](http://epics-base.github.io/pvDataCPP/release_notes.html)
-- [pvDatabase](https://github.com/epics-base/pvDatabaseCPP/blob/master/documentation/RELEASE_NOTES.md)
-- [pva2pva](https://epics-base.github.io/pva2pva/release_notes.html)
-- [pvaClient](https://github.com/epics-base/pvaClientCPP/blob/master/documentation/RELEASE_NOTES.md)
+## EPICS Release 7.0.9
 
-**This version of EPICS has not been released yet.**
+### Core documentation published at ReadTheDocs
 
-## Changes made on the 7.0 branch since 7.0.8.1
+The `documentation` directory's `Makefile` can now run various publication scripts including Sphinx and Doxygen to generate formatted documentation that is now being published
+[at docs.epics-controls.org](https://docs.epics-controls.org/projects/base/en/latest/index.html)
+and integrated into the main [EPICS Documentation website](https://docs.epics-controls.org/en/latest/index.html).
+The best place to find out more about these mechanisms is the
+[Contribution Guide](https://docs.epics-controls.org/en/latest/CONTRIBUTING.html)
+although it doesn't currently cover the new processes added to epics-base.
+
+Much of the documentation generated from .dbd.pod files at build time is now
+also being converted into MarkDown (.md) files and installed into the top-level
+`doc` directory. Some users might find it quicker to look up information about a
+record type by opening these files in a text editor intead of opening a browser
+and loading the HTML versions or finding and opening the files from the EPICS
+Documentation site.
 
 ### Post monitors from compress record when it's reset
 
@@ -72,7 +80,6 @@ file from the command line, `msi` will not use the `-I`-specified paths to
 search for the file, but will only work relative to the current working
 directory, consistent with most commandline utilities.
 
-
 ### Allow users to delete previously created records from the database
 
 From this release, record instances and aliases that have already been loaded
@@ -106,7 +113,7 @@ already be conditionally casting to/from the appropriate type.
 ### Fix issues with `_FORTIFY_SOURCE=3`
 
 This release fixes the false positives failures whhen building with `_FORTIFY_SOURCE` level 3.
-The override introduced with `7.0.8.1` is removed.
+The override introduced in 7.0.8.1 has been removed.
 
 ### Other
 
@@ -117,6 +124,17 @@ The override introduced with `7.0.8.1` is removed.
 - `seqRecord` fix support for link `DLY0`
 - Add `ABORT_ON_ASSERT` flag to `CONFIG_SITE_ENV`
 - rationalize osdMutex
+
+### Submodule updates
+
+The pvDatabase module was updated to version 4.7.2:
+
+* Resolved issue with changed field set in the case where the top level (master)
+field ("_") is not requested by the client, but the master field callback causes
+all fields to be marked as updated, rather than only those fields that have
+actually been modified.
+
+-----
 
 ## EPICS Release 7.0.8.1
 
@@ -354,6 +372,50 @@ and include a visual marker (a line of underlines) between different help comman
 The floating point modulo function `FMOD(NUM,DEN)` has been added to the CALC
 expression engine and is available to all software using that (calc and calcout
 record types, access security library and some extensions).
+
+### Submodule updates
+
+The pvData module was updated to version 8.0.6:
+
+- Compatible changes
+  - Actually enable JSON-5 output in PVStructure::Formatter::JSON when available.
+  - Fix unaligned access issues for some ARM/Linux targets.
+
+The pvAccess module was updated to version 7.1.7:
+
+- Changes
+  - Registering the PVA server with the IOC now sets the `PVAS_SERVER_PORT`
+    variable in the environment.
+
+The pva2pva module was updated to version 1.4.1:
+
+- Bug Fixes
+  - `dbLoadGroup` was fixed
+- Additions
+  - Support for "meta" member at top of array of structs
+
+The pvDatabase module was updated to version 4.7.1:
+
+* Added data distributor plugin which can be used for distributing data between
+  a group of clients. The plugin is triggered by the request string of the
+  form:
+
+  `_[distributor=group:<group id>;set:<set_id>;trigger:<field_name>;updates:<n_updates>;mode:<update_mode>]`
+
+  The plugin parameters are optional and are described bellow:
+
+  - group: this parameter indicates a group that client application belongs to (default value: "default"); groups of clients are completely independent of each other
+
+  - set: this parameter designates a client set that application belongs to within its group (default value: "default")
+
+  - trigger: this is the PV structure field that distinguishes different channel updates (default value: "timeStamp"); for example, for area detector images one could use the "uniqueId" field of the NTND structure
+
+  - updates: this parameter configures how many sequential updates a client (or a set of clients) will receive before the data distributor starts updating the next one (default value: "1")
+
+  - mode: this parameter configures how channel updates are to be distributed between clients in a set:
+    - one: update goes to one client per set
+    - all: update goes to all clients in a set
+    - default is "one" if client set id is not specified, and "all" if set id is specified
 
 -----
 
@@ -605,6 +667,44 @@ or if unsupported (`$TERM` not set, or Windows < 10).
 The `dbnd` server side filter now passes through alarm and property
 change events, even when not exceeding the deadband.
 
+### Submodule updates
+
+The pvData module was updated to version 8.0.5:
+
+- Compatible changes
+ - Internal changes to use the YAJL API for generating JSON and JSON-5 output.
+
+The pvAccess module was updated to version 7.1.6:
+
+- Changes to caProvider
+  - Bug fix related to enum values.
+  - More internal changes to improve performance when connecting tens of
+    thousands of CA channels.
+- Several minor internal improvements.
+
+The pva2pva module was updated to version 1.4.0:
+
+- Bug Fixes
+ - Apply ACF when writing to atomic group
+- Additions
+ - Add new "structure" to @ref qsrv_group_map_types
+- Changes
+ - Add Access Security hooks for single and group writes.
+ - Enable "Async Soft Channel" for output links
+ - When built against Base 7.0.6.1, set timeStamp.userTag from UTAG field.
+ - Add DTYP="QSRV Set UTag" for longin, which sets UTAG=VAL.
+
+The pvDatabase module was updated to version 4.7.0:
+
+* Added support for the whole structure (master field) server side plugins.
+  The whole structure is identified as the `_` string, and a pvRequest string
+  that applies a plugin to it takes the form:
+
+  `field(_[XYZ=A:3;B:uniqueId])`
+
+  where `XYZ` is the name of a specific filter plugin that takes parameters
+  `A` and `B` with values `3` and `uniqueId` respectively.
+
 -----
 
 ## EPICS Release 7.0.6.1
@@ -670,6 +770,15 @@ This was done to simplify the code and may have improved performance slightly fo
 ### Updates to Record Reference documentation
 
 Many of the built-in record types have had improvements to their documentation with additional fields added to the tables, rewrites of descriptions and links to other documents added or fixed.
+
+### Submodule updates
+
+The pvAccess module was updated to version 7.1.4:
+
+- Changes to caProvider
+  - Resolve issues with pv structures that don't have a value field
+  - Add NULL checks for handling unusual structures
+  - Speed up channel creation when using large numbers of channels
 
 -----
 
@@ -910,6 +1019,39 @@ speeds, so allow enough head-room for slower systems to complete the test.
 Test programs written directly in Perl as a `.plt` script should implement a
 similar timeout for themselves. The "netget" test in Base does this in a way
 that works on Windows as well as Unix-like hosts.
+
+### Submodule updates
+
+The pvAccess module was updated to version 7.1.4:
+
+- Changes
+  - Adjust argument parsing with pvput (Jesus Vasquez).
+
+The pva2pva module was updated to version 1.3.1:
+
+- Bug Fixes
+ - Correct handling for server side filters.
+- Changes
+ - Syncing softMain.cpp with epics-base
+
+The pvDatabase module was updated to version 4.6.0:
+
+* Access Security is now supported.
+* <b>special</b> has been revised and extended.
+* addRecord, removeRecord, processRecord, and traceRecord are replaced by pvdbcr versions.
+* <b>support</b> is DEPRECATED
+
+The pvaClient module was updated to version 4.8.0:
+
+* `PvaClientNTMultiData::getChannelChangeFlags` is a new method. It fixes
+  issue #66.
+* Fix for issue #68. Both `PvaClientArray` and `PvaClientField` are not longer
+  present. Neither was previously implemented.
+* Several public methods are now protected. They were never meant to be called
+  by clients.
+* Issue #70 has been fixed.
+* Changes was made to increase the performance of `pvaMultiChannel`.
+* doxygen changes were made.
 
 -----
 
@@ -1197,6 +1339,35 @@ aSub record inputs similarly configured as long strings.
 GNUmake added the directive `undefine` in version 3.82 to allow variables to
 be undefined. Support for this has been added to the EPICS Release file parser,
 so `undefine` can now be used in configure/RELEASE files to unset variables.
+
+
+### Submodule updates
+
+The pvData module was updated to version 8.0.4:
+
+- Incompatible changes
+ - Remove `ByteBuffer::align()`
+- Compatible changes
+ - Deprecate `SerializableControl::alignBuffer()` and
+   `DeserializableControl::alignData()`
+ - `shared_vector_convert<>()` fix convert of empty, untyped, array
+
+The pvAccess module was updated to version 7.1.3:
+
+- Bug fixes
+  - Increase default TCP timeout to 40 seconds.
+    Applies a 4/3 multiplier on `$EPICS_PVA_CONN_TMO` for compatibility.
+  - CA Provider implementation restructured to simplify, reduce duplication
+    and fix issues #163 and #165.
+- Changes
+  - Enable building of pvtools to all except vxWorks, RTEMS and iOS.
+
+The pva2pva module was updated to version 1.3.0:
+
+- Changes
+ - Add `dbLoadGroup()` iocsh function to read group JSON definitions
+   from a file.  Mappings in files must refer to full record names
+   instead of fields.  eg. 'recname.VAL' instead of 'VAL'.
 
 -----
 
