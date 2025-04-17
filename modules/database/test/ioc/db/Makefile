@@ -13,7 +13,7 @@ include $(TOP)/configure/CONFIG
 
 # Allow access to private headers in db/
 USR_CPPFLAGS += -I $(CURDIR)/../../../src/ioc/db
-USR_CPPFLAGS += -DUSE_TYPED_RSET
+USR_CPPFLAGS += -DUSE_TYPED_RSET -DUSE_TYPED_DSET
 
 TESTLIBRARY = dbTestIoc
 
