@@ -71,6 +71,11 @@ jobs:
             pyver: cp312-cp312
             piparch: manylinux2014_x86_64
 
+          - name: linux 3.13 amd64
+            os: ubuntu-latest
+            pyver: cp313-cp313
+            piparch: manylinux2014_x86_64
+
           # Linux py builds x64
           - name: linux 2.7 i686
             os: ubuntu-latest
@@ -152,6 +157,11 @@ jobs:
             python: "3.12"
             piparch: macosx_11_0_arm64
 
+          - name: osx 3.13 arm64
+            os: macos-latest
+            python: "3.13"
+            piparch: macosx_11_0_arm64
+
           # Windows py builds
 
           ## missing Microsoft Visual C++ 9.0
@@ -197,6 +207,11 @@ jobs:
           - name: win64 3.12
             os: windows-latest
             python: "3.12"
+            piparch: win_amd64
+
+          - name: win64 3.13
+            os: windows-latest
+            python: "3.13"
             piparch: win_amd64
 
     steps:
