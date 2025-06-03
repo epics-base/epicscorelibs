@@ -153,27 +153,27 @@ jobs:
             configuration: default
             name: "MacOS clang"
 
-          - os: windows-2019
-            cmp: vs2019
+          - os: windows-2022
+            cmp: vs2022
             configuration: debug
-            name: "Win2019 MSC-19"
+            name: "Win-22 MSC-22"
             extra: "CMD_CXXFLAGS=-analysis"
 
-          - os: windows-2019
-            cmp: vs2019
+          - os: windows-2022
+            cmp: vs2022
             configuration: static-debug
-            name: "Win2019 MSC-19, static"
+            name: "Win-22 MSC-22, static"
             extra: "CMD_CXXFLAGS=-analysis"
 
-          - os: windows-2019
-            cmp: vs2019
+          - os: windows-2022
+            cmp: vs2022
             configuration: debug
-            name: "Win2019 MSC-19, debug"
+            name: "Win-22 MSC-22, debug"
 
-          - os: windows-2019
+          - os: windows-2022
             cmp: gcc
             configuration: default
-            name: "Win2019 mingw"
+            name: "Win-22 mingw"
 
           # Cross builds
 
