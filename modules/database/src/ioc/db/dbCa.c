@@ -1251,7 +1251,9 @@ static void dbCaTask(void *arg)
                 epicsMutexMustLock(pca->lock);
                 prec = pca->plink->precord;
                 epicsMutexUnlock(pca->lock);
+                dbScanLock(prec);
                 db_process(prec);
+                dbScanUnlock(prec);
             }
         }
         SEVCHK(ca_flush_io(), "dbCaTask");
