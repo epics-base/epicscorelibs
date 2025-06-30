@@ -108,7 +108,8 @@ static long init_record(struct dbCommon *pcommon, int pass)
         /* convert the initialization subroutine name  */
         psubroutine = (SUBFUNCPTR)registryFunctionFind(prec->inam);
         if (psubroutine == 0) {
-            recGblRecordError(S_db_BadSub, (void *)prec, "Init subroutine (INAM)");
+            fprintf(stderr, "%s.INAM " ERL_ERROR " function '%s' not found\n",
+                    prec->name, prec->inam);
             return S_db_BadSub;
         }
         /* invoke the initialization subroutine */
@@ -122,7 +123,8 @@ static long init_record(struct dbCommon *pcommon, int pass)
     }
     prec->sadr = (SUBFUNCPTR)registryFunctionFind(prec->snam);
     if (prec->sadr == NULL) {
-        recGblRecordError(S_db_BadSub, (void *)prec, "Proc subroutine (SNAM)");
+        fprintf(stderr, "%s.SNAM " ERL_ERROR " function '%s' not found\n",
+                prec->name, prec->snam);
         return S_db_BadSub;
     }
     prec->mlst = prec->val;
@@ -186,8 +188,8 @@ static long special(DBADDR *paddr, int after)
     prec->sadr = (SUBFUNCPTR)registryFunctionFind(prec->snam);
     if (prec->sadr) return 0;
 
-    recGblRecordError(S_db_BadSub, (void *)prec,
-            "subRecord(special) registryFunctionFind failed");
+    fprintf(stderr, "%s " ERL_ERROR " subRecord::special - SNAM = '%s' not found\n",
+            prec->name, prec->snam);
     return S_db_BadSub;
 }
 
