@@ -7,6 +7,9 @@ from copy import deepcopy
 import platform
 import sysconfig
 
+from setuptools_dso.probe import ProbeToolchain
+
+
 __all__ = (
     'get_config_var',
     'get_config_vars',
@@ -25,19 +28,15 @@ def _makeconf():
     }[platform.system()]
 
     # select epics CMPLR_CLASS
-    CC = sysconfig.get_config_var('CC')
-    if CC is None and osname=='WIN32':
-        cmplrname = conf['CMPLR_CLASS'] = 'msvc'
-    elif CC is None:
-        raise RuntimeError("Unable to determine compiler")
-    elif CC.find('gcc')!=-1:
-        cmplrname = conf['CMPLR_CLASS'] = 'gcc'
-    elif CC.find('clang')!=-1:
+    ID = ProbeToolchain().eval_macros(('__GNUC__', '__clang__', '_MSC_VER'))
+    if ID['__clang__']:
         cmplrname = conf['CMPLR_CLASS'] = 'clang'
-    elif CC is None or CC.find('cl')!=-1:
+    elif ID['__GNUC__']:
+        cmplrname = conf['CMPLR_CLASS'] = 'gcc'
+    elif ID['_MSC_VER']:
         cmplrname = conf['CMPLR_CLASS'] = 'msvc'
     else:
-        raise RuntimeError("Unable to identify compiler %s"%CC)
+        raise RuntimeError('Unable to identify compiler %s' % ID)
 
     machine = platform.machine().lower() # host CPU, may not reflect target bit width on windows
     bits = {
