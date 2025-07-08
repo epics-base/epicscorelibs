@@ -23,98 +23,116 @@ jobs:
           # Linux py builds x64
           - name: linux 2.7 amd64
             os: ubuntu-latest
+            python: "2.7"
             pyver: cp27-cp27m
             piparch: manylinux1_x86_64
 
           - name: linux 2.7u amd64
             os: ubuntu-latest
+            python: "2.7"
             pyver: cp27-cp27mu
             piparch: manylinux1_x86_64
 
           - name: linux 3.5 amd64
             os: ubuntu-latest
+            python: "3.5"
             pyver: cp35-cp35m
             piparch: manylinux1_x86_64
 
           - name: linux 3.6 amd64
             os: ubuntu-latest
+            python: "3.6"
             pyver: cp36-cp36m
             piparch: manylinux1_x86_64
 
           - name: linux 3.7 amd64
             os: ubuntu-latest
+            python: "3.7"
             pyver: cp37-cp37m
             piparch: manylinux1_x86_64
 
           - name: linux 3.8 amd64
             os: ubuntu-latest
+            python: "3.8"
             pyver: cp38-cp38
             piparch: manylinux1_x86_64
 
           - name: linux 3.9 amd64
             os: ubuntu-latest
+            python: "3.9"
             pyver: cp39-cp39
             piparch: manylinux2010_x86_64
 
           - name: linux 3.10 amd64
             os: ubuntu-latest
+            python: "3.10"
             pyver: cp310-cp310
             piparch: manylinux2014_x86_64
 
           - name: linux 3.11 amd64
             os: ubuntu-latest
+            python: "3.11"
             pyver: cp311-cp311
             piparch: manylinux2014_x86_64
 
           - name: linux 3.12 amd64
             os: ubuntu-latest
+            python: "3.12"
             pyver: cp312-cp312
             piparch: manylinux2014_x86_64
 
           - name: linux 3.13 amd64
             os: ubuntu-latest
+            python: "3.13"
             pyver: cp313-cp313
             piparch: manylinux2014_x86_64
 
           # Linux py builds x64
           - name: linux 2.7 i686
             os: ubuntu-latest
+            python: "2.7"
             pyver: cp27-cp27m
             piparch: manylinux1_i686
             pre: linux32
 
           - name: linux 2.7u i686
             os: ubuntu-latest
+            python: "2.7"
             pyver: cp27-cp27mu
             piparch: manylinux1_i686
             pre: linux32
 
           - name: linux 3.5 i686
             os: ubuntu-latest
+            python: "3.5"
             pyver: cp35-cp35m
             piparch: manylinux1_i686
             pre: linux32
 
           - name: linux 3.6 i686
             os: ubuntu-latest
+            python: "3.6"
             pyver: cp36-cp36m
             piparch: manylinux1_i686
             pre: linux32
 
           - name: linux 3.7 i686
             os: ubuntu-latest
+            python: "3.7"
             pyver: cp37-cp37m
             piparch: manylinux1_i686
             pre: linux32
 
           - name: linux 3.8 i686
             os: ubuntu-latest
+            python: "3.8"
             pyver: cp38-cp38
             piparch: manylinux1_i686
             pre: linux32
 
           - name: linux 3.9 i686
             os: ubuntu-latest
+            python: "3.9"
             pyver: cp39-cp39
             piparch: manylinux2010_i686
             pre: linux32
@@ -222,7 +240,7 @@ jobs:
       - name: Setup native python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python || matrix.pyver || '3.11' }}
+          python-version: ${{ matrix.python || '3.11' }}
           #architecture: x64
 
       # TLS 1.0 and 1.1 support was removed from pypi so the cached pip won't work
