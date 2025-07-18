@@ -17,12 +17,13 @@ __all__ = [
 
 
 import ctypes
+import platform
 
 from epicscorelibs import path
 
 from . import py23
 
-if path.OS_CLASS == "WIN32":
+if platform.system() == "Windows":
     # On windows, use stdcall calling convention for libca
     libca = ctypes.WinDLL(path.get_lib("ca"), ctypes.RTLD_GLOBAL)
 else:
