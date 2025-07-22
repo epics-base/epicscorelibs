@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import os
 import ctypes
+import platform
 
 from .. import path
 
@@ -14,7 +15,7 @@ def test_loading():
 
     ca = ctypes.CDLL(path.get_lib('ca'), mode=ctypes.RTLD_GLOBAL)
 
-    if path.OS_CLASS=='WIN32':
+    if platform.system() == "Windows":
         # Base libs contain functions using a mixture of cdecl and stdcall calling conventions
         # make WinDLL w/o actually loading again
         ca_s = ctypes.WinDLL(ca._name, handle=ca._handle)

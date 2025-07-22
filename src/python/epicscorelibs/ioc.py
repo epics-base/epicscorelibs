@@ -5,6 +5,7 @@ from __future__ import print_function
 import ctypes
 import code
 import argparse
+import platform
 import sys
 import os
 import atexit
@@ -15,7 +16,7 @@ from . import path
 
 
 # The libraries we need to run up a soft IOC, don't load dbCore twice
-if path.OS_CLASS == "WIN32":
+if platform.system() == "Windows":
     Com = ctypes.WinDLL(path.get_lib("Com"), mode=ctypes.RTLD_GLOBAL)
 else:
     Com = ctypes.CDLL(path.get_lib("Com"), mode=ctypes.RTLD_GLOBAL)
