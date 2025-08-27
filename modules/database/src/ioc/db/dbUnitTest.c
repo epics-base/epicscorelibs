@@ -434,6 +434,17 @@ void testMonitorWait(testMonitor *mon)
     }
 }
 
+static void dummylabor(void* unused) {(void)unused;}
+
+void testMonitorSync(testMonitor *mon)
+{
+    // db_flush_extra_labor_event() only blocks if there is actual labor pending
+    (void)db_add_extra_labor_event(testEvtCtx, dummylabor, NULL);
+    (void)db_post_extra_labor(testEvtCtx);
+    db_flush_extra_labor_event(testEvtCtx);
+    (void)db_add_extra_labor_event(testEvtCtx, NULL, NULL);
+}
+
 unsigned testMonitorCount(testMonitor *mon, unsigned reset)
 {
     unsigned count;
