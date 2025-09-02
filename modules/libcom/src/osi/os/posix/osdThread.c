@@ -666,6 +666,8 @@ static epicsThreadOSD *createImplicit(void)
     pthreadInfo->tid = tid;
     pthreadInfo->osiPriority = 0;
     pthreadInfo->isOkToBlock = 1;
+    status = pthread_attr_init(&pthreadInfo->attr);
+    checkStatusOnce(status,"pthread_attr_init");
 
 #if defined(_POSIX_THREAD_PRIORITY_SCHEDULING) && _POSIX_THREAD_PRIORITY_SCHEDULING > 0
     if(pthread_getschedparam(tid,&pthreadInfo->schedPolicy,&pthreadInfo->schedParam) == 0) {
