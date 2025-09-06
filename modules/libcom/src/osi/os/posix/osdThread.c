@@ -396,11 +396,6 @@ static void once(void)
             pcommonAttr->maxPriority);
     }
 
-    if (errVerbose) {
-        fprintf(stderr, "LRT: min priority: %d max priority %d\n",
-            pcommonAttr->minPriority, pcommonAttr->maxPriority);
-    }
-
 #else
     if(errVerbose) fprintf(stderr,"task priorities are not implemented\n");
 #endif /* _POSIX_THREAD_PRIORITY_SCHEDULING */
@@ -459,9 +454,13 @@ static void epicsThreadInit(void)
     }
 }
 
+static
+unsigned char mlocked;
+
 LIBCOM_API
 void epicsThreadRealtimeLock(void)
 {
+    mlocked = 0;
 #if USE_MEMLOCK
 #ifndef RTEMS_LEGACY_STACK // seems to be part of libbsd?
     if (pcommonAttr->maxPriority > pcommonAttr->minPriority) {
@@ -486,6 +485,8 @@ void epicsThreadRealtimeLock(void)
                                 "VM page faults may harm real-time performance. errno=%d\n",
                         err);
             }
+        } else {
+            mlocked = 1;
         }
     }
 #endif // LEGACY STACK
@@ -982,6 +983,11 @@ LIBCOM_API void epicsStdCall epicsThreadShowAll(unsigned int level)
     }
     status = pthread_mutex_unlock(&listLock);
     checkStatus(status,"pthread_mutex_unlock epicsThreadShowAll");
+
+    fprintf(stderr,
+            "OSD priority range min: %d max %d, memory %slocked\n",
+        pcommonAttr->minPriority, pcommonAttr->maxPriority,
+            mlocked ? "" : "not ");
 }
 
 LIBCOM_API void epicsStdCall epicsThreadShow(epicsThreadId showThread, unsigned int level)
