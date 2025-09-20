@@ -16,6 +16,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
+#include "errlog.h"
 #include "epicsExit.h"
 #include "envDefs.h"
 #include "epicsReadlinePvt.h"
@@ -78,7 +79,7 @@ osdReadline (const char *prompt, struct readlineContext *context)
 
         line = malloc(linesize);
         if (line == NULL) {
-            printf("Out of memory!\n");
+            fprintf(stderr, ERL_ERROR " osdReadline() Out of memory!\n");
             return NULL;
         }
         if (prompt) {
@@ -98,7 +99,7 @@ osdReadline (const char *prompt, struct readlineContext *context)
                 linesize = linelen + 50;
                 cp = (char *)realloc(line, linesize);
                 if (cp == NULL) {
-                    printf ("Out of memory!\n");
+                    fprintf(stderr, ERL_ERROR " osdReadline() Out of memory!\n");
                     free(line);
                     line = NULL;
                     break;
