@@ -21,6 +21,19 @@
 #include "epicsMutex.h"
 #include "epicsTypes.h"
 #include "link.h"
+#include "shareLib.h"
+#include "libCaAPI.h"
+
+#ifndef INC_cadef_H
+/* Copy some definitions so this header to be included from
+ * places where cadef.h and db_access.h can not.
+ */
+typedef void * chid;
+typedef void * evid;
+LIBCA_API extern const unsigned short dbr_value_size[];
+LIBCA_API short epicsShareAPI ca_field_type (chid chan);
+#define MAX_UNITS_SIZE          8
+#endif
 
 /* link_action mask */
 #define CA_CLEAR_CHANNEL        0x1
@@ -32,6 +45,7 @@
 #define CA_GET_ATTRIBUTES       0x40
 #define CA_SYNC                 0x1000
 #define CA_DBPROCESS            0x2000
+#define CA_INIT_WAIT            0x4000
 /* write type */
 #define CA_PUT          0x1
 #define CA_PUT_CALLBACK 0x2
@@ -63,6 +77,7 @@ typedef struct caLink
     dbCaCallback    connect;
     dbCaCallback    monitor;
     void            *userPvt;
+    unsigned        flags;
     /* The following are for write request */
     short           putType;
     dbCaCallback    putCallback;
@@ -96,5 +111,11 @@ typedef struct caLink
     unsigned long   nNoWrite; /*only modified by dbCaPutLink*/
     unsigned long   nUpdate;
 }caLink;
+
+#define DBCA_CALLBACK_INIT_WAIT (1)
+
+void dbCaAddLinkCallbackOpt(struct dbLocker *locker, struct link *plink,
+                            dbCaCallback connect, dbCaCallback monitor,
+                            void *userPvt, unsigned flags);
 
 #endif /* INC_dbCaPvt_H */

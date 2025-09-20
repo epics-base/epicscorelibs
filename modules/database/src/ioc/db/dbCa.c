@@ -40,6 +40,7 @@
 /* We can't include dbStaticLib.h here */
 #define dbCalloc(nobj,size) callocMustSucceed(nobj,size,"dbCalloc")
 
+#include <epicsAtomic.h>
 #include "db_access_routines.h"
 #include "dbCa.h"
 #include "dbCaPvt.h"
@@ -64,6 +65,7 @@ extern int dbServiceIsolate;
 static ELLLIST workList = ELLLIST_INIT;    /* Work list for dbCaTask */
 static epicsMutexId workListLock; /*Mutual exclusions semaphores for workList*/
 static epicsEventId workListEvent; /*wakeup event for dbCaTask*/
+static size_t initOutstanding;
 static int removesOutstanding = 0;
 #define removesOutstandingWarning 10000
 
@@ -340,7 +342,7 @@ static void dbCaLinkInitImpl(int isolate)
     dbCaCtl = ctlPause;
 
     dbCaWorker = epicsThreadCreateOpt("dbCaLink", dbCaTask, NULL, &opts);
-    /* wait for worker to startup and initialize dbCaClientContext */
+    /* wait for worker to startup, initialize dbCaClientContext, and connect local CA */
     epicsEventMustWait(startStopEvent);
 }
 
@@ -369,11 +371,12 @@ void dbCaPause(void)
         epicsEventSignal(workListEvent);
     }
 }
-
-void dbCaAddLinkCallback(struct link *plink,
-    dbCaCallback connect, dbCaCallback monitor, void *userPvt)
+void dbCaAddLinkCallbackOpt(struct dbLocker *locker, struct link *plink,
+                            dbCaCallback connect, dbCaCallback monitor, void *userPvt,
+                            unsigned flags)
 {
     caLink *pca;
+    (void)locker; /* Passed for symmetry with dbDbAddLink().  So far unused. */
 
     assert(!plink->value.pv_link.pvt);
 
@@ -385,6 +388,10 @@ void dbCaAddLinkCallback(struct link *plink,
     pca->connect = connect;
     pca->monitor = monitor;
     pca->userPvt = userPvt;
+    pca->flags = flags;
+
+    if(flags & DBCA_CALLBACK_INIT_WAIT)
+        epicsAtomicIncrSizeT(&initOutstanding);
 
     epicsMutexMustLock(pca->lock);
     plink->lset = &dbCa_lset;
@@ -394,15 +401,22 @@ void dbCaAddLinkCallback(struct link *plink,
     epicsMutexUnlock(pca->lock);
 }
 
+void dbCaAddLinkCallback(struct link *plink,
+    dbCaCallback connect, dbCaCallback monitor, void *userPvt)
+{
+    dbCaAddLinkCallbackOpt(NULL, plink, connect, monitor, userPvt, 0);
+}
+
 long dbCaAddLink(struct dbLocker *locker, struct link *plink, short dbfType)
 {
-    dbCaAddLinkCallback(plink, 0, 0, NULL);
+    dbCaAddLinkCallbackOpt(locker, plink, 0, 0, NULL, 0);
     return 0;
 }
 
 void dbCaRemoveLink(struct dbLocker *locker, struct link *plink)
 {
     caLink *pca = (caLink *)plink->value.pv_link.pvt;
+    (void)locker; /* Passed for symmetry with dbDbRemoveLink().  So far unused. */
 
     if (!pca) return;
     epicsMutexMustLock(pca->lock);
@@ -962,6 +976,10 @@ static void eventCallback(struct event_handler_args arg)
         }
     }
 done:
+    if(pca->flags & DBCA_CALLBACK_INIT_WAIT) {
+        pca->flags &= ~DBCA_CALLBACK_INIT_WAIT;
+        addAction(pca, CA_INIT_WAIT);
+    }
     epicsMutexUnlock(pca->lock);
     if (monitor) monitor(userPvt);
 }
@@ -1099,7 +1117,9 @@ static void dbCaTask(void *arg)
     dbCaClientContext = ca_current_context ();
     SEVCHK(ca_add_exception_event(exceptionCallback,NULL),
         "ca_add_exception_event");
-    epicsEventSignal(startStopEvent);
+    if(epicsAtomicGetSizeT(&initOutstanding)==0)
+        epicsEventSignal(startStopEvent);
+    // else: defer to CA_INIT_WAIT
 
     /* channel access event loop */
     while (TRUE){
@@ -1254,6 +1274,9 @@ static void dbCaTask(void *arg)
                 dbScanLock(prec);
                 db_process(prec);
                 dbScanUnlock(prec);
+            }
+            if ((link_action & CA_INIT_WAIT) && epicsAtomicDecrSizeT(&initOutstanding)==0) {
+                epicsEventSignal(startStopEvent);
             }
         }
         SEVCHK(ca_flush_io(), "dbCaTask");
