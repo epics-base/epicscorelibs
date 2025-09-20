@@ -77,6 +77,12 @@ LIBCOM_API extern const ENV_PARAM IOCSH_PS1;
 LIBCOM_API extern const ENV_PARAM IOCSH_HISTSIZE;
 LIBCOM_API extern const ENV_PARAM IOCSH_HISTEDIT_DISABLE;
 LIBCOM_API extern const ENV_PARAM EPICS_ABORT_ON_ASSERT;
+/** @brief List of all parameters.
+ *
+ * A NULL terminated array of all ENV_PARAM known to EPICS Base.
+ * This array is assembled during the EPICS Base build, and
+ * contains at least the preceeding parameters.
+ */
 LIBCOM_API extern const ENV_PARAM *env_param_list[];
 
 struct in_addr;
