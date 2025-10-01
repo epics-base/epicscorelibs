@@ -98,10 +98,13 @@ struct in_addr;
  * is set to '\0' and NULL is returned.
  *
  * \param pParam Pointer to config param structure.
- * \param bufDim Dimension of parameter buffer
+ * \param bufDim Dimension of parameter buffer.
+ *               Must be greater than zero.
  * \param pBuf Pointer to parameter buffer
  * \return Pointer to the environment variable value string, or
  * NULL if no parameter value and default value was empty.
+ *
+ * \post A terminating nil will be written to pBuf.
  */
 LIBCOM_API char * epicsStdCall
     envGetConfigParam(const ENV_PARAM *pParam, int bufDim, char *pBuf);
