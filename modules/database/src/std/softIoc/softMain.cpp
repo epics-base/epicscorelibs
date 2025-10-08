@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
                 break;
             case 'D':
                 if(lazy_dbd_loaded) {
-                    throw std::runtime_error("-D specified too late.  softIoc.dbd already loaded.\n");
+                    throw std::runtime_error("-D specified too late, softIoc.dbd already loaded.\n");
                 }
                 dbd_file = optarg;
                 break;
@@ -195,8 +195,7 @@ int main(int argc, char *argv[])
                     + optarg + "\"" + ( !macros.empty() ?
                         (std::string(", \"") + macros + "\"") : std::string() )
                     + ")");
-                errIf(dbLoadRecords(optarg, macros.c_str()),
-                      std::string("Failed to load: ")+optarg);
+                errIf(dbLoadRecords(optarg, macros.c_str()), "");
                 loadedDb = true;
                 break;
             case 'm':
@@ -216,8 +215,7 @@ int main(int argc, char *argv[])
                 xmacro += optarg;
                 verbose_out(CMD, std::string("dbLoadRecords(\"")
                     + exit_file + "\", \"" + xmacro + "\")");
-                errIf(dbLoadRecords(exit_file.c_str(), xmacro.c_str()),
-                      std::string("Failed to load: ")+exit_file);
+                errIf(dbLoadRecords(exit_file.c_str(), xmacro.c_str()), "");
                 loadedDb = true;
                 break;
             }
@@ -274,7 +272,8 @@ int main(int argc, char *argv[])
 
     }catch(std::exception& e){
         errlogFlush();
-        std::cerr<<ERL_ERROR ": "<<e.what()<<"\n";
+        if (e.what()[0] != '\0')
+            std::cerr<<ERL_ERROR ": "<<e.what()<<"\n";
         epicsExit(2);
         return 2;
     }

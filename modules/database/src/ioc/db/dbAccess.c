@@ -805,7 +805,7 @@ int dbLoadRecords(const char* file, const char* subs)
         if(dbLoadRecordsHook)
             dbLoadRecordsHook(file, subs);
     } else {
-        fprintf(stderr, ERL_ERROR " failed to load '%s'\n", file);
+        fprintf(stderr, ERL_ERROR ": Failed to load '%s'\n", file);
         if(status==-2)
             fprintf(stderr, "    Records cannot be loaded after iocInit!\n");
     }
