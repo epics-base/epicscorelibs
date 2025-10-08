@@ -238,6 +238,8 @@ static long dbReadCOM(DBBASE **ppdbbase,const char *filename, FILE *fp,
         goto cleanup;
     }
 
+    errlogInit(0); /* Initialize the errSymTable */
+
     if(*ppdbbase == 0) *ppdbbase = dbAllocBase();
     savedPdbbase = *ppdbbase;
     if(path && strlen(path)>0) {
@@ -352,14 +354,18 @@ cleanup:
     return(status);
 }
 
-long dbReadDatabase(DBBASE **ppdbbase,const char *filename,
-        const char *path,const char *substitutions)
-{return (dbReadCOM(ppdbbase,filename,0,path,substitutions));}
+long dbReadDatabase(DBBASE **ppdbbase, const char *filename,
+    const char *path, const char *substitutions)
+{
+    return dbReadCOM(ppdbbase, filename, 0, path, substitutions);
+}
 
-long dbReadDatabaseFP(DBBASE **ppdbbase,FILE *fp,
-        const char *path,const char *substitutions)
-{return (dbReadCOM(ppdbbase,0,fp,path,substitutions));}
-
+long dbReadDatabaseFP(DBBASE **ppdbbase, FILE *fp,
+    const char *path, const char *substitutions)
+{
+    return dbReadCOM(ppdbbase, 0, fp, path, substitutions);
+}
+
 static int db_yyinput(char *buf, int max_size)
 {
     size_t  l,n;
