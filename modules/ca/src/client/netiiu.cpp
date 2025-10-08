@@ -116,6 +116,12 @@ const char * netiiu::pHostName (
     return pHostNameNetIIU;
 }
 
+unsigned netiiu::getHostMinorProtocol ( 
+    epicsGuard < epicsMutex > & ) const throw ()
+{
+  return CA_UKN_MINOR_VERSION;
+}
+
 osiSockAddr netiiu::getNetworkAddress (
     epicsGuard < epicsMutex > & ) const
 {
