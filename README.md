@@ -42,13 +42,13 @@ of the documentation.
 ### Quick run a softIOC
 
 After building, you can run an example soft-IOC (Input/Output Controller)
-which uses the pvAccess network protocol.
+which runs a Channel Access server.
 
 ```bash
 ./bin/*/softIoc -x first
 ```
 
-You can then run `dbl` to get:
+Run the `dbl` command to list the records it provides:
 
 ```bash
 epics> dbl
