@@ -31,7 +31,7 @@
 #include "dbAccessDefs.h"
 #include "dbAddr.h"
 #include "dbBase.h"
-#include "dbCaPvt.h"
+#include "dbCa.h"
 #include "dbCommon.h"
 #include "dbConstLink.h"
 #include "dbDbLink.h"
@@ -125,9 +125,7 @@ void dbInitLink(struct link *plink, short dbfType)
     if (dbfType == DBF_INLINK)
         plink->value.pv_link.pvlMask |= pvlOptInpNative;
 
-    int isLocal = dbChannelTest(plink->value.pv_link.pvname)==0;
-
-    dbCaAddLinkCallbackOpt(NULL, plink, NULL, NULL, NULL, isLocal ? DBCA_CALLBACK_INIT_WAIT : 0);
+    dbCaAddLink(NULL, plink, dbfType);
     if (dbfType == DBF_FWDLINK) {
         char *pperiod = strrchr(plink->value.pv_link.pvname, '.');
 
