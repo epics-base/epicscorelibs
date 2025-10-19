@@ -5,6 +5,8 @@ use warnings;
 
 use base 'Pod::Simple::XHTML';
 
+our $VERSION = '1.2.1';
+
 BEGIN {
     if ($Pod::Simple::XHTML::VERSION < '3.16') {
         # Add encode_entities() as a method

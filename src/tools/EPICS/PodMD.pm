@@ -7,6 +7,8 @@ use warnings;
 
 use base 'Pod::Markdown';
 
+our $VERSION = '1.1.1';
+
 # Translate L<link text|filename/Section name>
 # into <a href="filename.md#section-name">link text</a>#
 # This is for Sphinx processing on Readthedocs. Sphinx converts
