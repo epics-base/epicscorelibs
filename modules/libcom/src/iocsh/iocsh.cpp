@@ -30,20 +30,7 @@
 #define epicsStdioStdStreams
 #define epicsStdioStdPrintfEtc
 
-#include "epicsMath.h"
-#include "errlog.h"
-#include "macLib.h"
-#include "epicsStdio.h"
-#include "epicsString.h"
-#include "epicsStdlib.h"
-#include "epicsThread.h"
-#include "epicsMutex.h"
-#include "envDefs.h"
-#include "registry.h"
 #include "epicsReadline.h"
-#include "cantProceed.h"
-#include "iocsh.h"
-
 #include "epicsReadlinePvt.h"
 #if EPICS_COMMANDLINE_LIBRARY == EPICS_COMMANDLINE_LIBRARY_READLINE
 #  include <readline/readline.h>
@@ -64,6 +51,19 @@
 static const char *rl_basic_quote_characters;
 #  endif
 #endif
+
+#include "epicsMath.h"
+#include "errlog.h"
+#include "macLib.h"
+#include "epicsStdio.h"
+#include "epicsString.h"
+#include "epicsStdlib.h"
+#include "epicsThread.h"
+#include "epicsMutex.h"
+#include "envDefs.h"
+#include "registry.h"
+#include "cantProceed.h"
+#include "iocsh.h"
 
 extern "C" {
 
