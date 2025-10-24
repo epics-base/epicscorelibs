@@ -26,6 +26,10 @@
 
 #define EPICS_PRIVATE_API
 
+// Recent readline.h uses printf in an attribute
+#define epicsStdioStdStreams
+#define epicsStdioStdPrintfEtc
+
 #include "epicsMath.h"
 #include "errlog.h"
 #include "macLib.h"
@@ -41,7 +45,6 @@
 #include "iocsh.h"
 
 #include "epicsReadlinePvt.h"
-
 #if EPICS_COMMANDLINE_LIBRARY == EPICS_COMMANDLINE_LIBRARY_READLINE
 #  include <readline/readline.h>
 #  include <readline/history.h>
@@ -639,8 +642,9 @@ struct ReadlineContext {
             if(!hist_file.empty()) {
                 if(int err = read_history(hist_file.c_str())) {
                     if(err!=ENOENT)
-                        fprintf(stderr, ERL_ERROR " %s (%d) loading '%s'\n",
-                                strerror(err), err, hist_file.c_str());
+                        fprintf(epicsGetStderr(),
+                            ERL_ERROR " %s (%d) loading '%s'\n",
+                            strerror(err), err, hist_file.c_str());
                 }
                 stifle_history(1024); // some limit...
             }
@@ -654,8 +658,9 @@ struct ReadlineContext {
 #ifdef USE_READLINE
             if(!hist_file.empty()) {
                 if(int err = write_history(hist_file.c_str())) {
-                    fprintf(stderr, ERL_ERROR " %s (%d) writing '%s'\n",
-                            strerror(err), err, hist_file.c_str());
+                    fprintf(epicsGetStderr(),
+                        ERL_ERROR " %s (%d) writing '%s'\n",
+                        strerror(err), err, hist_file.c_str());
                 }
             }
             rl_readline_name = prev_rl_readline_name;
@@ -1167,7 +1172,7 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
         if (c == '#') {
             if ((prompt == NULL) && (commandLine == NULL))
                 if (raw[icin + 1] != '-') {
-                    printf(ANSI_BLUE("%s") "\n", raw);
+                    fprintf(epicsGetStdout(), ANSI_BLUE("%s") "\n", raw);
                 }
             continue;
         }
@@ -1194,7 +1199,7 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
          */
         if ((prompt == NULL) && *line && (commandLine == NULL)) {
             if ((c != '#') || (line[icin + 1] != '-')) {
-                printf(ANSI_BOLD("%s") "\n", line);
+                fprintf(epicsGetStdout(), ANSI_BOLD("%s") "\n", line);
             }
         }
 
