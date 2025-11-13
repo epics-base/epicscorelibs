@@ -612,6 +612,13 @@ epicsThreadCreateOpt(const char * name,
         pthreadInfo->isRealTimeScheduled = 1;
     }
 
+    /* The initial ref. will be transfered to the new thread on success,
+     * but is retained on error.
+     * Add a second temporary ref. for this function, in case the new thread
+     * is created, then ends before pthread_create() returns!.
+     */
+    epicsAtomicIncrIntT(&pthreadInfo->refcnt);
+
     if (pthreadInfo->joinable) {
         /* extra ref for epicsThreadMustJoin() */
         epicsAtomicIncrIntT(&pthreadInfo->refcnt);
@@ -619,12 +626,20 @@ epicsThreadCreateOpt(const char * name,
 
     status = pthread_create(&pthreadInfo->tid, &pthreadInfo->attr,
         start_routine, pthreadInfo);
+
+    free_threadInfo(pthreadInfo); // dispose of temp ref
+    /* On success, pthreadInfo treat as invalid after this point.
+     *   (eg. very short lived thread which self-joins)
+     * On error, we own all refs.
+     */
+
     if (status==EPERM) {
         /* Try again without SCHED_FIFO*/
         if (pthreadInfo->joinable) {
-            int cnt = epicsAtomicDecrIntT(&pthreadInfo->refcnt);
-            assert(cnt==1);
+            epicsAtomicDecrIntT(&pthreadInfo->refcnt); // dispose of joiner ref.
         }
+        // one ref. left
+        assert(1==epicsAtomicGetIntT(&pthreadInfo->refcnt));
         free_threadInfo(pthreadInfo);
 
         pthreadInfo = init_threadInfo(name, opts->priority, stackSize,
@@ -632,17 +647,24 @@ epicsThreadCreateOpt(const char * name,
         if (pthreadInfo==0)
             return 0;
 
+        epicsAtomicIncrIntT(&pthreadInfo->refcnt); // temp ref
+        if (pthreadInfo->joinable) {
+            epicsAtomicIncrIntT(&pthreadInfo->refcnt); // for caller to join
+        }
+
         pthreadInfo->isEpicsThread = 1;
         status = pthread_create(&pthreadInfo->tid, &pthreadInfo->attr,
             start_routine, pthreadInfo);
+
+        free_threadInfo(pthreadInfo); // dispose of temp ref
     }
     checkStatusOnce(status, "pthread_create");
     if (status) {
         if (pthreadInfo->joinable) {
-            /* release extra ref which would have been for epicsThreadMustJoin() */
-            int cnt = epicsAtomicDecrIntT(&pthreadInfo->refcnt);
-            assert(cnt==1);
+            epicsAtomicDecrIntT(&pthreadInfo->refcnt); // dispose of joiner ref.
         }
+        // one ref. left
+        assert(1==epicsAtomicGetIntT(&pthreadInfo->refcnt));
         free_threadInfo(pthreadInfo);
         return 0;
     }
