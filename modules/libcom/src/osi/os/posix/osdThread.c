@@ -425,6 +425,10 @@ static void * start_routine(void *arg)
     int status;
     sigset_t blockAllSig;
 
+    // concurrently written from creator thread with same value
+    pthreadInfo->tid = pthread_self();
+    epicsAtomicWriteMemoryBarrier();
+
     sigfillset(&blockAllSig);
     pthread_sigmask(SIG_SETMASK,&blockAllSig,NULL);
     status = pthread_setspecific(getpthreadInfo,arg);
@@ -624,8 +628,14 @@ epicsThreadCreateOpt(const char * name,
         epicsAtomicIncrIntT(&pthreadInfo->refcnt);
     }
 
-    status = pthread_create(&pthreadInfo->tid, &pthreadInfo->attr,
+
+    pthread_t new_tid;
+    status = pthread_create(&new_tid, &pthreadInfo->attr,
         start_routine, pthreadInfo);
+
+    // pthreadInfo->tid concurrently written with same value by new thread
+    pthreadInfo->tid = new_tid;
+    epicsAtomicWriteMemoryBarrier();
 
     free_threadInfo(pthreadInfo); // dispose of temp ref
     /* On success, pthreadInfo treat as invalid after this point.
@@ -653,8 +663,12 @@ epicsThreadCreateOpt(const char * name,
         }
 
         pthreadInfo->isEpicsThread = 1;
-        status = pthread_create(&pthreadInfo->tid, &pthreadInfo->attr,
+        status = pthread_create(&new_tid, &pthreadInfo->attr,
             start_routine, pthreadInfo);
+
+        // pthreadInfo->tid concurrently written with same value by new thread
+        pthreadInfo->tid = new_tid;
+        epicsAtomicWriteMemoryBarrier();
 
         free_threadInfo(pthreadInfo); // dispose of temp ref
     }
