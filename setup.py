@@ -6,10 +6,8 @@ import os, sys, platform, re
 from glob import glob
 from collections import defaultdict
 
-from setuptools import Command, Distribution
+from setuptools import Command, Distribution, setup, Extension
 from setuptools.command import install
-
-from setuptools_dso import Extension, setup, DSO, build_dso, ProbeToolchain
 
 
 mydir = os.path.abspath(os.path.dirname(__file__))
@@ -357,12 +355,12 @@ class InstallHeaders(Command):
 
 Distribution.x_headers = None
 
-build_dso.sub_commands.extend([
-    ('build_expand', lambda self:True),
-    ('build_apih', lambda self:True),
-    ('build_generated', lambda self:True),
-    ('install_epics_headers', lambda self:True),
-])
+# build_dso.sub_commands.extend([
+#     ('build_expand', lambda self:True),
+#     ('build_apih', lambda self:True),
+#     ('build_generated', lambda self:True),
+#     ('install_epics_headers', lambda self:True),
+# ])
 
 def readlists(name, prefix):
     prefix = os.path.normcase(prefix)
@@ -388,49 +386,49 @@ def readlists(name, prefix):
 
     return tuple(ret)
 
-probe = ProbeToolchain()
-toolchain_macros = probe.eval_macros([
-    '__cplusplus',
+# probe = ProbeToolchain()
+# toolchain_macros = probe.eval_macros([
+#     '__cplusplus',
 
-    '__GNUC__',
-    '__GNUC_MINOR__',
-    '__GNUC_PATCHLEVEL__',
+#     '__GNUC__',
+#     '__GNUC_MINOR__',
+#     '__GNUC_PATCHLEVEL__',
 
-    '__clang__',
-    '__clang_version__',
+#     '__clang__',
+#     '__clang_version__',
 
-    '_MSC_VER',
-    '_MSC_FULL_VER',
+#     '_MSC_VER',
+#     '_MSC_FULL_VER',
 
-    '__GLIBC__',
-    '__GLIBCXX__',
-    '_GLIBCXX_USE_CXX11_ABI',
+#     '__GLIBC__',
+#     '__GLIBCXX__',
+#     '_GLIBCXX_USE_CXX11_ABI',
 
-    '__UCLIBC__',
-    '__UCLIBC_MAJOR__',
-    '__UCLIBC_MINOR__',
-    '__UCLIBC_SUBLEVEL__',
+#     '__UCLIBC__',
+#     '__UCLIBC_MAJOR__',
+#     '__UCLIBC_MINOR__',
+#     '__UCLIBC_SUBLEVEL__',
 
-    '_CPPLIB_VER',
-    '_LIBCPP_VERSION',
-], headers=['string'], language='c++')
-cxxdefs = []
-if toolchain_macros.get('__GNUC__') is not None:
-    # https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
-    #
-    # Attempt to maintain ABI for any dependent builds...
-    cxxabi = toolchain_macros.get('_GLIBCXX_USE_CXX11_ABI') or '0'
-    cxxdefs += [('_GLIBCXX_USE_CXX11_ABI', cxxabi)]
+#     '_CPPLIB_VER',
+#     '_LIBCPP_VERSION',
+# ], headers=['string'], language='c++')
+# cxxdefs = []
+# if toolchain_macros.get('__GNUC__') is not None:
+#     # https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html
+#     #
+#     # Attempt to maintain ABI for any dependent builds...
+#     cxxabi = toolchain_macros.get('_GLIBCXX_USE_CXX11_ABI') or '0'
+#     cxxdefs += [('_GLIBCXX_USE_CXX11_ABI', cxxabi)]
 
-    # detect _FORTIFY_SOURCE level
-    # note: gcc only injects this builtin macro when optimiation enabled
-    fortify_source, = probe.eval_macros(['_FORTIFY_SOURCE'], extra_postargs=['-O2'], language='c++').values()
-    print('Detect _FORTIFY_SOURCE', fortify_source)
-    if fortify_source not in (None, '0', '1', '2'):
-        # https://github.com/epics-base/epics-base/issues/514
-        # bypass until patched
-        print('Bypass _FORTIFY_SOURCE')
-        cxxdefs += [('_FORTIFY_SOURCE',), ('_FORTIFY_SOURCE', '2')]
+#     # detect _FORTIFY_SOURCE level
+#     # note: gcc only injects this builtin macro when optimiation enabled
+#     fortify_source, = probe.eval_macros(['_FORTIFY_SOURCE'], extra_postargs=['-O2'], language='c++').values()
+#     print('Detect _FORTIFY_SOURCE', fortify_source)
+#     if fortify_source not in (None, '0', '1', '2'):
+#         # https://github.com/epics-base/epics-base/issues/514
+#         # bypass until patched
+#         print('Bypass _FORTIFY_SOURCE')
+#         cxxdefs += [('_FORTIFY_SOURCE',), ('_FORTIFY_SOURCE', '2')]
 
 modules = []
 headers = ['epicsVersion.h']
@@ -444,22 +442,22 @@ def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
         raise RuntimeError("module %s has no source"%name)
     defs = get_config_var('CPPFLAGS') + local_defs + defs
 
-    MOD = DSO(
-        name='epicscorelibs.lib.'+name,
-        sources = srcs+src,
-        include_dirs = [os.path.join('epicscorelibs', 'include')] + inc + ['.'],
-        define_macros = cxxdefs+defs,
-        dsos = ['epicscorelibs.lib.'+D for D in deps],
-        libraries = get_config_var('LDADD'),
-        extra_link_args = get_config_var('LDFLAGS'),
-        lang_compile_args = {
-            'c':get_config_var('CFLAGS'),
-            'c++':get_config_var('CXXFLAGS'),
-        },
-        soversion=soversion or abi_version,
-    )
+    # MOD = DSO(
+    #     name='epicscorelibs.lib.'+name,
+    #     sources = srcs+src,
+    #     include_dirs = [os.path.join('epicscorelibs', 'include')] + inc + ['.'],
+    #     define_macros = cxxdefs+defs,
+    #     dsos = ['epicscorelibs.lib.'+D for D in deps],
+    #     libraries = get_config_var('LDADD'),
+    #     extra_link_args = get_config_var('LDFLAGS'),
+    #     lang_compile_args = {
+    #         'c':get_config_var('CFLAGS'),
+    #         'c++':get_config_var('CXXFLAGS'),
+    #     },
+    #     soversion=soversion or abi_version,
+    # )
 
-    modules.append(MOD)
+    # modules.append(MOD)
     headers.extend(hdr)
 
 build_module('Com', 'modules/libcom/src',
