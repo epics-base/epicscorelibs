@@ -1,0 +1,11 @@
+name: epicscorelib
+channels:
+  - conda-forge
+dependencies:
+  - python
+  - epics-base
+  - numpy
+  - setuptools
+  - pip
+  - pip:
+    - .
