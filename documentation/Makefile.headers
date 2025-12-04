@@ -64,6 +64,7 @@ ca_HEADERS += caerr
 ca_HEADERS += caeventmask
 ca_HEADERS += db_access
 
+database_HEADERS += callback
 database_HEADERS += chfPlugin
 database_HEADERS += dbChannel
 database_HEADERS += dbCommon

@@ -20,6 +20,10 @@
 
 #include "dbCoreAPI.h"
 
+/** @file callback.h
+ *  @brief Process database deferred execution utility
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,9 +44,9 @@ extern "C" {
 
 /** Handle for delayed work.
  *
- * \pre Must be zero initialized prior to first use.
+ * @pre Must be zero initialized prior to first use.
  *
- * \since 3.15.6 epicsCallback typedef added.  CALLBACK typedef deprecated.
+ * @since 3.15.6 epicsCallback typedef added.  CALLBACK typedef deprecated.
  */
 typedef struct callbackPvt {
         /** Callback function */
@@ -62,7 +66,7 @@ typedef struct callbackPvt {
  * Portable applications should prefer epicsCallback
  * and define the EPICS_NO_CALLBACK pre-processor macro to hide this typedef.
  *
- * \since 3.15.6 Deprecated in favor of epicsCallback typedef
+ * @since 3.15.6 Deprecated in favor of epicsCallback typedef
  */
 typedef epicsCallback CALLBACK;
 #endif
@@ -105,17 +109,17 @@ DBCORE_API void callbackCleanup(void);
  * epicsCallback object must not be modified while queued,
  * and must remain valid while queued or executing.
  *
- * \param pCallback Caller expected to initialize or zero all members before first call.
- * \return Zero on success.
+ * @param pCallback Caller expected to initialize or zero all members before first call.
+ * @return Zero on success.
  *         Errors if callback members not initialized correctly, or if queue is full.
  */
 DBCORE_API int callbackRequest(epicsCallback *pCallback);
 /** Setup callback to process a record
- * \pre Callback must be zero initialized.
+ * @pre Callback must be zero initialized.
  *
- * \param pcallback Callback to initialize.
- * \param Priority priorityLow, priorityMedium, or priorityHigh
- * \param pRec A record pointer (dbCommon or specific recordType)
+ * @param pcallback Callback to initialize.
+ * @param Priority priorityLow, priorityMedium, or priorityHigh
+ * @param pRec A record pointer (dbCommon or specific recordType)
  */
 DBCORE_API void callbackSetProcess(
     epicsCallback *pcallback, int Priority, void *pRec);
@@ -123,7 +127,7 @@ DBCORE_API void callbackSetProcess(
  *
  *  Shorthand for callbackSetProcess() followed by callbackRequest()
  *
- * \pre Callback object must be zero initialized before first call.
+ * @pre Callback object must be zero initialized before first call.
  */
 DBCORE_API int callbackRequestProcessCallback(
     epicsCallback *pCallback,int Priority, void *pRec);
@@ -134,9 +138,9 @@ DBCORE_API int callbackRequestProcessCallback(
  * epicsCallback object must not be modified while queued,
  * and must remain valid while queued or executing.
  *
- * \param pCallback Callback object.  Caller expected to initialize or zero all members.
- * \param seconds Relative to call time.  Expected to be >= 0.
- * \return Zero on success.
+ * @param pCallback Callback object.  Caller expected to initialize or zero all members.
+ * @param seconds Relative to call time.  Expected to be >= 0.
+ * @return Zero on success.
  *         Errors if callback members not initialized correctly, or if queue is full.
  */
 DBCORE_API void callbackRequestDelayed(
@@ -147,33 +151,33 @@ DBCORE_API void callbackRequestDelayed(
  * cancellation, or expiration.  In the later case the callback may still be
  * queued or executing.
  *
- * \param pcallback Callback object previously passed to callbackRequestDelayed()
+ * @param pcallback Callback object previously passed to callbackRequestDelayed()
  *
- * \post Timer is cancelled.  However, callback may be queued or executing.
+ * @post Timer is cancelled.  However, callback may be queued or executing.
  */
 DBCORE_API void callbackCancelDelayed(epicsCallback *pcallback);
 /** (Re)Initialize callback object and queue
  *
  *  Shorthand for callbackSetProcess() followed by callbackRequestDelayed()
  *
- * \pre Callback object must be zero initialized before first call.
+ * @pre Callback object must be zero initialized before first call.
  */
 DBCORE_API void callbackRequestProcessCallbackDelayed(
     epicsCallback *pCallback, int Priority, void *pRec, double seconds);
 /** Set callback queue depth
  *
- * \param size A positive integer
- * \return -1 if too late to change depth
+ * @param size A positive integer
+ * @return -1 if too late to change depth
  *
- * \pre Must be called before iocInit()
+ * @pre Must be called before iocInit()
  */
 DBCORE_API int callbackSetQueueSize(int size);
 /** Query configuration and statistics from callback system
- * \param reset If non-zero, reset maxUsed after reading.
- * \param result NULL, or location for results
- * \return -2 if result is NULL.  reset happens anyway.
+ * @param reset If non-zero, reset maxUsed after reading.
+ * @param result NULL, or location for results
+ * @return -2 if result is NULL.  reset happens anyway.
  *
- * \since 7.0.2.  Also present in 3.16.2
+ * @since 7.0.2.  Also present in 3.16.2
  */
 DBCORE_API int callbackQueueStatus(const int reset, callbackQueueStats *result);
 DBCORE_API void callbackQueueShow(const int reset);
@@ -191,15 +195,15 @@ DBCORE_API void callbackQueueShow(const int reset);
  * A special prio name of "*" will modify all priorities.
  * Otherwise, only the named priority is modified.
  *
- * \param count If zero, reset to default (callbackParallelThreadsDefault global/iocsh variable).
+ * @param count If zero, reset to default (callbackParallelThreadsDefault global/iocsh variable).
  *              If positive, exact number of worker threads to create.
  *              If negative, number of worker threads less than core count.
- * \param prio Priority name.  eg. "*", "LOW", "MEDIUM" or "HIGH".
- * \return zero on success, non-zero if called after iocInit() or with invalid arguments.
+ * @param prio Priority name.  eg. "*", "LOW", "MEDIUM" or "HIGH".
+ * @return zero on success, non-zero if called after iocInit() or with invalid arguments.
  *
- * \pre Must be called before iocInit()
+ * @pre Must be called before iocInit()
  *
- * \since 3.15.0.2
+ * @since 3.15.0.2
  */
 DBCORE_API int callbackParallelThreads(int count, const char *prio);
 
