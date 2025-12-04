@@ -138,7 +138,14 @@ DBCORE_API int callbackRequestProcessCallback(
  * epicsCallback object must not be modified while queued,
  * and must remain valid while queued or executing.
  *
- * @param pCallback Callback object.  Caller expected to initialize or zero all members.
+ * epicsCallback::timer must be zeroed before the first call,
+ * and left unmodified for subsequent calls.
+ * Each epicsCallback is allocated a timer on first call.
+ * There is no way to free this allocation.
+ * Reuse of epicsCallback is strongly recommended.
+ *
+ * @param pCallback Callback object.
+ *        Caller expected to initialize or zero all members prior to first call.
  * @param seconds Relative to call time.  Expected to be >= 0.
  * @return Zero on success.
  *         Errors if callback members not initialized correctly, or if queue is full.
