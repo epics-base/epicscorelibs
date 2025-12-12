@@ -13,8 +13,6 @@ DOXYGEN ?= doxygen
 
 include $(TOP)/documentation/Makefile.headers
 
-HTMLS += ReleaseChecklist.html
-
 HEADER_MD_FILES = $(foreach t, $(HEADER_TYPES), \
     $(addsuffix _h.md, $($t_HEADERS)))
 API_RST_FILES = $(addsuffix -api.rst, $(HEADER_TYPES))
@@ -23,6 +21,7 @@ RTD_SRC = $(COMMON_DIR)/rtd-src
 
 DOCS += README.md
 DOCS += ca-cli.md
+DOCS += ReleaseChecklist.md
 
 OLD_NOTES = $(wildcard ../RELEASE-*.md)
 DOCS += $(OLD_NOTES:../%=%)
