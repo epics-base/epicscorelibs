@@ -1,9 +1,11 @@
-# ACF Syntax Forward Compatibility
+# IOC Access Security
+
+## ACF Syntax Forward Compatibility
 
 EPICS 7.0.10 modified the Access Security Configuration File (ACF) parser to
-**standardize the ACF grammar for forward compatibility**.
+standardize the ACF grammar for forward compatibility.
 It did not change the syntax that was accepted by earlier versions of the parser,
-so **existing access security configuration files will not need to be modified.**
+so existing access security configuration files would not need to be modified.
 All ACF definitions will adhere to a consistent syntax format,
 which will allow future additions to the access security language
 without breaking existing configurations.
@@ -124,22 +126,21 @@ the parser will report a syntax error.
 - Thus new elements can be added to ACF files in new EPICS releases
 without breaking older clients that loads those files.
 
-In summary, **ACF forward compatibility**
-means that from EPICS 7.0.10 onward,
+In summary, ACF forward compatibility means that from EPICS 7.0.10 onward,
 any new access security features will use this established syntax.
 The parser will recognize new group types or rule options using the same
 `<KEYWORD>(...) { ... }` convention,
 ensuring they can be used in files loaded by IOCs running EPICS 7.0.10 or later
 without being rejected by those IOCs or requiring their parser to be modified.
-This change **does not require any modifications to existing ACF files
-or downstream tools** -- all legacy syntax remains valid,
+This change does not require any modifications to existing ACF files --
+all legacy syntax remains valid,
 and the new standardized grammar provides a robust foundation for future extensions.
 
 ---
 
-# Full Language Specification for Access Security Configuration Files
+## Full Language Specification for Access Security Configuration Files
 
-## Lexical tokens
+### Lexical tokens
 
 **Ignored stuff**
 
@@ -201,9 +202,9 @@ and the new standardized grammar provides a robust foundation for future extensi
 
 ---
 
-## Grammar
+### Grammar
 
-### Top level
+#### Top level
 
 ```ebnf
 acf-file ::= asconfig ;
@@ -217,7 +218,7 @@ asconfig-item ::=
     | generic-top-level-item ;
 ```
 
-#### UAG / HAG groups
+##### UAG / HAG groups
 
 ```ebnf
 uag-def ::= "UAG" uag-head [ uag-body ] ;
@@ -239,7 +240,7 @@ hag-body ::= "{" hag-host-list "}" ;
 hag-host-list ::= STRING { "," STRING } ;
 ```
 
-#### ASG (access security group)
+##### ASG (access security group)
 
 ```ebnf
 asg-def ::= "ASG" asg-head [ asg-body ] ;
@@ -253,13 +254,13 @@ asg-body-item ::=
     | rule-config ;
 ```
 
-##### INP config
+###### INP config
 
 ```ebnf
 inp-config ::= INP(link) "(" STRING ")" ;`
 ```
 
-##### RULE config
+###### RULE config
 
 ```ebnf
 rule-config ::= "RULE" rule-head [ rule-body ] ;
@@ -291,11 +292,11 @@ rule-uag-list ::= STRING { "," STRING } ;
 rule-hag-list ::= STRING { "," STRING } ;`
 ```
 
-#### Generic / future-proof syntax
+##### Generic / future-proof syntax
 
 These are the "catch-all" constructs that are **parsed** but currently **ignored** semantically.
 
-##### Keyword classes
+###### Keyword classes
 
 These are parser-level categories used inside generic constructs:
 
@@ -312,7 +313,7 @@ non-rule-keyword ::=
     | INP(link) ;   (* INPA..INPU *)
 ```
 
-##### Generic head (argument list)
+###### Generic head (argument list)
 
 ```ebnf
 generic-head ::=
@@ -329,7 +330,7 @@ generic-element ::=
     | FLOAT ;
 ```
 
-##### Generic blocks
+###### Generic blocks
 
 ```ebnf
 generic-block ::=
@@ -345,7 +346,7 @@ generic-block-elem ::=
 generic-block-elem-name ::= keyword | STRING ;
 ```
 
-##### Generic top-level items
+###### Generic top-level items
 
 These are "unknown" top-level constructs, all of which are parsed and then ignored with a warning.
 
@@ -363,7 +364,7 @@ generic-list-block ::=
     "{" generic-element "}" "{" generic-list "}" ;
 ```
 
-##### Generic blocks inside RULE bodies
+###### Generic blocks inside RULE bodies
 
 These are the "future predicates" in a RULE's body; they cause the RULE to be disabled with a warning, but they **must** still parse.
 

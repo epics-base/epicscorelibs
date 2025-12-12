@@ -13,6 +13,8 @@ DOXYGEN ?= doxygen
 
 include $(TOP)/documentation/Makefile.headers
 
+HTMLS += ReleaseChecklist.html
+
 HEADER_MD_FILES = $(foreach t, $(HEADER_TYPES), \
     $(addsuffix _h.md, $($t_HEADERS)))
 API_RST_FILES = $(addsuffix -api.rst, $(HEADER_TYPES))
