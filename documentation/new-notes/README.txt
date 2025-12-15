@@ -34,7 +34,7 @@ where nnn is the number of the pull request. If you haven't created the pull
 request yet you can use the number from a related GitHub issue, or use some
 other name, then rename and push it after the PR has been created.
 
-The file should start with a level-3 Markdown title for the entry, like this:
+The file *must* start with a level-3 Markdown title for the entry, like this:
 
     ### Conflict-free release note entries for GitHub pull requests
 
@@ -46,6 +46,9 @@ The file should start with a level-3 Markdown title for the entry, like this:
    (followed by a blank line to separate it from the next paragraph), or a
    link to the PR may be integrated into the text that follows.
  * Use blank lines between paragraphs of text, and code-blocks for examples.
+ * I recommend using [semantic line-breaks](https://sembr.org/) in Markdown
+   files, it makes editing easier and reduces the number of lines that change
+   in most commits. This README.txt file isn't formatted as Markdown.
 
 Release note entries are not intended to provide full documentation of major
 features. For small features or changes though, they may provide all the
