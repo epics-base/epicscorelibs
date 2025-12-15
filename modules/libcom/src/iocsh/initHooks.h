@@ -163,9 +163,9 @@ typedef void (*initHookFunction)(initHookState state);
  *
  * Registers \p func for initHook notifications
  * \param func Pointer to application's notification function.
- * \return Always zero.  (before UNRELEASED could return -1 on allocation failure)
+ * \return Always zero.  (before 7.0.10 could return -1 on allocation failure)
  *
- * \since UNRELEASED initHookRegister is idempotent.
+ * \since 7.0.10 initHookRegister is idempotent.
  *        Previously, repeated registrations would result
  *        in duplicate calls to the hook function.
  */

@@ -86,7 +86,7 @@ input links, and returns a double-precision floating-point result. The
 expression is evaluated by the EPICS Calc engine, and the result is returned as
 the value of the link.
 
-Since UNRELEASED the number of inputs has been increased from 12 to 21.
+Since 7.0.10 the number of inputs has been increased from 12 to 21.
 
 Two additional expressions may also be provided and are evaluated to determine
 whether the record owning the link should be placed in alarm state. In both

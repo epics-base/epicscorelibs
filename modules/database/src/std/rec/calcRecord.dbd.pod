@@ -14,7 +14,7 @@ and logical operations on values retrieved from other records. The result
 of its operations can then be accessed by another record so that it can
 then be used.
 
-Since UNRELEASED the number of inputs has been increased from 12 to 21.
+Since 7.0.10 the number of inputs has been increased from 12 to 21.
 
 =head2 Parameter Fields
 

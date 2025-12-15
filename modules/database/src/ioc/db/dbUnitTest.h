@@ -167,7 +167,7 @@ DBCORE_API void testMonitorWait(testMonitor*);
  *
  * On return, any updates previously posted for this subscriptions have been delivered.
  *
- * @since UNRELEASED
+ * @since 7.0.10
  */
 DBCORE_API void testMonitorSync(testMonitor*);
 /** Return the number of monitor events which have occurred since create,

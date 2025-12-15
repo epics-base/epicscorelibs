@@ -12,7 +12,7 @@
 The subroutine record is used to call a C initialization routine and a recurring
 scan routine. There is no device support for this record.
 
-Since UNRELEASED the number of inputs has been increased from 12 to 21.
+Since 7.0.10 the number of inputs has been increased from 12 to 21.
 
 =recordtype sub
 

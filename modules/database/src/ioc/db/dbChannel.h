@@ -512,7 +512,7 @@ DBCORE_API long dbChannelGet(dbChannel *chan, short type,
  * \param[in] pfl Pointer to a db_field_log or NULL.
  * \returns 0, or an error status value.
  *
- * \since UNRELEASED If pfl is NULL and chan has filters, db_create_read_log() will be called
+ * \since 7.0.10 If pfl is NULL and chan has filters, db_create_read_log() will be called
  *        internally to create a temporary db_field_log which is passed to dbChannelGet()
  *        then deallocated.
  */

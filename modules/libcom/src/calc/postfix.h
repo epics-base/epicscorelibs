@@ -24,7 +24,7 @@
 
 /** \brief Number of input arguments to a calc expression (A-U)
   *
-  * Since UNRELEASED the number of inputs has been increased from 12 to 21.
+  * Since 7.0.10 the number of inputs has been increased from 12 to 21.
   */
 #define CALCPERFORM_NARGS 21
 /** \brief Size of the internal partial result stack */

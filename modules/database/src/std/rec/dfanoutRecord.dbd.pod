@@ -14,7 +14,7 @@ The Data Fanout or "dfanout" record is used to forward data to up to
 capability to forward data has been added to it. It has no associated
 device support.
 
-Since UNRELEASED the number of output links has been increased
+Since 7.0.10 the number of output links has been increased
 from 8 to 16 and IVOA and IVOV fields have been added.
 
 =head2 Parameter Fields

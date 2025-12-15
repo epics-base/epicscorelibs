@@ -143,7 +143,7 @@ DBCORE_API void dbsr(unsigned level);
 DBCORE_API int dbServerClient(char *pBuf, size_t bufSize);
 
 /** @brief CPP Macro indicating the dbServerStats() routine exists.
- * @since UNRELEASED
+ * @since 7.0.10
  */
 #define HAS_DBSERVER_STATS
 
@@ -161,7 +161,7 @@ DBCORE_API int dbServerClient(char *pBuf, size_t bufSize);
  *  variables and returns the number of dbServer::stats() methods called,
  *  0 if a named server wasn't found or doesn't have a stats() method.
  *
- * @since UNRELEASED
+ * @since 7.0.10
  */
 DBCORE_API int dbServerStats(const char *name, unsigned *channels,
     unsigned *clients);
