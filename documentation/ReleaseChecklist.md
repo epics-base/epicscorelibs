@@ -234,7 +234,7 @@ Git commit to apply those changes permanently to the repository.</p>
 file and remove the individual release note entry files:</p>
 <blockquote>
 <code> cd base-7.0/documentation</code><br />
-<code>make </code>
+<code>make release</code>
 </blockquote></li>
 <li><p>The <code>make release</code> command add some changes into the
 Git index but didn't commit them. These commands let you check what was
@@ -275,9 +275,6 @@ files:
 release by incrementing the MAINTENANCE_VERSION or PATCH_LEVEL value in
 each file. Set all <code>DEVELOPMENT_FLAG</code> values to 1 and
 <code>EPICS_DEV_SNAPSHOT</code> to "-DEV".</p>
-<p>Set up the headings in the Release Notes for the next release version
-number and restore the warning about this being an unreleased version of
-EPICS.</p>
 <p>Commit these changes (don't push).</p></td>
 </tr>
 <tr>
