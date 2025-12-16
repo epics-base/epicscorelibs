@@ -87,6 +87,14 @@ typedef struct dfanoutRecord {
     DBLINK              outf;       /**< @brief Output Spec F */
     DBLINK              outg;       /**< @brief Output Spec G */
     DBLINK              outh;       /**< @brief Output Spec H */
+    DBLINK              outi;       /**< @brief Output Spec I */
+    DBLINK              outj;       /**< @brief Output Spec J */
+    DBLINK              outk;       /**< @brief Output Spec K */
+    DBLINK              outl;       /**< @brief Output Spec L */
+    DBLINK              outm;       /**< @brief Output Spec M */
+    DBLINK              outn;       /**< @brief Output Spec N */
+    DBLINK              outo;       /**< @brief Output Spec O */
+    DBLINK              outp;       /**< @brief Output Spec P */
     DBLINK              dol;        /**< @brief Desired Output Link */
     epicsEnum16         omsl;       /**< @brief Output Mode Select */
     char                egu[16];    /**< @brief Engineering Units */
@@ -107,6 +115,8 @@ typedef struct dfanoutRecord {
     epicsFloat64        lalm;       /**< @brief Last Value Alarmed */
     epicsFloat64        alst;       /**< @brief Last Value Archived */
     epicsFloat64        mlst;       /**< @brief Last Val Monitored */
+    epicsEnum16         ivoa;       /**< @brief INVALID output action */
+    epicsFloat64        ivov;       /**< @brief INVALID output value */
 } dfanoutRecord;
 
 typedef enum {
@@ -170,26 +180,36 @@ typedef enum {
 	dfanoutRecordOUTF = 57,
 	dfanoutRecordOUTG = 58,
 	dfanoutRecordOUTH = 59,
-	dfanoutRecordDOL = 60,
-	dfanoutRecordOMSL = 61,
-	dfanoutRecordEGU = 62,
-	dfanoutRecordPREC = 63,
-	dfanoutRecordHOPR = 64,
-	dfanoutRecordLOPR = 65,
-	dfanoutRecordHIHI = 66,
-	dfanoutRecordLOLO = 67,
-	dfanoutRecordHIGH = 68,
-	dfanoutRecordLOW = 69,
-	dfanoutRecordHHSV = 70,
-	dfanoutRecordLLSV = 71,
-	dfanoutRecordHSV = 72,
-	dfanoutRecordLSV = 73,
-	dfanoutRecordHYST = 74,
-	dfanoutRecordADEL = 75,
-	dfanoutRecordMDEL = 76,
-	dfanoutRecordLALM = 77,
-	dfanoutRecordALST = 78,
-	dfanoutRecordMLST = 79
+	dfanoutRecordOUTI = 60,
+	dfanoutRecordOUTJ = 61,
+	dfanoutRecordOUTK = 62,
+	dfanoutRecordOUTL = 63,
+	dfanoutRecordOUTM = 64,
+	dfanoutRecordOUTN = 65,
+	dfanoutRecordOUTO = 66,
+	dfanoutRecordOUTP = 67,
+	dfanoutRecordDOL = 68,
+	dfanoutRecordOMSL = 69,
+	dfanoutRecordEGU = 70,
+	dfanoutRecordPREC = 71,
+	dfanoutRecordHOPR = 72,
+	dfanoutRecordLOPR = 73,
+	dfanoutRecordHIHI = 74,
+	dfanoutRecordLOLO = 75,
+	dfanoutRecordHIGH = 76,
+	dfanoutRecordLOW = 77,
+	dfanoutRecordHHSV = 78,
+	dfanoutRecordLLSV = 79,
+	dfanoutRecordHSV = 80,
+	dfanoutRecordLSV = 81,
+	dfanoutRecordHYST = 82,
+	dfanoutRecordADEL = 83,
+	dfanoutRecordMDEL = 84,
+	dfanoutRecordLALM = 85,
+	dfanoutRecordALST = 86,
+	dfanoutRecordMLST = 87,
+	dfanoutRecordIVOA = 88,
+	dfanoutRecordIVOV = 89
 } dfanoutFieldIndex;
 
 #ifdef GEN_SIZE_OFFSET
@@ -203,10 +223,10 @@ static int dfanoutRecordSizeOffset(dbRecordType *prt)
 {
     dfanoutRecord *prec = 0;
 
-    if (prt->no_fields != 80) {
+    if (prt->no_fields != 90) {
         cantProceed("IOC build or installation error:\n"
             "    The dfanoutRecord defined in the DBD file has %d fields,\n"
-            "    but the record support code was built with 80.\n",
+            "    but the record support code was built with 90.\n",
             prt->no_fields);
     }
     prt->papFldDes[dfanoutRecordNAME]->size = sizeof(prec->name);
@@ -329,6 +349,22 @@ static int dfanoutRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[dfanoutRecordOUTG]->offset = (unsigned short)offsetof(dfanoutRecord, outg);
     prt->papFldDes[dfanoutRecordOUTH]->size = sizeof(prec->outh);
     prt->papFldDes[dfanoutRecordOUTH]->offset = (unsigned short)offsetof(dfanoutRecord, outh);
+    prt->papFldDes[dfanoutRecordOUTI]->size = sizeof(prec->outi);
+    prt->papFldDes[dfanoutRecordOUTI]->offset = (unsigned short)offsetof(dfanoutRecord, outi);
+    prt->papFldDes[dfanoutRecordOUTJ]->size = sizeof(prec->outj);
+    prt->papFldDes[dfanoutRecordOUTJ]->offset = (unsigned short)offsetof(dfanoutRecord, outj);
+    prt->papFldDes[dfanoutRecordOUTK]->size = sizeof(prec->outk);
+    prt->papFldDes[dfanoutRecordOUTK]->offset = (unsigned short)offsetof(dfanoutRecord, outk);
+    prt->papFldDes[dfanoutRecordOUTL]->size = sizeof(prec->outl);
+    prt->papFldDes[dfanoutRecordOUTL]->offset = (unsigned short)offsetof(dfanoutRecord, outl);
+    prt->papFldDes[dfanoutRecordOUTM]->size = sizeof(prec->outm);
+    prt->papFldDes[dfanoutRecordOUTM]->offset = (unsigned short)offsetof(dfanoutRecord, outm);
+    prt->papFldDes[dfanoutRecordOUTN]->size = sizeof(prec->outn);
+    prt->papFldDes[dfanoutRecordOUTN]->offset = (unsigned short)offsetof(dfanoutRecord, outn);
+    prt->papFldDes[dfanoutRecordOUTO]->size = sizeof(prec->outo);
+    prt->papFldDes[dfanoutRecordOUTO]->offset = (unsigned short)offsetof(dfanoutRecord, outo);
+    prt->papFldDes[dfanoutRecordOUTP]->size = sizeof(prec->outp);
+    prt->papFldDes[dfanoutRecordOUTP]->offset = (unsigned short)offsetof(dfanoutRecord, outp);
     prt->papFldDes[dfanoutRecordDOL]->size = sizeof(prec->dol);
     prt->papFldDes[dfanoutRecordDOL]->offset = (unsigned short)offsetof(dfanoutRecord, dol);
     prt->papFldDes[dfanoutRecordOMSL]->size = sizeof(prec->omsl);
@@ -369,6 +405,10 @@ static int dfanoutRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[dfanoutRecordALST]->offset = (unsigned short)offsetof(dfanoutRecord, alst);
     prt->papFldDes[dfanoutRecordMLST]->size = sizeof(prec->mlst);
     prt->papFldDes[dfanoutRecordMLST]->offset = (unsigned short)offsetof(dfanoutRecord, mlst);
+    prt->papFldDes[dfanoutRecordIVOA]->size = sizeof(prec->ivoa);
+    prt->papFldDes[dfanoutRecordIVOA]->offset = (unsigned short)offsetof(dfanoutRecord, ivoa);
+    prt->papFldDes[dfanoutRecordIVOV]->size = sizeof(prec->ivov);
+    prt->papFldDes[dfanoutRecordIVOV]->offset = (unsigned short)offsetof(dfanoutRecord, ivov);
     prt->rec_size = sizeof(*prec);
     return 0;
 }

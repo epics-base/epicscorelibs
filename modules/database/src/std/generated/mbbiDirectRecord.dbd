@@ -31,6 +31,7 @@ recordtype(mbbiDirect) {
         promptgroup("40 - Input")
         special(SPC_NOMOD)
         interest(1)
+        prop(YES)       # get_precision
     }
     field(INP,DBF_INLINK) {
         prompt("Input Specification")

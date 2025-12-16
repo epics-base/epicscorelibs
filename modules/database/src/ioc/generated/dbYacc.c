@@ -7,7 +7,7 @@
 static int yyparse(void);
 #define YYPREFIX "yy"
 #line 11 "../dbStatic/dbYacc.y"
-static int yyerror();
+static int yyerror(char *str);
 static int yy_start;
 static long pvt_yy_parse(void);
 static int yyFailed = 0;
@@ -360,14 +360,15 @@ static YYSTYPE yyvs[YYSTACKSIZE];
 static int yyerror(char *str)
 {
     if (str)
-        epicsPrintf("Error: %s\n", str);
+        fprintf(stderr, ERL_ERROR ": %s\n", str);
     else
-        epicsPrintf("Error");
+        fprintf(stderr, ERL_ERROR ": ");
     if (!yyFailed) {    /* Only print this stuff once */
-        epicsPrintf(" at or before '%s'", yytext);
+        fprintf(stderr, " at or before '%s'", yytext);
         dbIncludePrint();
         yyFailed = TRUE;
     }
+    fprintf(stderr, "\n %d | %s\n", pinputFileNow->line_num, my_buffer);
     return(0);
 }
 static long pvt_yy_parse(void)
@@ -385,7 +386,7 @@ static long pvt_yy_parse(void)
     rtnval = yyparse();
     if(rtnval!=0 || yyFailed) return(-1); else return(0);
 }
-#line 389 "dbYacc.tab.c"
+#line 390 "dbYacc.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -857,7 +858,7 @@ case 89:
 #line 358 "../dbStatic/dbYacc.y"
 { yyval.Str = dbmfStrdup("false"); }
 break;
-#line 861 "dbYacc.tab.c"
+#line 862 "dbYacc.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

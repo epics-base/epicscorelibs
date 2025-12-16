@@ -82,6 +82,15 @@ typedef struct subRecord {
     DBLINK              inpj;       /**< @brief Input J */
     DBLINK              inpk;       /**< @brief Input K */
     DBLINK              inpl;       /**< @brief Input L */
+    DBLINK              inpm;       /**< @brief Input M */
+    DBLINK              inpn;       /**< @brief Input N */
+    DBLINK              inpo;       /**< @brief Input O */
+    DBLINK              inpp;       /**< @brief Input P */
+    DBLINK              inpq;       /**< @brief Input Q */
+    DBLINK              inpr;       /**< @brief Input R */
+    DBLINK              inps;       /**< @brief Input S */
+    DBLINK              inpt;       /**< @brief Input T */
+    DBLINK              inpu;       /**< @brief Input U */
     char                egu[16];    /**< @brief Engineering Units */
     epicsFloat64        hopr;       /**< @brief High Operating Range */
     epicsFloat64        lopr;       /**< @brief Low Operating Range */
@@ -110,6 +119,15 @@ typedef struct subRecord {
     epicsFloat64        j;          /**< @brief Value of Input J */
     epicsFloat64        k;          /**< @brief Value of Input K */
     epicsFloat64        l;          /**< @brief Value of Input L */
+    epicsFloat64        m;          /**< @brief Value of Input M */
+    epicsFloat64        n;          /**< @brief Value of Input N */
+    epicsFloat64        o;          /**< @brief Value of Input O */
+    epicsFloat64        p;          /**< @brief Value of Input P */
+    epicsFloat64        q;          /**< @brief Value of Input Q */
+    epicsFloat64        r;          /**< @brief Value of Input R */
+    epicsFloat64        s;          /**< @brief Value of Input S */
+    epicsFloat64        t;          /**< @brief Value of Input T */
+    epicsFloat64        u;          /**< @brief Value of Input U */
     epicsFloat64        la;         /**< @brief Prev Value of A */
     epicsFloat64        lb;         /**< @brief Prev Value of B */
     epicsFloat64        lc;         /**< @brief Prev Value of C */
@@ -122,6 +140,15 @@ typedef struct subRecord {
     epicsFloat64        lj;         /**< @brief Prev Value of J */
     epicsFloat64        lk;         /**< @brief Prev Value of K */
     epicsFloat64        ll;         /**< @brief Prev Value of L */
+    epicsFloat64        lm;         /**< @brief Prev Value of M */
+    epicsFloat64        ln;         /**< @brief Prev Value of N */
+    epicsFloat64        lo;         /**< @brief Prev Value of O */
+    epicsFloat64        lp;         /**< @brief Prev Value of P */
+    epicsFloat64        lq;         /**< @brief Prev Value of Q */
+    epicsFloat64        lr;         /**< @brief Prev Value of R */
+    epicsFloat64        ls;         /**< @brief Prev Value of S */
+    epicsFloat64        lt;         /**< @brief Prev Value of T */
+    epicsFloat64        lu;         /**< @brief Prev Value of U */
     epicsFloat64        lalm;       /**< @brief Last Value Alarmed */
     epicsFloat64        alst;       /**< @brief Last Value Archived */
     epicsFloat64        mlst;       /**< @brief Last Value Monitored */
@@ -192,49 +219,76 @@ typedef enum {
 	subRecordINPJ = 61,
 	subRecordINPK = 62,
 	subRecordINPL = 63,
-	subRecordEGU = 64,
-	subRecordHOPR = 65,
-	subRecordLOPR = 66,
-	subRecordHIHI = 67,
-	subRecordLOLO = 68,
-	subRecordHIGH = 69,
-	subRecordLOW = 70,
-	subRecordPREC = 71,
-	subRecordBRSV = 72,
-	subRecordHHSV = 73,
-	subRecordLLSV = 74,
-	subRecordHSV = 75,
-	subRecordLSV = 76,
-	subRecordHYST = 77,
-	subRecordADEL = 78,
-	subRecordMDEL = 79,
-	subRecordA = 80,
-	subRecordB = 81,
-	subRecordC = 82,
-	subRecordD = 83,
-	subRecordE = 84,
-	subRecordF = 85,
-	subRecordG = 86,
-	subRecordH = 87,
-	subRecordI = 88,
-	subRecordJ = 89,
-	subRecordK = 90,
-	subRecordL = 91,
-	subRecordLA = 92,
-	subRecordLB = 93,
-	subRecordLC = 94,
-	subRecordLD = 95,
-	subRecordLE = 96,
-	subRecordLF = 97,
-	subRecordLG = 98,
-	subRecordLH = 99,
-	subRecordLI = 100,
-	subRecordLJ = 101,
-	subRecordLK = 102,
-	subRecordLL = 103,
-	subRecordLALM = 104,
-	subRecordALST = 105,
-	subRecordMLST = 106
+	subRecordINPM = 64,
+	subRecordINPN = 65,
+	subRecordINPO = 66,
+	subRecordINPP = 67,
+	subRecordINPQ = 68,
+	subRecordINPR = 69,
+	subRecordINPS = 70,
+	subRecordINPT = 71,
+	subRecordINPU = 72,
+	subRecordEGU = 73,
+	subRecordHOPR = 74,
+	subRecordLOPR = 75,
+	subRecordHIHI = 76,
+	subRecordLOLO = 77,
+	subRecordHIGH = 78,
+	subRecordLOW = 79,
+	subRecordPREC = 80,
+	subRecordBRSV = 81,
+	subRecordHHSV = 82,
+	subRecordLLSV = 83,
+	subRecordHSV = 84,
+	subRecordLSV = 85,
+	subRecordHYST = 86,
+	subRecordADEL = 87,
+	subRecordMDEL = 88,
+	subRecordA = 89,
+	subRecordB = 90,
+	subRecordC = 91,
+	subRecordD = 92,
+	subRecordE = 93,
+	subRecordF = 94,
+	subRecordG = 95,
+	subRecordH = 96,
+	subRecordI = 97,
+	subRecordJ = 98,
+	subRecordK = 99,
+	subRecordL = 100,
+	subRecordM = 101,
+	subRecordN = 102,
+	subRecordO = 103,
+	subRecordP = 104,
+	subRecordQ = 105,
+	subRecordR = 106,
+	subRecordS = 107,
+	subRecordT = 108,
+	subRecordU = 109,
+	subRecordLA = 110,
+	subRecordLB = 111,
+	subRecordLC = 112,
+	subRecordLD = 113,
+	subRecordLE = 114,
+	subRecordLF = 115,
+	subRecordLG = 116,
+	subRecordLH = 117,
+	subRecordLI = 118,
+	subRecordLJ = 119,
+	subRecordLK = 120,
+	subRecordLL = 121,
+	subRecordLM = 122,
+	subRecordLN = 123,
+	subRecordLO = 124,
+	subRecordLP = 125,
+	subRecordLQ = 126,
+	subRecordLR = 127,
+	subRecordLS = 128,
+	subRecordLT = 129,
+	subRecordLU = 130,
+	subRecordLALM = 131,
+	subRecordALST = 132,
+	subRecordMLST = 133
 } subFieldIndex;
 
 #ifdef GEN_SIZE_OFFSET
@@ -248,10 +302,10 @@ static int subRecordSizeOffset(dbRecordType *prt)
 {
     subRecord *prec = 0;
 
-    if (prt->no_fields != 107) {
+    if (prt->no_fields != 134) {
         cantProceed("IOC build or installation error:\n"
             "    The subRecord defined in the DBD file has %d fields,\n"
-            "    but the record support code was built with 107.\n",
+            "    but the record support code was built with 134.\n",
             prt->no_fields);
     }
     prt->papFldDes[subRecordNAME]->size = sizeof(prec->name);
@@ -382,6 +436,24 @@ static int subRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[subRecordINPK]->offset = (unsigned short)offsetof(subRecord, inpk);
     prt->papFldDes[subRecordINPL]->size = sizeof(prec->inpl);
     prt->papFldDes[subRecordINPL]->offset = (unsigned short)offsetof(subRecord, inpl);
+    prt->papFldDes[subRecordINPM]->size = sizeof(prec->inpm);
+    prt->papFldDes[subRecordINPM]->offset = (unsigned short)offsetof(subRecord, inpm);
+    prt->papFldDes[subRecordINPN]->size = sizeof(prec->inpn);
+    prt->papFldDes[subRecordINPN]->offset = (unsigned short)offsetof(subRecord, inpn);
+    prt->papFldDes[subRecordINPO]->size = sizeof(prec->inpo);
+    prt->papFldDes[subRecordINPO]->offset = (unsigned short)offsetof(subRecord, inpo);
+    prt->papFldDes[subRecordINPP]->size = sizeof(prec->inpp);
+    prt->papFldDes[subRecordINPP]->offset = (unsigned short)offsetof(subRecord, inpp);
+    prt->papFldDes[subRecordINPQ]->size = sizeof(prec->inpq);
+    prt->papFldDes[subRecordINPQ]->offset = (unsigned short)offsetof(subRecord, inpq);
+    prt->papFldDes[subRecordINPR]->size = sizeof(prec->inpr);
+    prt->papFldDes[subRecordINPR]->offset = (unsigned short)offsetof(subRecord, inpr);
+    prt->papFldDes[subRecordINPS]->size = sizeof(prec->inps);
+    prt->papFldDes[subRecordINPS]->offset = (unsigned short)offsetof(subRecord, inps);
+    prt->papFldDes[subRecordINPT]->size = sizeof(prec->inpt);
+    prt->papFldDes[subRecordINPT]->offset = (unsigned short)offsetof(subRecord, inpt);
+    prt->papFldDes[subRecordINPU]->size = sizeof(prec->inpu);
+    prt->papFldDes[subRecordINPU]->offset = (unsigned short)offsetof(subRecord, inpu);
     prt->papFldDes[subRecordEGU]->size = sizeof(prec->egu);
     prt->papFldDes[subRecordEGU]->offset = (unsigned short)offsetof(subRecord, egu);
     prt->papFldDes[subRecordHOPR]->size = sizeof(prec->hopr);
@@ -438,6 +510,24 @@ static int subRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[subRecordK]->offset = (unsigned short)offsetof(subRecord, k);
     prt->papFldDes[subRecordL]->size = sizeof(prec->l);
     prt->papFldDes[subRecordL]->offset = (unsigned short)offsetof(subRecord, l);
+    prt->papFldDes[subRecordM]->size = sizeof(prec->m);
+    prt->papFldDes[subRecordM]->offset = (unsigned short)offsetof(subRecord, m);
+    prt->papFldDes[subRecordN]->size = sizeof(prec->n);
+    prt->papFldDes[subRecordN]->offset = (unsigned short)offsetof(subRecord, n);
+    prt->papFldDes[subRecordO]->size = sizeof(prec->o);
+    prt->papFldDes[subRecordO]->offset = (unsigned short)offsetof(subRecord, o);
+    prt->papFldDes[subRecordP]->size = sizeof(prec->p);
+    prt->papFldDes[subRecordP]->offset = (unsigned short)offsetof(subRecord, p);
+    prt->papFldDes[subRecordQ]->size = sizeof(prec->q);
+    prt->papFldDes[subRecordQ]->offset = (unsigned short)offsetof(subRecord, q);
+    prt->papFldDes[subRecordR]->size = sizeof(prec->r);
+    prt->papFldDes[subRecordR]->offset = (unsigned short)offsetof(subRecord, r);
+    prt->papFldDes[subRecordS]->size = sizeof(prec->s);
+    prt->papFldDes[subRecordS]->offset = (unsigned short)offsetof(subRecord, s);
+    prt->papFldDes[subRecordT]->size = sizeof(prec->t);
+    prt->papFldDes[subRecordT]->offset = (unsigned short)offsetof(subRecord, t);
+    prt->papFldDes[subRecordU]->size = sizeof(prec->u);
+    prt->papFldDes[subRecordU]->offset = (unsigned short)offsetof(subRecord, u);
     prt->papFldDes[subRecordLA]->size = sizeof(prec->la);
     prt->papFldDes[subRecordLA]->offset = (unsigned short)offsetof(subRecord, la);
     prt->papFldDes[subRecordLB]->size = sizeof(prec->lb);
@@ -462,6 +552,24 @@ static int subRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[subRecordLK]->offset = (unsigned short)offsetof(subRecord, lk);
     prt->papFldDes[subRecordLL]->size = sizeof(prec->ll);
     prt->papFldDes[subRecordLL]->offset = (unsigned short)offsetof(subRecord, ll);
+    prt->papFldDes[subRecordLM]->size = sizeof(prec->lm);
+    prt->papFldDes[subRecordLM]->offset = (unsigned short)offsetof(subRecord, lm);
+    prt->papFldDes[subRecordLN]->size = sizeof(prec->ln);
+    prt->papFldDes[subRecordLN]->offset = (unsigned short)offsetof(subRecord, ln);
+    prt->papFldDes[subRecordLO]->size = sizeof(prec->lo);
+    prt->papFldDes[subRecordLO]->offset = (unsigned short)offsetof(subRecord, lo);
+    prt->papFldDes[subRecordLP]->size = sizeof(prec->lp);
+    prt->papFldDes[subRecordLP]->offset = (unsigned short)offsetof(subRecord, lp);
+    prt->papFldDes[subRecordLQ]->size = sizeof(prec->lq);
+    prt->papFldDes[subRecordLQ]->offset = (unsigned short)offsetof(subRecord, lq);
+    prt->papFldDes[subRecordLR]->size = sizeof(prec->lr);
+    prt->papFldDes[subRecordLR]->offset = (unsigned short)offsetof(subRecord, lr);
+    prt->papFldDes[subRecordLS]->size = sizeof(prec->ls);
+    prt->papFldDes[subRecordLS]->offset = (unsigned short)offsetof(subRecord, ls);
+    prt->papFldDes[subRecordLT]->size = sizeof(prec->lt);
+    prt->papFldDes[subRecordLT]->offset = (unsigned short)offsetof(subRecord, lt);
+    prt->papFldDes[subRecordLU]->size = sizeof(prec->lu);
+    prt->papFldDes[subRecordLU]->offset = (unsigned short)offsetof(subRecord, lu);
     prt->papFldDes[subRecordLALM]->size = sizeof(prec->lalm);
     prt->papFldDes[subRecordLALM]->offset = (unsigned short)offsetof(subRecord, lalm);
     prt->papFldDes[subRecordALST]->size = sizeof(prec->alst);

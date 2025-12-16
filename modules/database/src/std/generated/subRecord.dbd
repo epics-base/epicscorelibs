@@ -99,58 +99,103 @@ recordtype(sub) {
 		promptgroup("42 - Input G-L")
 		interest(1)
 	}
+	field(INPM,DBF_INLINK) {
+		prompt("Input M")
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPN,DBF_INLINK) {
+		prompt("Input N")
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPO,DBF_INLINK) {
+		prompt("Input O")
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPP,DBF_INLINK) {
+		prompt("Input P")
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPQ,DBF_INLINK) {
+		prompt("Input Q")
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPR,DBF_INLINK) {
+		prompt("Input R")
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPS,DBF_INLINK) {
+		prompt("Input S")
+		promptgroup("44 - Input S-U")
+		interest(1)
+	}
+	field(INPT,DBF_INLINK) {
+		prompt("Input T")
+		promptgroup("44 - Input S-U")
+		interest(1)
+	}
+	field(INPU,DBF_INLINK) {
+		prompt("Input U")
+		promptgroup("44 - Input S-U")
+		interest(1)
+	}
 	field(EGU,DBF_STRING) {
 		prompt("Engineering Units")
 		promptgroup("80 - Display")
 		interest(1)
 		size(16)
-		prop(YES)
+		prop(YES)		# get_units
 	}
 	field(HOPR,DBF_DOUBLE) {
 		prompt("High Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(LOPR,DBF_DOUBLE) {
 		prompt("Low Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(HIHI,DBF_DOUBLE) {
 		prompt("Hihi Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(LOLO,DBF_DOUBLE) {
 		prompt("Lolo Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(HIGH,DBF_DOUBLE) {
 		prompt("High Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(LOW,DBF_DOUBLE) {
 		prompt("Low Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(PREC,DBF_SHORT) {
 		prompt("Display Precision")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_precision
 	}
 	field(BRSV,DBF_MENU) {
 		prompt("Bad Return Severity")
@@ -164,7 +209,7 @@ recordtype(sub) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(LLSV,DBF_MENU) {
@@ -172,7 +217,7 @@ recordtype(sub) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(HSV,DBF_MENU) {
@@ -180,7 +225,7 @@ recordtype(sub) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(LSV,DBF_MENU) {
@@ -188,7 +233,7 @@ recordtype(sub) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(HYST,DBF_DOUBLE) {
@@ -254,6 +299,42 @@ recordtype(sub) {
 		prompt("Value of Input L")
 		pp(TRUE)
 	}
+	field(M,DBF_DOUBLE) {
+		prompt("Value of Input M")
+		pp(TRUE)
+	}
+	field(N,DBF_DOUBLE) {
+		prompt("Value of Input N")
+		pp(TRUE)
+	}
+	field(O,DBF_DOUBLE) {
+		prompt("Value of Input O")
+		pp(TRUE)
+	}
+	field(P,DBF_DOUBLE) {
+		prompt("Value of Input P")
+		pp(TRUE)
+	}
+	field(Q,DBF_DOUBLE) {
+		prompt("Value of Input Q")
+		pp(TRUE)
+	}
+	field(R,DBF_DOUBLE) {
+		prompt("Value of Input R")
+		pp(TRUE)
+	}
+	field(S,DBF_DOUBLE) {
+		prompt("Value of Input S")
+		pp(TRUE)
+	}
+	field(T,DBF_DOUBLE) {
+		prompt("Value of Input T")
+		pp(TRUE)
+	}
+	field(U,DBF_DOUBLE) {
+		prompt("Value of Input U")
+		pp(TRUE)
+	}
 	field(LA,DBF_DOUBLE) {
 		prompt("Prev Value of A")
 		special(SPC_NOMOD)
@@ -311,6 +392,51 @@ recordtype(sub) {
 	}
 	field(LL,DBF_DOUBLE) {
 		prompt("Prev Value of L")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LM,DBF_DOUBLE) {
+		prompt("Prev Value of M")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LN,DBF_DOUBLE) {
+		prompt("Prev Value of N")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LO,DBF_DOUBLE) {
+		prompt("Prev Value of O")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LP,DBF_DOUBLE) {
+		prompt("Prev Value of P")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LQ,DBF_DOUBLE) {
+		prompt("Prev Value of Q")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LR,DBF_DOUBLE) {
+		prompt("Prev Value of R")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LS,DBF_DOUBLE) {
+		prompt("Prev Value of S")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LT,DBF_DOUBLE) {
+		prompt("Prev Value of T")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LU,DBF_DOUBLE) {
+		prompt("Prev Value of U")
 		special(SPC_NOMOD)
 		interest(3)
 	}

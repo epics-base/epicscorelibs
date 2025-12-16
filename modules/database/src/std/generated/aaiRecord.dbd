@@ -16,7 +16,7 @@ menu(aaiPOST) {
 recordtype(aai) {
 
 
-	include "dbCommon.dbd" 
+	include "dbCommon.dbd"
     %
     %/* Declare Device Support Entry Table */
     %struct aaiRecord;
@@ -33,7 +33,7 @@ recordtype(aai) {
 		special(SPC_DBADDR)
 		pp(TRUE)
 		extra("void *		val")
-		#=type DOUBLE[NELM]
+		#=type Set by FTVL[NELM]
 		#=read Yes
 		#=write Yes
 	}
@@ -41,7 +41,7 @@ recordtype(aai) {
 		prompt("Display Precision")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_precision
 	}
 	field(INP,DBF_INLINK) {
 		prompt("Input Specification")
@@ -53,19 +53,19 @@ recordtype(aai) {
 		promptgroup("80 - Display")
 		interest(1)
 		size(16)
-		prop(YES)
+		prop(YES)		# get_units
 	}
 	field(HOPR,DBF_DOUBLE) {
 		prompt("High Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(LOPR,DBF_DOUBLE) {
 		prompt("Low Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(NELM,DBF_ULONG) {
 		prompt("Number of Elements")
@@ -73,6 +73,7 @@ recordtype(aai) {
 		special(SPC_NOMOD)
 		interest(1)
 		initial("1")
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(FTVL,DBF_MENU) {
 		prompt("Field Type of Value")

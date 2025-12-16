@@ -58,7 +58,7 @@ recordtype(calcout) {
 		promptgroup("30 - Action")
 		special(SPC_CALC)
 		pp(TRUE)
-		size(80)
+		size(160)
 		initial("0")
 	}
 	field(CLCV,DBF_LONG) {
@@ -135,6 +135,60 @@ recordtype(calcout) {
 		prompt("Input L")
 		special(SPC_MOD)
 		promptgroup("42 - Input G-L")
+		interest(1)
+	}
+	field(INPM,DBF_INLINK) {
+		prompt("Input M")
+		special(SPC_MOD)
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPN,DBF_INLINK) {
+		prompt("Input N")
+		special(SPC_MOD)
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPO,DBF_INLINK) {
+		prompt("Input O")
+		special(SPC_MOD)
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPP,DBF_INLINK) {
+		prompt("Input P")
+		special(SPC_MOD)
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPQ,DBF_INLINK) {
+		prompt("Input Q")
+		special(SPC_MOD)
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPR,DBF_INLINK) {
+		prompt("Input R")
+		special(SPC_MOD)
+		promptgroup("43 - Input M-R")
+		interest(1)
+	}
+	field(INPS,DBF_INLINK) {
+		prompt("Input S")
+		special(SPC_MOD)
+		promptgroup("44 - Input S-U")
+		interest(1)
+	}
+	field(INPT,DBF_INLINK) {
+		prompt("Input T")
+		special(SPC_MOD)
+		promptgroup("44 - Input S-U")
+		interest(1)
+	}
+	field(INPU,DBF_INLINK) {
+		prompt("Input U")
+		special(SPC_MOD)
+		promptgroup("44 - Input S-U")
 		interest(1)
 	}
 	field(OUT,DBF_OUTLINK) {
@@ -227,6 +281,69 @@ recordtype(calcout) {
 		menu(calcoutINAV)
 		initial("1")
 	}
+	field(INMV,DBF_MENU) {
+		prompt("INPM PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INNV,DBF_MENU) {
+		prompt("INPN PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INOV,DBF_MENU) {
+		prompt("INPO PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INPV,DBF_MENU) {
+		prompt("INPP PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INQV,DBF_MENU) {
+		prompt("INPQ PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INRV,DBF_MENU) {
+		prompt("INPR PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INSV,DBF_MENU) {
+		prompt("INPS PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INTV,DBF_MENU) {
+		prompt("INPT PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
+	field(INUV,DBF_MENU) {
+		prompt("INPU PV Status")
+		special(SPC_NOMOD)
+		interest(1)
+		menu(calcoutINAV)
+		initial("1")
+	}
 	field(OUTV,DBF_MENU) {
 		prompt("OUT PV Status")
 		special(SPC_NOMOD)
@@ -261,7 +378,7 @@ recordtype(calcout) {
 		promptgroup("30 - Action")
 		special(SPC_CALC)
 		pp(TRUE)
-		size(80)
+		size(160)
 		initial("0")
 	}
 	field(OCLV,DBF_LONG) {
@@ -298,60 +415,60 @@ recordtype(calcout) {
 		promptgroup("80 - Display")
 		interest(1)
 		size(16)
-		prop(YES)
+		prop(YES)		# get_units
 	}
 	field(PREC,DBF_SHORT) {
 		prompt("Display Precision")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_precision
 	}
 	field(HOPR,DBF_DOUBLE) {
 		prompt("High Operating Rng")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(LOPR,DBF_DOUBLE) {
 		prompt("Low Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(HIHI,DBF_DOUBLE) {
 		prompt("Hihi Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(LOLO,DBF_DOUBLE) {
 		prompt("Lolo Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(HIGH,DBF_DOUBLE) {
 		prompt("High Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(LOW,DBF_DOUBLE) {
 		prompt("Low Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(HHSV,DBF_MENU) {
 		prompt("Hihi Severity")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(LLSV,DBF_MENU) {
@@ -359,7 +476,7 @@ recordtype(calcout) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(HSV,DBF_MENU) {
@@ -367,7 +484,7 @@ recordtype(calcout) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(LSV,DBF_MENU) {
@@ -375,7 +492,7 @@ recordtype(calcout) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(HYST,DBF_DOUBLE) {
@@ -439,6 +556,42 @@ recordtype(calcout) {
 	}
 	field(L,DBF_DOUBLE) {
 		prompt("Value of Input L")
+		pp(TRUE)
+	}
+	field(M,DBF_DOUBLE) {
+		prompt("Value of Input M")
+		pp(TRUE)
+	}
+	field(N,DBF_DOUBLE) {
+		prompt("Value of Input N")
+		pp(TRUE)
+	}
+	field(O,DBF_DOUBLE) {
+		prompt("Value of Input O")
+		pp(TRUE)
+	}
+	field(P,DBF_DOUBLE) {
+		prompt("Value of Input P")
+		pp(TRUE)
+	}
+	field(Q,DBF_DOUBLE) {
+		prompt("Value of Input Q")
+		pp(TRUE)
+	}
+	field(R,DBF_DOUBLE) {
+		prompt("Value of Input R")
+		pp(TRUE)
+	}
+	field(S,DBF_DOUBLE) {
+		prompt("Value of Input S")
+		pp(TRUE)
+	}
+	field(T,DBF_DOUBLE) {
+		prompt("Value of Input T")
+		pp(TRUE)
+	}
+	field(U,DBF_DOUBLE) {
+		prompt("Value of Input U")
 		pp(TRUE)
 	}
 	field(OVAL,DBF_DOUBLE) {
@@ -505,6 +658,51 @@ recordtype(calcout) {
 		special(SPC_NOMOD)
 		interest(3)
 	}
+	field(LM,DBF_DOUBLE) {
+		prompt("Prev Value of M")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LN,DBF_DOUBLE) {
+		prompt("Prev Value of N")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LO,DBF_DOUBLE) {
+		prompt("Prev Value of O")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LP,DBF_DOUBLE) {
+		prompt("Prev Value of P")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LQ,DBF_DOUBLE) {
+		prompt("Prev Value of Q")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LR,DBF_DOUBLE) {
+		prompt("Prev Value of R")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LS,DBF_DOUBLE) {
+		prompt("Prev Value of S")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LT,DBF_DOUBLE) {
+		prompt("Prev Value of T")
+		special(SPC_NOMOD)
+		interest(3)
+	}
+	field(LU,DBF_DOUBLE) {
+		prompt("Prev Value of U")
+		special(SPC_NOMOD)
+		interest(3)
+	}
 	field(POVL,DBF_DOUBLE) {
 		prompt("Prev Value of OVAL")
 		asl(ASL0)
@@ -529,13 +727,13 @@ recordtype(calcout) {
 		prompt("Reverse Polish Calc")
 		special(SPC_NOMOD)
 		interest(4)
-		extra("char	rpcl[INFIX_TO_POSTFIX_SIZE(80)]")
+		extra("char	rpcl[INFIX_TO_POSTFIX_SIZE(160)]")
 	}
 	field(ORPC,DBF_NOACCESS) {
 		prompt("Reverse Polish OCalc")
 		special(SPC_NOMOD)
 		interest(4)
-		extra("char	orpc[INFIX_TO_POSTFIX_SIZE(80)]")
+		extra("char	orpc[INFIX_TO_POSTFIX_SIZE(160)]")
 	}
 
 }

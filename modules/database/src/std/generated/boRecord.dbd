@@ -54,7 +54,7 @@ recordtype(bo) {
 		pp(TRUE)
 		interest(1)
 		size(26)
-		prop(YES)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(ONAM,DBF_STRING) {
 		prompt("One Name")
@@ -62,7 +62,7 @@ recordtype(bo) {
 		pp(TRUE)
 		interest(1)
 		size(26)
-		prop(YES)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(RVAL,DBF_ULONG) {
 		prompt("Raw Value")

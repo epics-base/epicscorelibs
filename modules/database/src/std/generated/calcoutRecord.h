@@ -113,7 +113,7 @@ typedef struct calcoutRecord {
     struct rpvtStruct *rpvt;        /**< @brief Record Private */
     epicsFloat64        val;        /**< @brief Result */
     epicsFloat64        pval;       /**< @brief Previous Value */
-    char                calc[80];   /**< @brief Calculation */
+    char                calc[160];  /**< @brief Calculation */
     epicsInt32          clcv;       /**< @brief CALC Valid */
     DBLINK              inpa;       /**< @brief Input A */
     DBLINK              inpb;       /**< @brief Input B */
@@ -127,6 +127,15 @@ typedef struct calcoutRecord {
     DBLINK              inpj;       /**< @brief Input J */
     DBLINK              inpk;       /**< @brief Input K */
     DBLINK              inpl;       /**< @brief Input L */
+    DBLINK              inpm;       /**< @brief Input M */
+    DBLINK              inpn;       /**< @brief Input N */
+    DBLINK              inpo;       /**< @brief Input O */
+    DBLINK              inpp;       /**< @brief Input P */
+    DBLINK              inpq;       /**< @brief Input Q */
+    DBLINK              inpr;       /**< @brief Input R */
+    DBLINK              inps;       /**< @brief Input S */
+    DBLINK              inpt;       /**< @brief Input T */
+    DBLINK              inpu;       /**< @brief Input U */
     DBLINK              out;        /**< @brief Output Specification */
     epicsEnum16         inav;       /**< @brief INPA PV Status */
     epicsEnum16         inbv;       /**< @brief INPB PV Status */
@@ -140,12 +149,21 @@ typedef struct calcoutRecord {
     epicsEnum16         injv;       /**< @brief INPJ PV Status */
     epicsEnum16         inkv;       /**< @brief INPK PV Status */
     epicsEnum16         inlv;       /**< @brief INPL PV Status */
+    epicsEnum16         inmv;       /**< @brief INPM PV Status */
+    epicsEnum16         innv;       /**< @brief INPN PV Status */
+    epicsEnum16         inov;       /**< @brief INPO PV Status */
+    epicsEnum16         inpv;       /**< @brief INPP PV Status */
+    epicsEnum16         inqv;       /**< @brief INPQ PV Status */
+    epicsEnum16         inrv;       /**< @brief INPR PV Status */
+    epicsEnum16         insv;       /**< @brief INPS PV Status */
+    epicsEnum16         intv;       /**< @brief INPT PV Status */
+    epicsEnum16         inuv;       /**< @brief INPU PV Status */
     epicsEnum16         outv;       /**< @brief OUT PV Status */
     epicsEnum16         oopt;       /**< @brief Output Execute Opt */
     epicsFloat64        odly;       /**< @brief Output Execute Delay */
     epicsUInt16         dlya;       /**< @brief Output Delay Active */
     epicsEnum16         dopt;       /**< @brief Output Data Opt */
-    char                ocal[80];   /**< @brief Output Calculation */
+    char                ocal[160];  /**< @brief Output Calculation */
     epicsInt32          oclv;       /**< @brief OCAL Valid */
     char                oevt[40];   /**< @brief Event To Issue */
     EVENTPVT epvt;                  /**< @brief Event private */
@@ -178,6 +196,15 @@ typedef struct calcoutRecord {
     epicsFloat64        j;          /**< @brief Value of Input J */
     epicsFloat64        k;          /**< @brief Value of Input K */
     epicsFloat64        l;          /**< @brief Value of Input L */
+    epicsFloat64        m;          /**< @brief Value of Input M */
+    epicsFloat64        n;          /**< @brief Value of Input N */
+    epicsFloat64        o;          /**< @brief Value of Input O */
+    epicsFloat64        p;          /**< @brief Value of Input P */
+    epicsFloat64        q;          /**< @brief Value of Input Q */
+    epicsFloat64        r;          /**< @brief Value of Input R */
+    epicsFloat64        s;          /**< @brief Value of Input S */
+    epicsFloat64        t;          /**< @brief Value of Input T */
+    epicsFloat64        u;          /**< @brief Value of Input U */
     epicsFloat64        oval;       /**< @brief Output Value */
     epicsFloat64        la;         /**< @brief Prev Value of A */
     epicsFloat64        lb;         /**< @brief Prev Value of B */
@@ -191,12 +218,21 @@ typedef struct calcoutRecord {
     epicsFloat64        lj;         /**< @brief Prev Value of J */
     epicsFloat64        lk;         /**< @brief Prev Value of K */
     epicsFloat64        ll;         /**< @brief Prev Value of L */
+    epicsFloat64        lm;         /**< @brief Prev Value of M */
+    epicsFloat64        ln;         /**< @brief Prev Value of N */
+    epicsFloat64        lo;         /**< @brief Prev Value of O */
+    epicsFloat64        lp;         /**< @brief Prev Value of P */
+    epicsFloat64        lq;         /**< @brief Prev Value of Q */
+    epicsFloat64        lr;         /**< @brief Prev Value of R */
+    epicsFloat64        ls;         /**< @brief Prev Value of S */
+    epicsFloat64        lt;         /**< @brief Prev Value of T */
+    epicsFloat64        lu;         /**< @brief Prev Value of U */
     epicsFloat64        povl;       /**< @brief Prev Value of OVAL */
     epicsFloat64        lalm;       /**< @brief Last Value Alarmed */
     epicsFloat64        alst;       /**< @brief Last Value Archived */
     epicsFloat64        mlst;       /**< @brief Last Val Monitored */
-    char	rpcl[INFIX_TO_POSTFIX_SIZE(80)]; /**< @brief Reverse Polish Calc */
-    char	orpc[INFIX_TO_POSTFIX_SIZE(80)]; /**< @brief Reverse Polish OCalc */
+    char	rpcl[INFIX_TO_POSTFIX_SIZE(160)]; /**< @brief Reverse Polish Calc */
+    char	orpc[INFIX_TO_POSTFIX_SIZE(160)]; /**< @brief Reverse Polish OCalc */
 } calcoutRecord;
 
 typedef enum {
@@ -265,76 +301,112 @@ typedef enum {
 	calcoutRecordINPJ = 62,
 	calcoutRecordINPK = 63,
 	calcoutRecordINPL = 64,
-	calcoutRecordOUT = 65,
-	calcoutRecordINAV = 66,
-	calcoutRecordINBV = 67,
-	calcoutRecordINCV = 68,
-	calcoutRecordINDV = 69,
-	calcoutRecordINEV = 70,
-	calcoutRecordINFV = 71,
-	calcoutRecordINGV = 72,
-	calcoutRecordINHV = 73,
-	calcoutRecordINIV = 74,
-	calcoutRecordINJV = 75,
-	calcoutRecordINKV = 76,
-	calcoutRecordINLV = 77,
-	calcoutRecordOUTV = 78,
-	calcoutRecordOOPT = 79,
-	calcoutRecordODLY = 80,
-	calcoutRecordDLYA = 81,
-	calcoutRecordDOPT = 82,
-	calcoutRecordOCAL = 83,
-	calcoutRecordOCLV = 84,
-	calcoutRecordOEVT = 85,
-	calcoutRecordEPVT = 86,
-	calcoutRecordIVOA = 87,
-	calcoutRecordIVOV = 88,
-	calcoutRecordEGU = 89,
-	calcoutRecordPREC = 90,
-	calcoutRecordHOPR = 91,
-	calcoutRecordLOPR = 92,
-	calcoutRecordHIHI = 93,
-	calcoutRecordLOLO = 94,
-	calcoutRecordHIGH = 95,
-	calcoutRecordLOW = 96,
-	calcoutRecordHHSV = 97,
-	calcoutRecordLLSV = 98,
-	calcoutRecordHSV = 99,
-	calcoutRecordLSV = 100,
-	calcoutRecordHYST = 101,
-	calcoutRecordADEL = 102,
-	calcoutRecordMDEL = 103,
-	calcoutRecordA = 104,
-	calcoutRecordB = 105,
-	calcoutRecordC = 106,
-	calcoutRecordD = 107,
-	calcoutRecordE = 108,
-	calcoutRecordF = 109,
-	calcoutRecordG = 110,
-	calcoutRecordH = 111,
-	calcoutRecordI = 112,
-	calcoutRecordJ = 113,
-	calcoutRecordK = 114,
-	calcoutRecordL = 115,
-	calcoutRecordOVAL = 116,
-	calcoutRecordLA = 117,
-	calcoutRecordLB = 118,
-	calcoutRecordLC = 119,
-	calcoutRecordLD = 120,
-	calcoutRecordLE = 121,
-	calcoutRecordLF = 122,
-	calcoutRecordLG = 123,
-	calcoutRecordLH = 124,
-	calcoutRecordLI = 125,
-	calcoutRecordLJ = 126,
-	calcoutRecordLK = 127,
-	calcoutRecordLL = 128,
-	calcoutRecordPOVL = 129,
-	calcoutRecordLALM = 130,
-	calcoutRecordALST = 131,
-	calcoutRecordMLST = 132,
-	calcoutRecordRPCL = 133,
-	calcoutRecordORPC = 134
+	calcoutRecordINPM = 65,
+	calcoutRecordINPN = 66,
+	calcoutRecordINPO = 67,
+	calcoutRecordINPP = 68,
+	calcoutRecordINPQ = 69,
+	calcoutRecordINPR = 70,
+	calcoutRecordINPS = 71,
+	calcoutRecordINPT = 72,
+	calcoutRecordINPU = 73,
+	calcoutRecordOUT = 74,
+	calcoutRecordINAV = 75,
+	calcoutRecordINBV = 76,
+	calcoutRecordINCV = 77,
+	calcoutRecordINDV = 78,
+	calcoutRecordINEV = 79,
+	calcoutRecordINFV = 80,
+	calcoutRecordINGV = 81,
+	calcoutRecordINHV = 82,
+	calcoutRecordINIV = 83,
+	calcoutRecordINJV = 84,
+	calcoutRecordINKV = 85,
+	calcoutRecordINLV = 86,
+	calcoutRecordINMV = 87,
+	calcoutRecordINNV = 88,
+	calcoutRecordINOV = 89,
+	calcoutRecordINPV = 90,
+	calcoutRecordINQV = 91,
+	calcoutRecordINRV = 92,
+	calcoutRecordINSV = 93,
+	calcoutRecordINTV = 94,
+	calcoutRecordINUV = 95,
+	calcoutRecordOUTV = 96,
+	calcoutRecordOOPT = 97,
+	calcoutRecordODLY = 98,
+	calcoutRecordDLYA = 99,
+	calcoutRecordDOPT = 100,
+	calcoutRecordOCAL = 101,
+	calcoutRecordOCLV = 102,
+	calcoutRecordOEVT = 103,
+	calcoutRecordEPVT = 104,
+	calcoutRecordIVOA = 105,
+	calcoutRecordIVOV = 106,
+	calcoutRecordEGU = 107,
+	calcoutRecordPREC = 108,
+	calcoutRecordHOPR = 109,
+	calcoutRecordLOPR = 110,
+	calcoutRecordHIHI = 111,
+	calcoutRecordLOLO = 112,
+	calcoutRecordHIGH = 113,
+	calcoutRecordLOW = 114,
+	calcoutRecordHHSV = 115,
+	calcoutRecordLLSV = 116,
+	calcoutRecordHSV = 117,
+	calcoutRecordLSV = 118,
+	calcoutRecordHYST = 119,
+	calcoutRecordADEL = 120,
+	calcoutRecordMDEL = 121,
+	calcoutRecordA = 122,
+	calcoutRecordB = 123,
+	calcoutRecordC = 124,
+	calcoutRecordD = 125,
+	calcoutRecordE = 126,
+	calcoutRecordF = 127,
+	calcoutRecordG = 128,
+	calcoutRecordH = 129,
+	calcoutRecordI = 130,
+	calcoutRecordJ = 131,
+	calcoutRecordK = 132,
+	calcoutRecordL = 133,
+	calcoutRecordM = 134,
+	calcoutRecordN = 135,
+	calcoutRecordO = 136,
+	calcoutRecordP = 137,
+	calcoutRecordQ = 138,
+	calcoutRecordR = 139,
+	calcoutRecordS = 140,
+	calcoutRecordT = 141,
+	calcoutRecordU = 142,
+	calcoutRecordOVAL = 143,
+	calcoutRecordLA = 144,
+	calcoutRecordLB = 145,
+	calcoutRecordLC = 146,
+	calcoutRecordLD = 147,
+	calcoutRecordLE = 148,
+	calcoutRecordLF = 149,
+	calcoutRecordLG = 150,
+	calcoutRecordLH = 151,
+	calcoutRecordLI = 152,
+	calcoutRecordLJ = 153,
+	calcoutRecordLK = 154,
+	calcoutRecordLL = 155,
+	calcoutRecordLM = 156,
+	calcoutRecordLN = 157,
+	calcoutRecordLO = 158,
+	calcoutRecordLP = 159,
+	calcoutRecordLQ = 160,
+	calcoutRecordLR = 161,
+	calcoutRecordLS = 162,
+	calcoutRecordLT = 163,
+	calcoutRecordLU = 164,
+	calcoutRecordPOVL = 165,
+	calcoutRecordLALM = 166,
+	calcoutRecordALST = 167,
+	calcoutRecordMLST = 168,
+	calcoutRecordRPCL = 169,
+	calcoutRecordORPC = 170
 } calcoutFieldIndex;
 
 #ifdef GEN_SIZE_OFFSET
@@ -348,10 +420,10 @@ static int calcoutRecordSizeOffset(dbRecordType *prt)
 {
     calcoutRecord *prec = 0;
 
-    if (prt->no_fields != 135) {
+    if (prt->no_fields != 171) {
         cantProceed("IOC build or installation error:\n"
             "    The calcoutRecord defined in the DBD file has %d fields,\n"
-            "    but the record support code was built with 135.\n",
+            "    but the record support code was built with 171.\n",
             prt->no_fields);
     }
     prt->papFldDes[calcoutRecordNAME]->size = sizeof(prec->name);
@@ -484,6 +556,24 @@ static int calcoutRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[calcoutRecordINPK]->offset = (unsigned short)offsetof(calcoutRecord, inpk);
     prt->papFldDes[calcoutRecordINPL]->size = sizeof(prec->inpl);
     prt->papFldDes[calcoutRecordINPL]->offset = (unsigned short)offsetof(calcoutRecord, inpl);
+    prt->papFldDes[calcoutRecordINPM]->size = sizeof(prec->inpm);
+    prt->papFldDes[calcoutRecordINPM]->offset = (unsigned short)offsetof(calcoutRecord, inpm);
+    prt->papFldDes[calcoutRecordINPN]->size = sizeof(prec->inpn);
+    prt->papFldDes[calcoutRecordINPN]->offset = (unsigned short)offsetof(calcoutRecord, inpn);
+    prt->papFldDes[calcoutRecordINPO]->size = sizeof(prec->inpo);
+    prt->papFldDes[calcoutRecordINPO]->offset = (unsigned short)offsetof(calcoutRecord, inpo);
+    prt->papFldDes[calcoutRecordINPP]->size = sizeof(prec->inpp);
+    prt->papFldDes[calcoutRecordINPP]->offset = (unsigned short)offsetof(calcoutRecord, inpp);
+    prt->papFldDes[calcoutRecordINPQ]->size = sizeof(prec->inpq);
+    prt->papFldDes[calcoutRecordINPQ]->offset = (unsigned short)offsetof(calcoutRecord, inpq);
+    prt->papFldDes[calcoutRecordINPR]->size = sizeof(prec->inpr);
+    prt->papFldDes[calcoutRecordINPR]->offset = (unsigned short)offsetof(calcoutRecord, inpr);
+    prt->papFldDes[calcoutRecordINPS]->size = sizeof(prec->inps);
+    prt->papFldDes[calcoutRecordINPS]->offset = (unsigned short)offsetof(calcoutRecord, inps);
+    prt->papFldDes[calcoutRecordINPT]->size = sizeof(prec->inpt);
+    prt->papFldDes[calcoutRecordINPT]->offset = (unsigned short)offsetof(calcoutRecord, inpt);
+    prt->papFldDes[calcoutRecordINPU]->size = sizeof(prec->inpu);
+    prt->papFldDes[calcoutRecordINPU]->offset = (unsigned short)offsetof(calcoutRecord, inpu);
     prt->papFldDes[calcoutRecordOUT]->size = sizeof(prec->out);
     prt->papFldDes[calcoutRecordOUT]->offset = (unsigned short)offsetof(calcoutRecord, out);
     prt->papFldDes[calcoutRecordINAV]->size = sizeof(prec->inav);
@@ -510,6 +600,24 @@ static int calcoutRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[calcoutRecordINKV]->offset = (unsigned short)offsetof(calcoutRecord, inkv);
     prt->papFldDes[calcoutRecordINLV]->size = sizeof(prec->inlv);
     prt->papFldDes[calcoutRecordINLV]->offset = (unsigned short)offsetof(calcoutRecord, inlv);
+    prt->papFldDes[calcoutRecordINMV]->size = sizeof(prec->inmv);
+    prt->papFldDes[calcoutRecordINMV]->offset = (unsigned short)offsetof(calcoutRecord, inmv);
+    prt->papFldDes[calcoutRecordINNV]->size = sizeof(prec->innv);
+    prt->papFldDes[calcoutRecordINNV]->offset = (unsigned short)offsetof(calcoutRecord, innv);
+    prt->papFldDes[calcoutRecordINOV]->size = sizeof(prec->inov);
+    prt->papFldDes[calcoutRecordINOV]->offset = (unsigned short)offsetof(calcoutRecord, inov);
+    prt->papFldDes[calcoutRecordINPV]->size = sizeof(prec->inpv);
+    prt->papFldDes[calcoutRecordINPV]->offset = (unsigned short)offsetof(calcoutRecord, inpv);
+    prt->papFldDes[calcoutRecordINQV]->size = sizeof(prec->inqv);
+    prt->papFldDes[calcoutRecordINQV]->offset = (unsigned short)offsetof(calcoutRecord, inqv);
+    prt->papFldDes[calcoutRecordINRV]->size = sizeof(prec->inrv);
+    prt->papFldDes[calcoutRecordINRV]->offset = (unsigned short)offsetof(calcoutRecord, inrv);
+    prt->papFldDes[calcoutRecordINSV]->size = sizeof(prec->insv);
+    prt->papFldDes[calcoutRecordINSV]->offset = (unsigned short)offsetof(calcoutRecord, insv);
+    prt->papFldDes[calcoutRecordINTV]->size = sizeof(prec->intv);
+    prt->papFldDes[calcoutRecordINTV]->offset = (unsigned short)offsetof(calcoutRecord, intv);
+    prt->papFldDes[calcoutRecordINUV]->size = sizeof(prec->inuv);
+    prt->papFldDes[calcoutRecordINUV]->offset = (unsigned short)offsetof(calcoutRecord, inuv);
     prt->papFldDes[calcoutRecordOUTV]->size = sizeof(prec->outv);
     prt->papFldDes[calcoutRecordOUTV]->offset = (unsigned short)offsetof(calcoutRecord, outv);
     prt->papFldDes[calcoutRecordOOPT]->size = sizeof(prec->oopt);
@@ -586,6 +694,24 @@ static int calcoutRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[calcoutRecordK]->offset = (unsigned short)offsetof(calcoutRecord, k);
     prt->papFldDes[calcoutRecordL]->size = sizeof(prec->l);
     prt->papFldDes[calcoutRecordL]->offset = (unsigned short)offsetof(calcoutRecord, l);
+    prt->papFldDes[calcoutRecordM]->size = sizeof(prec->m);
+    prt->papFldDes[calcoutRecordM]->offset = (unsigned short)offsetof(calcoutRecord, m);
+    prt->papFldDes[calcoutRecordN]->size = sizeof(prec->n);
+    prt->papFldDes[calcoutRecordN]->offset = (unsigned short)offsetof(calcoutRecord, n);
+    prt->papFldDes[calcoutRecordO]->size = sizeof(prec->o);
+    prt->papFldDes[calcoutRecordO]->offset = (unsigned short)offsetof(calcoutRecord, o);
+    prt->papFldDes[calcoutRecordP]->size = sizeof(prec->p);
+    prt->papFldDes[calcoutRecordP]->offset = (unsigned short)offsetof(calcoutRecord, p);
+    prt->papFldDes[calcoutRecordQ]->size = sizeof(prec->q);
+    prt->papFldDes[calcoutRecordQ]->offset = (unsigned short)offsetof(calcoutRecord, q);
+    prt->papFldDes[calcoutRecordR]->size = sizeof(prec->r);
+    prt->papFldDes[calcoutRecordR]->offset = (unsigned short)offsetof(calcoutRecord, r);
+    prt->papFldDes[calcoutRecordS]->size = sizeof(prec->s);
+    prt->papFldDes[calcoutRecordS]->offset = (unsigned short)offsetof(calcoutRecord, s);
+    prt->papFldDes[calcoutRecordT]->size = sizeof(prec->t);
+    prt->papFldDes[calcoutRecordT]->offset = (unsigned short)offsetof(calcoutRecord, t);
+    prt->papFldDes[calcoutRecordU]->size = sizeof(prec->u);
+    prt->papFldDes[calcoutRecordU]->offset = (unsigned short)offsetof(calcoutRecord, u);
     prt->papFldDes[calcoutRecordOVAL]->size = sizeof(prec->oval);
     prt->papFldDes[calcoutRecordOVAL]->offset = (unsigned short)offsetof(calcoutRecord, oval);
     prt->papFldDes[calcoutRecordLA]->size = sizeof(prec->la);
@@ -612,6 +738,24 @@ static int calcoutRecordSizeOffset(dbRecordType *prt)
     prt->papFldDes[calcoutRecordLK]->offset = (unsigned short)offsetof(calcoutRecord, lk);
     prt->papFldDes[calcoutRecordLL]->size = sizeof(prec->ll);
     prt->papFldDes[calcoutRecordLL]->offset = (unsigned short)offsetof(calcoutRecord, ll);
+    prt->papFldDes[calcoutRecordLM]->size = sizeof(prec->lm);
+    prt->papFldDes[calcoutRecordLM]->offset = (unsigned short)offsetof(calcoutRecord, lm);
+    prt->papFldDes[calcoutRecordLN]->size = sizeof(prec->ln);
+    prt->papFldDes[calcoutRecordLN]->offset = (unsigned short)offsetof(calcoutRecord, ln);
+    prt->papFldDes[calcoutRecordLO]->size = sizeof(prec->lo);
+    prt->papFldDes[calcoutRecordLO]->offset = (unsigned short)offsetof(calcoutRecord, lo);
+    prt->papFldDes[calcoutRecordLP]->size = sizeof(prec->lp);
+    prt->papFldDes[calcoutRecordLP]->offset = (unsigned short)offsetof(calcoutRecord, lp);
+    prt->papFldDes[calcoutRecordLQ]->size = sizeof(prec->lq);
+    prt->papFldDes[calcoutRecordLQ]->offset = (unsigned short)offsetof(calcoutRecord, lq);
+    prt->papFldDes[calcoutRecordLR]->size = sizeof(prec->lr);
+    prt->papFldDes[calcoutRecordLR]->offset = (unsigned short)offsetof(calcoutRecord, lr);
+    prt->papFldDes[calcoutRecordLS]->size = sizeof(prec->ls);
+    prt->papFldDes[calcoutRecordLS]->offset = (unsigned short)offsetof(calcoutRecord, ls);
+    prt->papFldDes[calcoutRecordLT]->size = sizeof(prec->lt);
+    prt->papFldDes[calcoutRecordLT]->offset = (unsigned short)offsetof(calcoutRecord, lt);
+    prt->papFldDes[calcoutRecordLU]->size = sizeof(prec->lu);
+    prt->papFldDes[calcoutRecordLU]->offset = (unsigned short)offsetof(calcoutRecord, lu);
     prt->papFldDes[calcoutRecordPOVL]->size = sizeof(prec->povl);
     prt->papFldDes[calcoutRecordPOVL]->offset = (unsigned short)offsetof(calcoutRecord, povl);
     prt->papFldDes[calcoutRecordLALM]->size = sizeof(prec->lalm);
