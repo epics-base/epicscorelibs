@@ -1,9 +1,6 @@
 epicscorelibs
 =============
 
-  <img src="https://travis-ci.org/mdavidsaver/epicscorelibs.svg?branch=master">
-  <img src="https://ci.appveyor.com/api/projects/status/github/mdavidsaver/epicscorelibs?svg=true">
-
 Not an end user library.
 
 This repository contains the source used to build
@@ -19,7 +16,7 @@ it is will be necessary to skip the pre-built
 wheel binaries.
 
 ```sh
-pip install --no-binary :all: epicscorelibs
+pip install --no-binary epicscorelibs epicscorelibs
 ```
 
 Please report issues first to https://github.com/mdavidsaver/epicscorelibs/issues
@@ -27,9 +24,7 @@ before code.launchpad.net or EPICS mailing lists.
 
 CI builds
 
-https://travis-ci.org/mdavidsaver/epicscorelibs/builds
-
-https://ci.appveyor.com/project/mdavidsaver/epicscorelibs
+https://github.com/mdavidsaver/epicscorelibs/actions
 
 Python API
 ----------

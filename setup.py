@@ -550,6 +550,7 @@ setup(
     long_description="""The EPICS (Experimental Physics and Industrial Control System) core libraries
 for use by python modules.  Either dynamically with ctypes or statically by compiled extension.
 """,
+    long_description_content_type='text/plain',
     url='https://github.com/mdavidsaver/epicscorelibs',
     author='Michael Davidsaver',
     author_email='mdavidsaver@gmail.com',
@@ -558,7 +559,6 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'License :: Freely Distributable',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
         'Topic :: Software Development :: Libraries',
