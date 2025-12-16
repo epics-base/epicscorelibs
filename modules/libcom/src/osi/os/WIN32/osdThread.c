@@ -41,7 +41,7 @@
  * prototypes only appear in the windows SDK 8 and above.
  * VS2010 supplies sdk 7, but can be upgraded to later SDK 
 
- * To accomodate this we suuply prototypes on, for XP
+ * To accommodate this we supply prototypes on, for XP
  * fall back to Tls*() which will build and run
  * correctly for epicsThreads, but means that TLS allocations from
  * epicsThreadImplicitCreate() will continue to leak (for non-EPICS threads).
@@ -49,13 +49,13 @@
  * Also, WINE circa 5.0.3 provides the FLS storage functions, but doesn't
  * actually run the dtor function.
  *
- * we check for existance of _WIN32_WINNT_WIN8 which will only be defined
+ * we check for existence of _WIN32_WINNT_WIN8 which will only be defined
  * in SDK 8 and above. If Visa is detected and SDK < 8 we will supply
  * the missing prototypes
  */
 
 #if _WIN32_WINNT >= 0x0600 /* VISTA */
-#   ifdef _WIN32_WINNT_WIN8 /* Existance means using SDK 8 or higher */
+#   ifdef _WIN32_WINNT_WIN8 /* Existence means using SDK 8 or higher */
 #       include <fibersapi.h>
 #   else
 #       include <winnt.h> /* for PFLS_CALLBACK_FUNCTION */
@@ -102,6 +102,8 @@ typedef struct epicsThreadOSD {
     unsigned epicsPriority;
     char isSuspended;
     int joinable;
+    int isRunning;
+    int isOkToBlock;
     HANDLE timer; /* waitable timer */
 } win32ThreadParam;
 
@@ -499,8 +501,6 @@ static unsigned WINAPI epicsWin32ThreadEntry ( LPVOID lpParameter )
     BOOL success;
 
     if ( pGbl )  {
-        setThreadName ( pParm->id, pParm->pName );
-
         success = FlsSetValue ( pGbl->flsIndexThreadLibraryEPICS, pParm );
         if ( success ) {
             osdThreadHooksRun ( ( epicsThreadId ) pParm );
@@ -518,6 +518,8 @@ static unsigned WINAPI epicsWin32ThreadEntry ( LPVOID lpParameter )
     }
 
     epicsExitCallAtThreadExits ();
+
+    epicsAtomicSetIntT(&pParm->isRunning, 0);
 
     /* On Windows we could omit this and rely on the callback given to FlsAlloc() to free.
      * However < vista doesn't implement FLS at all, and WINE (circa 5.0.3) doesn't
@@ -540,6 +542,7 @@ static win32ThreadParam * epicsThreadParmCreate ( const char *pName )
         pParmWIN32->pName = (char *) ( pParmWIN32 + 1 );
         strcpy ( pParmWIN32->pName, pName );
         pParmWIN32->isSuspended = 0;
+        pParmWIN32->isRunning = 1;
         epicsAtomicIncrIntT(&pParmWIN32->refcnt);
 #ifdef CREATE_WAITABLE_TIMER_HIGH_RESOLUTION
         pParmWIN32->timer = CreateWaitableTimerEx(NULL, NULL, CREATE_WAITABLE_TIMER_HIGH_RESOLUTION, TIMER_ALL_ACCESS);
@@ -584,6 +587,7 @@ static win32ThreadParam * epicsThreadImplicitCreate ( void )
 
         pParm->handle = handle;
         pParm->id = id;
+        pParm->isOkToBlock = 1;
         win32ThreadPriority = GetThreadPriority ( pParm->handle );
         assert ( win32ThreadPriority != THREAD_PRIORITY_ERROR_RETURN );
         pParm->epicsPriority = epicsThreadGetOsiPriorityValue ( win32ThreadPriority );
@@ -655,6 +659,7 @@ epicsThreadId epicsThreadCreateOpt (
         pParmWIN32->id = ( DWORD ) threadId ;
     }
 
+    setThreadName ( pParmWIN32->id, pParmWIN32->pName );
     osdPriority = epicsThreadGetOsdPriorityValue (opts->priority);
     bstat = SetThreadPriority ( pParmWIN32->handle, osdPriority );
     if (!bstat) {
@@ -1044,6 +1049,8 @@ static void epicsThreadShowInfo ( epicsThreadId id, unsigned level )
             fprintf (epicsGetStdout(), " %-8p %-8p ",
                 (void *) pParm->handle, (void *) pParm->parm );
         }
+        if(!epicsAtomicGetIntT(&pParm->isRunning))
+            fprintf (epicsGetStdout(), " ZOMBIE");
     }
     else {
         fprintf (epicsGetStdout(),
@@ -1219,3 +1226,17 @@ void testPriorityMapping ()
     return 0;
 }
 #endif
+
+int epicsStdCall epicsThreadIsOkToBlock(void)
+{
+    struct epicsThreadOSD *pthreadInfo = epicsThreadGetIdSelf();
+
+    return(pthreadInfo->isOkToBlock);
+}
+
+void epicsStdCall epicsThreadSetOkToBlock(int isOkToBlock)
+{
+    struct epicsThreadOSD *pthreadInfo = epicsThreadGetIdSelf();
+
+    pthreadInfo->isOkToBlock = !!isOkToBlock;
+}

@@ -869,7 +869,7 @@ nosplit:
     }
 }
 
-static char *msstring[4]={"NMS","MS","MSI","MSS"};
+static const char *msstring[4]={"NMS","MS","MSI","MSS"};
 
 long dblsr(char *recordname,int level)
 {
@@ -918,7 +918,7 @@ long dblsr(char *recordname,int level)
                 pdbFldDes = pdbRecordType->papFldDes[pdbRecordType->link_ind[link]];
                 plink = (DBLINK *)((char *)precord + pdbFldDes->offset);
                 if(plink->type != DB_LINK) continue;
-                pdbAddr = (DBADDR *)(plink->value.pv_link.pvt);
+                pdbAddr = &((dbChannel *)(plink->value.pv_link.pvt))->addr;
                 printf("\t%s",pdbFldDes->name);
                 if(pdbFldDes->field_type==DBF_INLINK) {
                     printf("\t INLINK");

@@ -63,8 +63,8 @@ LIBCOM_API SOCKET epicsStdCall epicsSocketCreate (
  * peer address.
  * \return A new socket used for communicating with the peer just accepted, or -1 on error.
  */
-LIBCOM_API int epicsStdCall epicsSocketAccept ( 
-    int sock, struct sockaddr * pAddr, osiSocklen_t * addrlen );
+LIBCOM_API SOCKET epicsStdCall epicsSocketAccept (
+    SOCKET sock, struct sockaddr * pAddr, osiSocklen_t * addrlen );
 /*!
  * \brief Close and free resources held by a SOCKET object.
  *
@@ -114,7 +114,7 @@ LIBCOM_API void epicsStdCall
  *
  * This enum specifies how to interrupt a blocking socket system call.
  * Fortunately, on most systems the combination of a shutdown of both directions
- * and/or a signal is sufficent to interrupt a blocking send, receive, or
+ * and/or a signal is sufficient to interrupt a blocking send, receive, or
  * connect call. For odd ball systems this is stubbed out in the osi area.
  *
  */
@@ -235,7 +235,7 @@ LIBCOM_API unsigned epicsStdCall ipAddrToDottedIP (
  * \param[out] pBuf Pointer to a character buffer where the output string will be placed
  * \param bufSize Size of the array pointed to by pBuf
  * \return the number of character elements stored in buffer not including the
- * null termination. This will be zero if a matching host name cant be found.
+ * null termination. This will be zero if a matching host name can't be found.
  */
 LIBCOM_API unsigned epicsStdCall ipAddrToHostName (
     const struct in_addr * pAddr, char * pBuf, unsigned bufSize );

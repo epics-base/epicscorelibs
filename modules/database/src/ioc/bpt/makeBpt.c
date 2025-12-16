@@ -21,6 +21,7 @@
 #include <ctype.h>
 
 #include "dbDefs.h"
+#include "errlog.h"
 #include "ellLib.h"
 #include "cvtTable.h"
 
@@ -125,12 +126,12 @@ int main(int argc, char **argv)
     }
     inFile = fopen(argv[1],"r");
     if(!inFile) {
-        fprintf(stderr,"Error opening %s\n",argv[1]);
+        fprintf(stderr,ERL_ERROR " opening %s\n",argv[1]);
         exit(-1);
     }
     outFile = fopen(outFilename,"w");
     if(!outFile) {
-        fprintf(stderr,"Error opening %s\n",outFilename);
+        fprintf(stderr,ERL_ERROR " opening %s\n",outFilename);
         exit(-1);
     }
     while(fgets(inbuf,MAX_LINE_SIZE,inFile)) {
@@ -223,6 +224,8 @@ got_header:
     fprintf(outFile,"}\n");
     fclose(inFile);
     fclose(outFile);
+    free(outFilename);
+    free(pname);
     return(0);
 }
 
@@ -357,7 +360,7 @@ static int create_break( struct brkCreateInfo *pbci, brkInt *pabrkInt,
         if (inc < 1)
             inc = 1;
         valid = TRUE;
-        /* keep trying intervals until cant do better */
+        /* keep trying intervals until can't do better */
         expanding = TRUE;       /* originally we are trying larger and larger
                                  * intervals */
         while (valid) {

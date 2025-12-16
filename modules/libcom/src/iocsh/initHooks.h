@@ -83,7 +83,7 @@ typedef enum {
     initHookAfterInitDatabase,      /**< Records and locksets init  (also autosave pass 1) */
     initHookAfterFinishDevSup,      /**< Device support init pass 1 */
     initHookAfterScanInit,          /**< Scan, AS, ProcessNotify init */
-    initHookAfterInitialProcess,    /**< Records with PINI = YES processsed */
+    initHookAfterInitialProcess,    /**< Records with PINI = YES processed */
     initHookAfterCaServerInit,      /**< RSRV init */
     initHookAfterIocBuilt,          /**< End of iocBuild() */
 
@@ -111,7 +111,7 @@ typedef enum {
      */
     initHookAfterCloseLinks,
     /** \brief Scan tasks stopped.
-     *  \since UNRELEASED Triggered during normal IOC shutdown
+     *  \since 7.0.8 Triggered during normal IOC shutdown
      *  \since 7.0.3.1 Added, triggered only by unittest code.
      */
     initHookAfterStopScan,
@@ -120,7 +120,7 @@ typedef enum {
      */
     initHookAfterStopCallback,
     /** \brief CA links stopped.
-     *  \since UNRELEASED Triggered during normal IOC shutdown
+     *  \since 7.0.8 Triggered during normal IOC shutdown
      *  \since 7.0.3.1 Added, triggered only by unittest code.
      */
     initHookAfterStopLinks,
@@ -136,12 +136,12 @@ typedef enum {
 
     /** \brief Called during testdbPrepare()
      * Use this hook to repeat actions each time an empty test database is initialized.
-     * \since UNRELEASED Added, triggered only by unittest code.
+     * \since 7.0.8 Added, triggered only by unittest code.
      */
     initHookAfterPrepareDatabase,
     /** \brief Called during testdbCleanup()
      * Use this hook to perform cleanup each time before a test database is free()'d.
-     * \since UNRELEASED Added, triggered only by unittest code.
+     * \since 7.0.8 Added, triggered only by unittest code.
      */
     initHookBeforeCleanupDatabase,
 
@@ -154,7 +154,7 @@ typedef enum {
 
 /** \brief Type for application callback functions
  *
- * Application callback functions must match this typdef.
+ * Application callback functions must match this typedef.
  * \param state initHook enumeration value
  */
 typedef void (*initHookFunction)(initHookState state);
@@ -163,7 +163,11 @@ typedef void (*initHookFunction)(initHookState state);
  *
  * Registers \p func for initHook notifications
  * \param func Pointer to application's notification function.
- * \return 0 if Ok, -1 on error (memory allocation failure).
+ * \return Always zero.  (before 7.0.10 could return -1 on allocation failure)
+ *
+ * \since 7.0.10 initHookRegister is idempotent.
+ *        Previously, repeated registrations would result
+ *        in duplicate calls to the hook function.
  */
 LIBCOM_API int initHookRegister(initHookFunction func);
 

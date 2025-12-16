@@ -20,6 +20,9 @@ use POSIX qw(strftime);
 
 use strict;
 
+# Make sure that chomp removes all trailing newlines
+$/='';
+
 # RFC 8601 date+time w/ zone (eg "2014-08-29T09:42-0700")
 my $tfmt = '%Y-%m-%dT%H:%M';
 $tfmt .= '%z' unless $^O eq 'MSWin32'; # %z returns zone name on Windows
@@ -51,8 +54,8 @@ if (-d '_darcs') { # Darcs
     print "== Found <top>/_darcs directory\n" if $opt_v;
     # v1-4-dirty
     # is tag 'v1' plus 4 patches
-    # with uncommited modifications
-    my @tags = `darcs show tags`;
+    # with uncommitted modifications
+    my @tags = split('\n', `darcs show tags`);
     my $count = `darcs changes --count --from-tag .` - 1;
     my $result = $tags[0] . '-' . $count;
     print "== darcs show tags, changes:\n$result\n==\n" if $opt_v;
@@ -70,7 +73,7 @@ elsif (-d '.hg') { # Mercurial
     print "== Found <top>/.hg directory\n" if $opt_v;
     # v1-4-abcdef-dirty
     # is 4 commits after tag 'v1' with short hash abcdef
-    # with uncommited modifications
+    # with uncommitted modifications
     my $result = `hg tip --template '{latesttag}-{latesttagdistance}-{node|short}'`;
     print "== hg tip:\n$result\n==\n" if $opt_v;
     if (!$? && $result ne '') {
@@ -83,11 +86,11 @@ elsif (-d '.hg') { # Mercurial
     }
     $cv = `hg log -l1 --template '{date|isodate}'`
 }
-elsif (-d '.git') { # Git
+elsif (-d '.git' || -f '.git') { # Git
     print "== Found <top>/.git directory\n" if $opt_v;
     # v1-4-abcdef-dirty
     # is 4 commits after tag 'v1' with short hash abcdef
-    # with uncommited modifications
+    # with uncommitted modifications
     my $result = `git describe --always --tags --dirty --abbrev=20`;
     chomp $result;
     print "== git describe:\n$result\n==\n" if $opt_v;

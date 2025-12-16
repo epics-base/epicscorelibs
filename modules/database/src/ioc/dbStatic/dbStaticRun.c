@@ -66,7 +66,17 @@ void devExtend(dsxt *pdsxt)
         pthisDevSup->pdsxt = pdsxt;
     }
 }
-
+
+/* Ensure that: sizeof(dbCommonPvt) + pdbRecordType->rec_size
+ * accounts for necessary alignment of record type struct
+ */
+typedef struct {
+    dbCommonPvt prefix;
+    /* ensure no padding needed... */
+    dbCommon suffix;
+} dbCommonPvtAlignmentTest;
+STATIC_ASSERT(offsetof(dbCommonPvtAlignmentTest, suffix)==sizeof(dbCommonPvt));
+
 long dbAllocRecord(DBENTRY *pdbentry,const char *precordName)
 {
     dbRecordType    *pdbRecordType = pdbentry->precordType;
@@ -90,8 +100,8 @@ long dbAllocRecord(DBENTRY *pdbentry,const char *precordName)
                     precordName, pdbRecordType->name, pdbRecordType->rec_size);
         return(S_dbLib_noRecSup);
     }
-    ppvt = dbCalloc(1, offsetof(dbCommonPvt, common) + pdbRecordType->rec_size);
-    precord = &ppvt->common;
+    ppvt = dbCalloc(1, sizeof(dbCommonPvt) + pdbRecordType->rec_size);
+    precord = dbPvt2Rec(ppvt);
     ppvt->recnode = precnode;
     precord->rdes = pdbRecordType;
     precnode->precord = precord;
@@ -143,7 +153,7 @@ long dbAllocRecord(DBENTRY *pdbentry,const char *precordName)
 
                 status = dbPutStringNum(pdbentry,pflddes->initial);
                 if(status)
-                    epicsPrintf("Error initializing %s.%s initial %s\n",
+                    epicsPrintf(ERL_ERROR " initializing %s.%s initial %s\n",
                                 pdbRecordType->name,pflddes->name,pflddes->initial);
             }
             break;

@@ -8,6 +8,8 @@
 #include <string>
 #include <fstream>
 #include <set>
+#include <sstream>
+#include <stdexcept>
 
 #include <osiUnistd.h>
 #include <osiFileName.h>
@@ -83,14 +85,125 @@ void assertCallFunc(const iocshArgBuf *args)
     iocshSetError(args[0].ival);
 }
 
+const iocshFuncDef testHelpFunction1Def = {"testHelpFunction1",0,0,
+                                    "Usage message of testHelpFunction1\n"};
+const iocshFuncDef testHelpFunction2Def = {"testHelpFunction2",0,0,
+                                    "Usage message of testHelpFunction2\n"};
+const iocshFuncDef testHelpFunction3Def = {"testHelpFunction3",0,0,
+                                    "Usage message of testHelpFunction3\n"};
+void doNothing(const iocshArgBuf *args)
+{
+    return;
+}
+
+std::string readFile(std::string filename)
+{
+    std::ifstream t(filename.c_str());
+    std::stringstream buffer;
+
+    if (!t.is_open()) {
+        throw std::invalid_argument("Could not open filename " + filename);
+    }
+
+    buffer << t.rdbuf();
+    return buffer.str();
+}
+
+bool compareFiles(const std::string& p1, const std::string& p2)
+{
+  std::ifstream f1(p1.c_str(), std::ifstream::binary|std::ifstream::ate);
+  std::ifstream f2(p2.c_str(), std::ifstream::binary|std::ifstream::ate);
+
+  if (f1.fail() || f2.fail()) {
+    testDiag("One or more files failed to open");
+    testDiag("f1.fail(): %d f2.fail(): %d", f1.fail(), f2.fail());
+    return false; // File problem
+  }
+
+  bool different = false;
+  if (f1.tellg() != f2.tellg()) {
+    testDiag("Help text size is different");
+    different = true;
+  }
+  else {
+    // Seek back to beginning and use std::equal to compare contents
+    f1.seekg(0, std::ifstream::beg);
+    f2.seekg(0, std::ifstream::beg);
+
+    different = !std::equal(
+      std::istreambuf_iterator<char>(f1.rdbuf()),
+      std::istreambuf_iterator<char>(),
+      std::istreambuf_iterator<char>(f2.rdbuf())
+    );
+    if (different)
+      testDiag("Help text output is different");
+  }
+
+  if (different) {
+    std::string line;
+    f1.seekg(0, std::ifstream::beg);
+    f2.seekg(0, std::ifstream::beg);
+
+    testDiag("Expected output:");
+    while(std::getline(f1, line)) {
+        testDiag("  < %s", line.c_str());
+    }
+
+    testDiag("Received output:");
+    while(std::getline(f2, line)) {
+        testDiag("  > %s", line.c_str());
+    }
+  }
+
+  return !different;
+}
+
+
+void testHelp(void)
+{
+    testDiag("iocshTest testHelp start");
+
+    // Filename to save help output to
+    const std::string filename = "testHelpOutput";
+
+    // Verify help lists expected commands
+    iocshCmd(("help > " + filename).c_str());
+    std::string contents = readFile(filename);
+    testOk(contents.find("help") != std::string::npos,
+        "Found 'help' in help output");
+    testOk(contents.find("testHelpFunction1") != std::string::npos,
+        "Found 'testHelpFunction1' in help output");
+    testOk(contents.find("testHelpFunction2") != std::string::npos,
+        "Found 'testHelpFunction2' in help output");
+    testOk(contents.find("testHelpFunction3") != std::string::npos,
+        "Found 'testHelpFunction3' in help output");
+
+    // Confirm formatting of a single command
+    iocshCmd(("help testHelpFunction1 > " + filename).c_str());
+    testOk(compareFiles(filename, "iocshTestHelpFunction1"),
+        "'help testHelpFunction1' matches file iocshTestHelpFunction1");
+
+    // Confirm formatting of multiple commands
+    iocshCmd(("help testHelp* > " + filename).c_str());
+    testOk(compareFiles(filename, "iocshTestHelpFunctions"),
+        "'help testHelp*' matches file iocshTestHelpFunctions");
+
+    remove(filename.c_str());
+}
+
 } // namespace
+
+
 
 MAIN(iocshTest)
 {
-    testPlan(19);
+    testPlan(25);
     libComRegister();
     iocshRegister(&positionFuncDef, &positionCallFunc);
     iocshRegister(&assertFuncDef, &assertCallFunc);
+    iocshRegister(&testHelpFunction1Def, &doNothing);
+    iocshRegister(&testHelpFunction2Def, &doNothing);
+    iocshRegister(&testHelpFunction3Def, &doNothing);
     findTestData();
 
     testFile("iocshTestSuccess.cmd");
@@ -128,6 +241,8 @@ MAIN(iocshTest)
     testPosition("after_error", false);
     testPosition("after_error_1", false);
     reached.clear();
+
+    testHelp();
 
     // cleanup after macLib to avoid valgrind false positives
     dbmfFreeChunks();
