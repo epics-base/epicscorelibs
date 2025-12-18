@@ -100,6 +100,10 @@ static int priorityValue[NUM_CALLBACK_PRIORITIES] = {0, 1, 2};
 
 int callbackSetQueueSize(int size)
 {
+    if (size<=0) {
+        fprintf(stderr, "Queue size must be positive\n");
+        return -1;
+    }
     if (epicsAtomicGetIntT(&cbState)!=cbInit) {
         fprintf(stderr, "Callback system already initialized\n");
         return -1;
@@ -342,6 +346,10 @@ int callbackRequest(epicsCallback *pcallback)
 
     if (!pcallback) {
         epicsInterruptContextMessage("callbackRequest: " ERL_ERROR " pcallback was NULL\n");
+        return S_db_notInit;
+    }
+    if (!pcallback->callback) {
+        epicsInterruptContextMessage("callbackRequest: " ERL_ERROR " pcallback->callback was NULL\n");
         return S_db_notInit;
     }
     priority = pcallback->priority;

@@ -39,7 +39,7 @@ src/factory/Compare.cpp
 src/factory/Convert.cpp
 src/factory/PVUnion.cpp
 src/json/parseany.cpp
-src/json/print.cpp
+src/json/jprint.cpp
 src/json/parseinto.cpp
 src/json/parsehelper.cpp
 src/copy/createRequest.cpp

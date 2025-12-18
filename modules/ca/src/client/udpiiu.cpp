@@ -83,7 +83,7 @@ double getMaxPeriod()
             }
         }
         else {
-            epicsPrintf ( "EPICS \"%s\" wasnt a real number\n",
+            epicsPrintf ( "EPICS \"%s\" wasn't a real number\n",
                             EPICS_CA_MAX_SEARCH_PERIOD.name );
             epicsPrintf ( "Setting \"%s\" = %f seconds\n",
                 EPICS_CA_MAX_SEARCH_PERIOD.name, maxPeriod );
@@ -549,7 +549,7 @@ void epicsStdCall caRepeaterRegistrationMessage (
             char sockErrBuf[64];
             epicsSocketConvertErrnoToString (
                 sockErrBuf, sizeof ( sockErrBuf ) );
-            fprintf ( stderr, "error sending registration message to CA repeater daemon was \"%s\"\n",
+            fprintf ( stderr, ERL_ERROR " sending registration message to CA repeater daemon was \"%s\"\n",
                 sockErrBuf );
         }
     }
@@ -813,13 +813,13 @@ bool udpiiu::exceptionRespAction (
 
     if ( msg.m_postsize > sizeof ( caHdr ) ){
         errlogPrintf (
-            "error condition \"%s\" detected by %s with context \"%s\" at %s\n",
+            ERL_ERROR " condition \"%s\" detected by %s with context \"%s\" at %s\n",
             ca_message ( msg.m_available ),
             name, reinterpret_cast <const char *> ( &reqMsg + 1 ), date );
     }
     else{
         errlogPrintf (
-            "error condition \"%s\" detected by %s at %s\n",
+            ERL_ERROR " condition \"%s\" detected by %s at %s\n",
             ca_message ( msg.m_available ), name, date );
     }
 
@@ -1340,6 +1340,12 @@ const char * udpiiu::pHostName (
     epicsGuard < epicsMutex > & cacGuard ) const throw ()
 {
     return netiiu::pHostName ( cacGuard );
+}
+
+unsigned udpiiu::getHostMinorProtocol ( 
+    epicsGuard < epicsMutex > & cacGuard ) const throw ()
+{
+    return netiiu::getHostMinorProtocol ( cacGuard );
 }
 
 bool udpiiu::ca_v42_ok (

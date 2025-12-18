@@ -9,6 +9,14 @@
 #include <set>
 #include <map>
 
+#if defined(vxWorks) && \
+      (_WRS_VXWORKS_MAJOR+0 <= 6) && (_WRS_VXWORKS_MINOR+0 < 9)
+typedef int intptr_t;
+typedef unsigned int uintptr_t;
+#else
+#include <stdint.h>
+#endif
+
 #include <string.h>
 
 #define EPICS_PRIVATE_API
@@ -17,6 +25,7 @@
 
 #include <epicsStdio.h>
 #include <epicsFindSymbol.h>
+#include <errlog.h>
 #include <registryRecordType.h>
 #include <registryDeviceSupport.h>
 #include <registryDriverSupport.h>
@@ -31,11 +40,12 @@ namespace {
 struct compareLoc {
     bool operator()(const recordTypeLocation& lhs, const recordTypeLocation& rhs) const
     {
-        if(lhs.prset<rhs.prset)
+        if (lhs.prset < rhs.prset)
             return true;
-        else if(lhs.prset>rhs.prset)
+        if (lhs.prset > rhs.prset)
             return false;
-        return lhs.sizeOffset<rhs.sizeOffset;
+        return reinterpret_cast<uintptr_t>(lhs.sizeOffset)
+             < reinterpret_cast<uintptr_t>(rhs.sizeOffset);
     }
 };
 
@@ -248,7 +258,7 @@ registerAllRecordDeviceDrivers(DBBASE *pdbbase)
 
     } catch(std::exception& e) {
         dbFinishEntry(&entry);
-        fprintf(stderr, "Error: %s\n", e.what());
+        fprintf(stderr, ERL_ERROR ": %s\n", e.what());
         return 2;
     }
 }

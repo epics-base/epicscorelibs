@@ -18,6 +18,7 @@ fdmgr/fdmgr.cpp
 
 freeList/freeListLib.c
 gpHash/gpHashLib.c
+iocsh/afterIocRunning.c
 iocsh/initHooks.c
 iocsh/iocsh.cpp
 iocsh/libComRegister.c

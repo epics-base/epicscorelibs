@@ -57,10 +57,10 @@ static char *pNullString = "";
  */
 STATIC_ASSERT(messagesize >= 21);
 
-static char *ppstring[5]={" NPP"," PP"," CA"," CP"," CPP"};
-static char *msstring[4]={" NMS"," MS"," MSI"," MSS"};
+static const char *ppstring[5]={" NPP"," PP"," CA"," CP"," CPP"};
+static const char *msstring[4]={" NMS"," MS"," MSI"," MSS"};
 
-maplinkType pamaplinkType[LINK_NTYPES] = {
+const maplinkType pamaplinkType[LINK_NTYPES] = {
     {"CONSTANT",CONSTANT},
     {"PV_LINK",PV_LINK},
     {"VME_IO",VME_IO},
@@ -89,7 +89,7 @@ static FILE *openOutstream(const char *filename)
     errno = 0;
     stream = fopen(filename,"w");
     if(!stream) {
-        fprintf(stderr,"error opening %s %s\n",filename,strerror(errno));
+        fprintf(stderr,ERL_ERROR " opening %s %s\n",filename,strerror(errno));
         return 0;
     }
     return stream;
@@ -637,7 +637,7 @@ void dbFinishEntry(DBENTRY *pdbentry)
     }
 }
 
-DBENTRY * dbCopyEntry(DBENTRY *pdbentry)
+DBENTRY * dbCopyEntry(const DBENTRY *pdbentry)
 {
     DBENTRY *pnew;
 
@@ -647,7 +647,7 @@ DBENTRY * dbCopyEntry(DBENTRY *pdbentry)
     return(pnew);
 }
 
-void dbCopyEntryContents(DBENTRY *pfrom,DBENTRY *pto)
+void dbCopyEntryContents(const DBENTRY *pfrom,DBENTRY *pto)
 {
     *pto = *pfrom;
     pto->message = NULL;
@@ -1219,7 +1219,9 @@ long dbNextRecordType(DBENTRY *pdbentry)
 
 char * dbGetRecordTypeName(DBENTRY *pdbentry)
 {
-    return(pdbentry->precordType->name);
+    dbRecordType *pdbRecordType = pdbentry->precordType;
+    if(!pdbRecordType) return NULL;
+    return(pdbRecordType->name);
 }
 
 int dbGetNRecordTypes(DBENTRY *pdbentry)
@@ -1445,6 +1447,7 @@ long dbCreateRecord(DBENTRY *pdbentry,const char *precordName)
     pdbentry->precnode = pNewRecNode;
     ppvd = dbPvdAdd(pdbentry->pdbbase,precordType,pNewRecNode);
     if(!ppvd) {errMessage(-1,"Logic Err: Could not add to PVD");return(-1);}
+    pNewRecNode->order = pdbentry->pdbbase->no_records++;
     return(0);
 }
 
@@ -1477,6 +1480,17 @@ long dbDeleteAliases(DBENTRY *pdbentry)
     return 0;
 }
 
+static void dbDeleteRecordLinks(dbRecordType *rtyp, struct dbCommon *prec)
+{
+    short i;
+
+    for (i=0; i<rtyp->no_links; i++) {
+        dbFldDes *pflddes = rtyp->papFldDes[rtyp->link_ind[i]];
+        DBLINK *plink = (DBLINK *)(((char *)prec) + pflddes->offset);
+        dbFreeLinkContents(plink);
+    }
+}
+
 long dbDeleteRecord(DBENTRY *pdbentry)
 {
     dbBase          *pdbbase = pdbentry->pdbbase;
@@ -1492,6 +1506,7 @@ long dbDeleteRecord(DBENTRY *pdbentry)
     preclist = &precordType->recList;
     ellDelete(preclist, &precnode->node);
     dbPvdDelete(pdbbase, precnode);
+    dbDeleteRecordLinks(precordType, precnode->precord);
     while (!dbFirstInfo(pdbentry)) {
         dbDeleteInfo(pdbentry);
     }
@@ -1686,6 +1701,7 @@ long dbCreateAlias(DBENTRY *pdbentry, const char *alias)
     }
 
     ellAdd(&precordType->recList, &pnewnode->node);
+    pnewnode->order = pdbentry->pdbbase->no_records++;
     precordType->no_aliases++;
 
     return 0;
@@ -2198,18 +2214,18 @@ long dbInitRecordLinks(dbRecordType *rtyp, struct dbCommon *prec)
         if(!plink->text)
             continue;
 
-        if(dbParseLink(plink->text, pflddes->field_type, &link_info)!=0) {
+        if(dbParseLink(plink->text, pflddes->field_type, &link_info, prec->name, pflddes->name)!=0) {
             /* This was already parsed once when ->text was set.
              * Any syntax error messages were printed at that time.
              */
 
         } else if(dbCanSetLink(plink, &link_info, devsup)!=0) {
-            errlogPrintf("Error: %s.%s: can't initialize link type %d with \"%s\" (type %d)\n",
-                         prec->name, pflddes->name, plink->type, plink->text, link_info.ltype);
+            errlogPrintf(ERL_ERROR ": %s.%s: can't initialize link type %s with \"%s\" (type %s)\n",
+                         prec->name, pflddes->name, pamaplinkType[plink->type].strvalue, plink->text, pamaplinkType[link_info.ltype].strvalue);
 
         } else if(dbSetLink(plink, &link_info, devsup)) {
-            errlogPrintf("Error: %s.%s: failed to initialize link type %d with \"%s\" (type %d)\n",
-                         prec->name, pflddes->name, plink->type, plink->text, link_info.ltype);
+            errlogPrintf(ERL_ERROR ": %s.%s: failed to initialize link type %s with \"%s\" (type %s)\n",
+                         prec->name, pflddes->name, pamaplinkType[plink->type].strvalue, plink->text, pamaplinkType[link_info.ltype].strvalue);
         }
         free(plink->text);
         plink->text = NULL;
@@ -2227,7 +2243,7 @@ void dbFreeLinkInfo(dbLinkInfo *pinfo)
     pinfo->target = NULL;
 }
 
-long dbParseLink(const char *str, short ftype, dbLinkInfo *pinfo)
+long dbParseLink(const char *str, short ftype, dbLinkInfo *pinfo, const char *recname, const char *fieldname)
 {
     char *pstr;
     size_t len;
@@ -2364,7 +2380,13 @@ long dbParseLink(const char *str, short ftype, dbLinkInfo *pinfo)
         /* filter modifiers based on link type */
         switch(ftype) {
         case DBF_INLINK: /* accept all */ break;
-        case DBF_OUTLINK: pinfo->modifiers &= ~pvlOptCPP; break;
+        case DBF_OUTLINK:
+            if(pinfo->modifiers & (pvlOptCPP|pvlOptCP)){
+                errlogPrintf(ERL_WARNING ": Discarding CP/CPP modifier in CA output link from %s.%s to %s.\n",
+                recname, fieldname, pinfo->target);
+            }
+            pinfo->modifiers &= ~(pvlOptCPP|pvlOptCP);
+            break;
         case DBF_FWDLINK: pinfo->modifiers &= pvlOptCA; break;
         }
     }
@@ -2602,7 +2624,7 @@ long dbPutString(DBENTRY *pdbentry,const char *pstring)
             dbLinkInfo link_info;
             DBLINK *plink = (DBLINK *)pfield;
 
-            status = dbParseLink(pstring, pflddes->field_type, &link_info);
+            status = dbParseLink(pstring, pflddes->field_type, &link_info, dbGetRecordName(pdbentry), dbGetFieldName(pdbentry));
             if (status) break;
 
             if (plink->type==CONSTANT && plink->value.constantStr==NULL) {
@@ -2621,7 +2643,9 @@ long dbPutString(DBENTRY *pdbentry,const char *pstring)
             }
         }
         break;
-
+    case DBF_NOACCESS:
+        dbMsgPrint(pdbentry, "Can't set array field before iocInit()");
+        /* fall through */
     default:
         return S_dbLib_badField;
     }
@@ -3440,7 +3464,7 @@ void  dbDumpDevice(DBBASE *pdbbase,const char *recordTypeName)
                     " - get_ioint_info()"
                 };
                 int i, n = pdevSup->pdset->number;
-                DEVSUPFUN *pfunc = &pdevSup->pdset->report;
+                DEVSUPFUN *pfunc = (DEVSUPFUN*) &pdevSup->pdset->report;
 
                 printf("\t    number: %d\n", n);
                 for (i = 0; i < n; ++i, ++pfunc) {
@@ -3584,7 +3608,7 @@ void  dbReportDeviceConfig(dbBase *pdbbase, FILE *report)
                 if (plink->text) {  /* Not yet parsed */
                     dbLinkInfo linfo;
 
-                    if (dbParseLink(plink->text, pdbentry->pflddes->field_type, &linfo))
+                    if (dbParseLink(plink->text, pdbentry->pflddes->field_type, &linfo, dbGetRecordName(pdbentry), dbGetFieldName(pdbentry)))
                         continue;
 
                     linkType = linfo.ltype;

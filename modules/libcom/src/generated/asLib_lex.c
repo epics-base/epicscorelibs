@@ -117,6 +117,8 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 * in file LICENSE that is included with this distribution.
 \*************************************************************************/
 # line 24 "../as/asLib_lex.l"
+#include "epicsStdlib.h"
+
 static ASINPUTFUNCPTR *my_yyinput;
 #undef YY_INPUT
 #define YY_INPUT(b,r,ms) (r=(*my_yyinput)((char *)b,ms))
@@ -128,7 +130,7 @@ static int yyreset(void)
         return(0);
 }
 
-# line 37 "../as/asLib_lex.l"
+# line 39 "../as/asLib_lex.l"
 
 /* done after the current pattern has been matched and before the
  * corresponding action - sets up yytext
@@ -215,14 +217,15 @@ static int yyleng; /* jbk added static */
 
 static FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0; /* jbk added static */
 
-#define YY_END_OF_BUFFER 17
+#define YY_END_OF_BUFFER 18
 typedef int yy_state_type;
-static const short int yy_accept[41] =
+static const short int yy_accept[48] =
     {   0,
-        0,    0,   17,   15,   14,   12,   15,   13,   11,    8,
-        7,    8,    8,    8,    8,    8,    8,    0,   10,    9,
-        0,   13,    8,    7,    8,    8,    8,    8,    8,    8,
-        3,    8,    2,    8,    8,    1,    5,    6,    4,    0
+        0,    0,   18,   16,   15,   13,   16,   14,   12,    9,
+        9,    8,    9,    9,    9,    9,    9,    9,    9,    0,
+       11,   10,    0,   14,    9,    9,    8,    7,    9,    9,
+        9,    9,    9,    9,    9,    3,    9,    2,    9,    9,
+        1,    9,    7,    5,    6,    4,    0
     } ;
 
 static const YY_CHAR yy_ec[256] =
@@ -231,16 +234,16 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    2,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    2,    1,    4,    5,    1,    1,    1,    1,    6,
-        6,    1,    7,    6,    7,    7,    1,    8,    8,    8,
-        8,    8,    8,    8,    8,    8,    8,    7,    7,    7,
-        1,    7,    1,    1,    9,   10,   11,   10,   12,   10,
-       13,   14,   15,   10,   10,   16,    7,   17,    7,   18,
-        7,   19,   20,    7,   21,    7,    7,    7,    7,    7,
-        7,   22,    7,    1,    7,    1,    7,    7,    7,    7,
+        6,    1,    7,    6,    7,    8,    1,    9,    9,    9,
+        9,    9,    9,    9,    9,    9,    9,   10,   10,   10,
+        1,   10,    1,    1,   11,   12,   13,   12,   14,   12,
+       15,   16,   17,   12,   12,   18,   12,   19,   12,   20,
+       12,   21,   22,   12,   23,   10,   10,   10,   10,   10,
+       10,   24,   10,    1,   10,    1,   10,   10,   10,   10,
 
-        7,    7,    7,    7,    7,    7,    7,    7,    7,    7,
-        7,    7,    7,    7,    7,    7,    7,    7,    7,    7,
-        7,    7,    6,    1,    6,    1,    1,    1,    1,    1,
+       25,   10,   10,   10,   10,   10,   10,   10,   10,   10,
+       10,   10,   10,   10,   10,   10,   10,   10,   10,   10,
+       10,   10,    6,    1,    6,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -257,55 +260,63 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[23] =
+static const YY_CHAR yy_meta[26] =
     {   0,
         1,    1,    2,    1,    1,    1,    3,    3,    3,    3,
         3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
-        3,    1
+        3,    3,    3,    1,    3
     } ;
 
-static const short int yy_base[44] =
+static const short int yy_base[52] =
     {   0,
-        0,    0,   67,   68,   68,   68,   20,    0,   68,    0,
-       58,   44,   34,   32,   23,   18,   29,   22,   68,   68,
-       34,    0,    0,   28,   22,   18,   20,   14,   15,   17,
-        0,   18,    0,   38,   16,    0,    0,    0,    0,   68,
-       59,   62,   24
+        0,    0,   68,   79,   79,   79,   23,    0,   79,   20,
+       58,   22,    0,   44,   54,   53,   44,   39,   50,   29,
+       79,   79,   57,    0,    0,   50,   26,   27,   43,   33,
+       35,   29,   30,   31,   30,    0,   32,    0,   47,   30,
+        0,   34,   33,    0,    0,    0,   79,   72,   75,   37,
+       35
     } ;
 
-static const short int yy_def[44] =
+static const short int yy_def[52] =
     {   0,
-       40,    1,   40,   40,   40,   40,   41,   42,   40,   43,
-       43,   43,   43,   43,   43,   43,   43,   41,   40,   40,
-       41,   42,   43,   43,   43,   43,   43,   43,   43,   43,
-       43,   43,   43,   40,   43,   43,   43,   43,   43,    0,
-       40,   40,   40
+       47,    1,   47,   47,   47,   47,   48,   49,   47,   50,
+       50,   50,   50,   50,   50,   50,   50,   50,   50,   48,
+       47,   47,   48,   49,   50,   50,   50,   50,   50,   50,
+       50,   50,   50,   50,   50,   50,   50,   50,   51,   50,
+       50,   50,   50,   50,   50,   50,    0,   47,   47,   47,
+       47
     } ;
 
-static const short int yy_nxt[91] =
+static const short int yy_nxt[105] =
     {   0,
-        4,    5,    6,    7,    8,    9,   10,   11,   12,   10,
-       13,   10,   10,   14,   15,   10,   10,   10,   16,   10,
-       17,    4,   19,   20,   19,   20,   23,   39,   37,   36,
-       35,   34,   33,   32,   31,   24,   40,   30,   29,   28,
-       27,   21,   26,   21,   23,   23,   38,   38,   38,   38,
-       38,   38,   38,   38,   23,   23,   23,   23,   23,   18,
-       18,   18,   22,   25,   22,   24,   40,    3,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   40,   40
+        4,    5,    6,    7,    8,    9,   10,   11,   12,   13,
+       14,   13,   15,   13,   13,   16,   17,   13,   13,   13,
+       18,   13,   19,    4,   13,   21,   22,   26,   27,   26,
+       27,   21,   22,   26,   27,   28,   42,   45,   43,   25,
+       35,   43,   43,   46,   44,   41,   23,   40,   39,   38,
+       37,   35,   23,   25,   25,   25,   25,   36,   28,   47,
+       34,   33,   32,   31,   30,   29,   28,   47,   47,   47,
+       47,   25,   20,   20,   20,   24,   47,   24,    3,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+
+       47,   47,   47,   47
     } ;
 
-static const short int yy_chk[91] =
+static const short int yy_chk[105] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    7,    7,   18,   18,   43,   35,   32,   30,
-       29,   28,   27,   26,   25,   24,   21,   17,   16,   15,
-       14,    7,   13,   18,   34,   34,   34,   34,   34,   34,
-       34,   34,   34,   34,   34,   34,   34,   34,   34,   41,
-       41,   41,   42,   12,   42,   11,    3,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   40,   40,
-       40,   40,   40,   40,   40,   40,   40,   40,   40,   40
+        1,    1,    1,    1,    1,    7,    7,   10,   10,   12,
+       12,   20,   20,   27,   27,   28,   35,   51,   35,   50,
+       28,   43,   42,   40,   37,   34,    7,   33,   32,   31,
+       30,   28,   20,   39,   39,   39,   39,   29,   26,   23,
+       19,   18,   17,   16,   15,   14,   11,    3,    0,    0,
+        0,   39,   48,   48,   48,   49,    0,   49,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+       47,   47,   47,   47,   47,   47,   47,   47,   47,   47,
+
+       47,   47,   47,   47
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -411,13 +422,13 @@ yy_match:
 	    while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 		{
 		yy_current_state = yy_def[yy_current_state];
-		if ( yy_current_state >= 41 )
+		if ( yy_current_state >= 48 )
 		    yy_c = yy_meta[(int)yy_c];
 		}
 	    yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
 	    ++yy_cp;
 	    }
-	while ( yy_base[yy_current_state] != 68 );
+	while ( yy_base[yy_current_state] != 79 );
 
 yy_find_action:
 	yy_act = yy_accept[yy_current_state];
@@ -438,79 +449,98 @@ do_action:      /* this label is used only to access EOF actions */
 	    goto yy_find_action;
 
 case 1:
-# line 39 "../as/asLib_lex.l"
+# line 41 "../as/asLib_lex.l"
 { return(tokenUAG);     }
 	YY_BREAK
 case 2:
-# line 40 "../as/asLib_lex.l"
+# line 42 "../as/asLib_lex.l"
 { return(tokenHAG);     }
 	YY_BREAK
 case 3:
-# line 41 "../as/asLib_lex.l"
+# line 43 "../as/asLib_lex.l"
 { return(tokenASG);     }
 	YY_BREAK
 case 4:
-# line 42 "../as/asLib_lex.l"
+# line 44 "../as/asLib_lex.l"
 { return(tokenRULE);    }
 	YY_BREAK
 case 5:
-# line 43 "../as/asLib_lex.l"
+# line 45 "../as/asLib_lex.l"
 { return(tokenCALC);    }
 	YY_BREAK
 case 6:
-# line 45 "../as/asLib_lex.l"
+# line 47 "../as/asLib_lex.l"
 {
-        yylval.Int = (unsigned char)yytext[3];
-        yylval.Int -= 'A';
+        yylval.Int64 = (unsigned char)yytext[3];
+        yylval.Int64 -= 'A';
         return(tokenINP);
 }
 	YY_BREAK
 case 7:
-# line 51 "../as/asLib_lex.l"
-{ /*integer*/
-        yylval.Int = atoi((char *)yytext);
-        return(tokenINTEGER);
+# line 53 "../as/asLib_lex.l"
+{
+        char *end;
+        if (epicsParseDouble((char *)yytext, &yylval.Float64, &end) ) {
+            char message[40];
+            sprintf(message, "Error parsing Float64: %s", (char *)yytext);
+            yyerror(message);
+        } else {
+            return(tokenFLOAT64);
+        }
 }
 	YY_BREAK
 case 8:
-# line 56 "../as/asLib_lex.l"
+# line 64 "../as/asLib_lex.l"
+{ /*integer 64*/
+        char *end;
+        if (epicsParseInt64((char *)yytext, &yylval.Int64, 10, &end) ) {
+            char message[40];
+            sprintf(message, "Error parsing Int64: %s", (char *)yytext);
+            yyerror(message);
+        } else {
+            return(tokenINT64);
+        }
+}
+	YY_BREAK
+case 9:
+# line 75 "../as/asLib_lex.l"
 { /*unquoted string*/
         yylval.Str=asStrdup(yytext);
         return(tokenSTRING);
 }
 	YY_BREAK
-case 9:
-# line 61 "../as/asLib_lex.l"
+case 10:
+# line 80 "../as/asLib_lex.l"
 { /* quoted string */
         yylval.Str=asStrdup(yytext+1);
-        yylval.Str[strlen(yylval.Str)-1] = '\0';
+        yylval.Str[strlen(yylval.Str)-1] = '\0'; /* overwrite trailing '"' */
         return(tokenSTRING);
 }
 	YY_BREAK
-case 10:
-# line 67 "../as/asLib_lex.l"
+case 11:
+# line 86 "../as/asLib_lex.l"
 { /* bad string */
         yyerror("Newline in quoted string, closing quote missing");
 }
 	YY_BREAK
-case 11:
-# line 71 "../as/asLib_lex.l"
+case 12:
+# line 90 "../as/asLib_lex.l"
 { return(yytext[0]); }
 	YY_BREAK
-case 12:
-# line 73 "../as/asLib_lex.l"
+case 13:
+# line 92 "../as/asLib_lex.l"
 { line_num++; }
 	YY_BREAK
-case 13:
-# line 75 "../as/asLib_lex.l"
-;
-	YY_BREAK
 case 14:
-# line 76 "../as/asLib_lex.l"
+# line 94 "../as/asLib_lex.l"
 ;
 	YY_BREAK
 case 15:
-# line 78 "../as/asLib_lex.l"
+# line 95 "../as/asLib_lex.l"
+;
+	YY_BREAK
+case 16:
+# line 97 "../as/asLib_lex.l"
 {
         char message[40];
         YY_BUFFER_STATE *dummy=0;
@@ -528,8 +558,8 @@ case 15:
         if (0) yy_switch_to_buffer(*dummy);
 }
 	YY_BREAK
-case 16:
-# line 95 "../as/asLib_lex.l"
+case 17:
+# line 114 "../as/asLib_lex.l"
 ECHO;
 	YY_BREAK
 case YY_STATE_EOF(INITIAL):
@@ -759,7 +789,7 @@ static yy_state_type yy_get_previous_state( void )
 	while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 	    {
 	    yy_current_state = yy_def[yy_current_state];
-	    if ( yy_current_state >= 41 )
+	    if ( yy_current_state >= 48 )
 		yy_c = yy_meta[(int)yy_c];
 	    }
 	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
@@ -789,11 +819,11 @@ static yy_state_type yy_try_NUL_trans( register yy_state_type yy_current_state )
     while ( yy_chk[yy_base[yy_current_state] + yy_c] != yy_current_state )
 	{
 	yy_current_state = yy_def[yy_current_state];
-	if ( yy_current_state >= 41 )
+	if ( yy_current_state >= 48 )
 	    yy_c = yy_meta[(int)yy_c];
 	}
     yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
-    yy_is_jam = (yy_base[yy_current_state] == 68);
+    yy_is_jam = (yy_base[yy_current_state] == 79);
 
     return ( yy_is_jam ? 0 : yy_current_state );
     }
@@ -1024,5 +1054,5 @@ static int yyterminate_internal( void )
         return YY_NULL;
 }
 
-# line 95 "../as/asLib_lex.l"
+# line 114 "../as/asLib_lex.l"
 

@@ -13,6 +13,10 @@ setup.py.d/*
     include - module sub-directories containing internal headers
     source - list of source files
 
+Compare file list before and after merge using:
+
+git ls-tree --name-only -r <rev>
+
 Generated files
 
   rather than build/run antelope (modified yacc) and e_flex executables,

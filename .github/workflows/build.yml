@@ -7,311 +7,267 @@ defaults:
     shell: bash
 
 jobs:
-  build:
-    name: ${{ matrix.name }}
+  manylinux:
+    name: py${{ matrix.py }} ${{ matrix.ml }}
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        # see compat matrix: https://github.com/pypa/manylinux
+
+        - ml: manylinux1_x86_64
+          py: cp27-cp27m
+          cy: "Cython<3.0"
+          skip: true
+
+        - ml: manylinux2010_x86_64
+          py: cp37-cp37m
+          skip: true
+
+        - ml: manylinux2014_x86_64
+          py: cp38-cp38
+
+        - ml: manylinux2014_x86_64
+          py: cp39-cp39
+
+        - ml: manylinux2014_x86_64
+          py: cp310-cp310
+
+        - ml: manylinux2014_x86_64
+          py: cp311-cp311
+
+        - ml: manylinux2014_x86_64
+          py: cp312-cp312
+
+        - ml: manylinux2014_x86_64
+          py: cp313-cp313
+
+        - ml: manylinux2014_x86_64
+          py: cp313-cp313t
+
+        - ml: manylinux_2_28_x86_64
+          py: cp314-cp314
+
+        - ml: manylinux_2_28_x86_64
+          py: cp314-cp314t
+          src: true
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+            submodules: recursive
+
+      - name: Detect pre-release
+        run: python ./gha-set-pre.py
+
+      - name: Build
+        run: |
+            # emit script to be executed in container.
+            cat <<EOF > runit.sh
+            #!/bin/sh
+            set -e -x
+            ls /opt/python/
+            /opt/python/${{ matrix.py }}/bin/python --version
+
+            export PATH="/opt/python/${{ matrix.py }}/bin:\$PATH"
+            export SETUPTOOLS_DSO_PLAT_NAME="${{ matrix.ml }}"
+
+            cd /io
+
+            pip install -U pip
+            # pre-download for later steps
+            pip download $PRE -d output \
+                --only-binary numpy,Cython \
+                "${{ matrix.cy || 'Cython' }}" \
+                setuptools_dso wheel numpy ply nose2
+
+            # create source tar
+            pip install --no-index -f ./output setuptools_dso
+            python setup.py sdist -d ./output
+            ls -lh output
+
+            # build wheel from source tar
+            pip wheel -w ./output --no-index -f ./output epicscorelibs
+            ls -lh output
+
+            # install wheel for testing
+            pip install --no-index -f ./output epicscorelibs nose2
+
+            # switch away from root when running test to avoid inclusion in PYTHONPATH
+            cd output
+            python -m nose2 -v epicscorelibs
+
+            EOF
+            # end of script.  Now execute in container
+
+            chmod +x runit.sh
+            mkdir output
+            podman run --rm \
+                -v `pwd`:/io \
+                quay.io/pypa/${{ matrix.ml }} \
+                /io/runit.sh
+
+      - name: Result
+        run: ls -lhtr output
+
+      - name: Save wheels
+        if: ${{ ! matrix.skip }}
+        uses: actions/upload-artifact@v6
+        with:
+          retention-days: 1
+          name: whl-${{ matrix.py }}-${{ matrix.ml }}
+          path: output/epicscorelibs*.whl
+
+      - name: Save source
+        if: ${{ matrix.src }}
+        uses: actions/upload-artifact@v6
+        with:
+          retention-days: 1
+          name: whl-source
+          path: output/epicscorelibs*.gz
+
+  native:
+    name: py${{ matrix.py }} ${{ matrix.arch }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          # Check build from .tar
-          - name: Source
-            os: ubuntu-latest
-            python: "3.11"
-            source: true
+          - os: windows-latest
+            py: "3.8"
+            arch: win_amd64
 
-          # Linux py builds x64
-          - name: linux 2.7 amd64
-            os: ubuntu-latest
-            pyver: cp27-cp27m
-            piparch: manylinux1_x86_64
+          # windows + 3.9 omitted due to numpy bug "invalid preprocessor command 'warning'"
 
-          - name: linux 2.7u amd64
-            os: ubuntu-latest
-            pyver: cp27-cp27mu
-            piparch: manylinux1_x86_64
+          - os: windows-latest
+            py: "3.10"
+            arch: win_amd64
 
-          - name: linux 3.5 amd64
-            os: ubuntu-latest
-            pyver: cp35-cp35m
-            piparch: manylinux1_x86_64
+          - os: windows-latest
+            py: "3.11"
+            arch: win_amd64
 
-          - name: linux 3.6 amd64
-            os: ubuntu-latest
-            pyver: cp36-cp36m
-            piparch: manylinux1_x86_64
+          - os: windows-latest
+            py: "3.12"
+            arch: win_amd64
 
-          - name: linux 3.7 amd64
-            os: ubuntu-latest
-            pyver: cp37-cp37m
-            piparch: manylinux1_x86_64
+          - os: windows-latest
+            py: "3.13"
+            arch: win_amd64
 
-          - name: linux 3.8 amd64
-            os: ubuntu-latest
-            pyver: cp38-cp38
-            piparch: manylinux1_x86_64
+          - os: windows-latest
+            py: "3.14"
+            arch: win_amd64
 
-          - name: linux 3.9 amd64
-            os: ubuntu-latest
-            pyver: cp39-cp39
-            piparch: manylinux2010_x86_64
+          - os: macos-latest
+            py: "3.8"
+            arch: macosx_11_0_universal2
 
-          - name: linux 3.10 amd64
-            os: ubuntu-latest
-            pyver: cp310-cp310
-            piparch: manylinux2014_x86_64
+          - os: macos-latest
+            py: "3.9"
+            arch: macosx_11_0_universal2
 
-          - name: linux 3.11 amd64
-            os: ubuntu-latest
-            pyver: cp311-cp311
-            piparch: manylinux2014_x86_64
+          - os: macos-latest
+            py: "3.10"
+            arch: macosx_11_0_universal2
 
-          - name: linux 3.12 amd64
-            os: ubuntu-latest
-            pyver: cp312-cp312
-            piparch: manylinux2014_x86_64
+          - os: macos-latest
+            py: "3.11"
+            arch: macosx_11_0_universal2
 
-          - name: linux 3.13 amd64
-            os: ubuntu-latest
-            pyver: cp313-cp313
-            piparch: manylinux2014_x86_64
+          - os: macos-latest
+            py: "3.12"
+            arch: macosx_11_0_universal2
 
-          # Linux py builds x64
-          - name: linux 2.7 i686
-            os: ubuntu-latest
-            pyver: cp27-cp27m
-            piparch: manylinux1_i686
-            pre: linux32
+          - os: macos-latest
+            py: "3.13"
+            arch: macosx_11_0_universal2
 
-          - name: linux 2.7u i686
-            os: ubuntu-latest
-            pyver: cp27-cp27mu
-            piparch: manylinux1_i686
-            pre: linux32
-
-          - name: linux 3.5 i686
-            os: ubuntu-latest
-            pyver: cp35-cp35m
-            piparch: manylinux1_i686
-            pre: linux32
-
-          - name: linux 3.6 i686
-            os: ubuntu-latest
-            pyver: cp36-cp36m
-            piparch: manylinux1_i686
-            pre: linux32
-
-          - name: linux 3.7 i686
-            os: ubuntu-latest
-            pyver: cp37-cp37m
-            piparch: manylinux1_i686
-            pre: linux32
-
-          - name: linux 3.8 i686
-            os: ubuntu-latest
-            pyver: cp38-cp38
-            piparch: manylinux1_i686
-            pre: linux32
-
-          - name: linux 3.9 i686
-            os: ubuntu-latest
-            pyver: cp39-cp39
-            piparch: manylinux2010_i686
-            pre: linux32
-
-          # numpy builds for >=3.10 do no include i686
-
-          # OSX py builds
-          - name: osx 3.6 intel
-            os: macos-13
-            python: "3.6"
-            piparch: macosx_10_9_intel
-
-          - name: osx 3.7 intel
-            os: macos-13
-            python: "3.7"
-            piparch: macosx_10_9_intel
-
-          - name: osx 3.8 arm64
-            os: macos-latest
-            python: "3.8"
-            piparch: macosx_11_0_arm64
-
-          - name: osx 3.9 arm64
-            os: macos-latest
-            python: "3.9"
-            piparch: macosx_11_0_arm64
-
-          - name: osx 3.10 arm64
-            os: macos-latest
-            python: "3.10"
-            piparch: macosx_11_0_arm64
-
-          - name: osx 3.11 arm64
-            os: macos-latest
-            python: "3.11"
-            piparch: macosx_11_0_arm64
-
-          - name: osx 3.12 arm64
-            os: macos-latest
-            python: "3.12"
-            piparch: macosx_11_0_arm64
-
-          - name: osx 3.13 arm64
-            os: macos-latest
-            python: "3.13"
-            piparch: macosx_11_0_arm64
-
-          # Windows py builds
-
-          - name: win64 3.6
-            os: windows-latest
-            python: "3.6"
-            piparch: win_amd64
-
-          - name: win64 3.7
-            os: windows-latest
-            python: "3.7"
-            piparch: win_amd64
-
-          - name: win64 3.8
-            os: windows-latest
-            python: "3.8"
-            piparch: win_amd64
-
-          - name: win64 3.9
-            os: windows-latest
-            python: "3.9"
-            piparch: win_amd64
-
-          - name: win64 3.10
-            os: windows-latest
-            python: "3.10"
-            piparch: win_amd64
-
-          - name: win64 3.11
-            os: windows-latest
-            python: "3.11"
-            piparch: win_amd64
-
-          - name: win64 3.12
-            os: windows-latest
-            python: "3.12"
-            piparch: win_amd64
-
-          - name: win64 3.13
-            os: windows-latest
-            python: "3.13"
-            piparch: win_amd64
+          - os: macos-latest
+            py: "3.14"
+            arch: macosx_11_0_universal2
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
-          submodules: recursive
+            submodules: recursive
 
-      - name: Setup native python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
-          python-version: ${{ matrix.python || '3.11' }}
-          #architecture: x64
+          python-version: ${{ matrix.py }}
 
-      # TLS 1.0 and 1.1 support was removed from pypi so the cached pip won't work
-      - name: Python 3.5 Fix
-        if: ${{ matrix.python == '3.5' }}
-        run: |
-          curl https://bootstrap.pypa.io/pip/3.5/get-pip.py | python
+      - name: Prepare
+        run: python -m pip install -U pip virtualenv
 
-      - name: Native Prep/Info
+      - name: PIP Debug
+        run: pip debug -v
+
+      - name: Detect pre-release
+        run: python ./gha-set-pre.py
+
+      - name: Build
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install setuptools wheel twine
-          which python
-          python --version
-          python -m pip --version
+            set -x -e
+            python -m pip install -U pip
+            pip download $PRE -d output \
+                --only-binary numpy,Cython \
+                Cython setuptools_dso wheel numpy ply nose2
+
+            export SETUPTOOLS_DSO_PLAT_NAME=${{ matrix.arch }}
+
+            pip install --no-index -f ./output setuptools_dso
+            python setup.py sdist -d ./output
+            ls -lh output
+
+            # build wheel from source tar
+            pip wheel -w ./output --no-index -f ./output epicscorelibs
+            ls -lh output
+
+            # install wheel for testing
+            pip install --no-index -f ./output epicscorelibs nose2
+
+            # switch away from root when running test to avoid inclusion in PYTHONPATH
+            cd output
+            python -m nose2 -v epicscorelibs
+
+      - run: ls -lhtr output
+
+      - name: Save wheels
+        if: ${{ ! matrix.skip }}
+        uses: actions/upload-artifact@v6
+        with:
+          retention-days: 1
+          name: whl-${{ matrix.py }}-${{ matrix.os }}
+          path: output/epicscorelibs*.whl
+
+  combine:
+    runs-on: ubuntu-latest
+    needs: [manylinux, native]
+    steps:
+      - name: Download
+        uses: actions/download-artifact@v7
+        with:
+            merge-multiple: true
+
+      - run: ls -lhtr
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 3.11
+
+      - name: Setup
+        run: |
+          pip install -U pip twine
           python -m twine -h
-          python ./gha-set-pre.py
 
-      - name: PY Source
-        run: |
-          echo "PRE=$PRE"
-          python -m pip install setuptools wheel nose2
-          python -m pip install $PRE setuptools-dso
-          python setup.py sdist --formats=gztar
-          ls dist/*
-
-      - name: PEP517 Build
-        if: matrix.source
-        run: |
-          python -m pip wheel -v -w dist $PRE dist/*.tar.*
-
-      - name: Native PY build
-        if: matrix.python && !matrix.source
-        run: |
-          python -m pip wheel -v -w dist --no-index --no-deps \
-           --no-build-isolation --no-use-pep517 \
-           --build-option --plat-name=${{ matrix.piparch }} \
-           $PRE \
-           dist/*.tar.*
-
-          cd dist
-          python -m pip install epicscorelibs*.whl
-          python -c 'import epicscorelibs; print("IMPORT", epicscorelibs.__file__)'
-          python -m nose2 -v epicscorelibs
-
-      - name: Docker PY build
-        if: matrix.pyver && !matrix.source
-        run: |
-          # can't use GHA native docker support since GHA magic binaries need .so absent from old manylinux images :(
-          cat <<EOF > runit.sh
-          #!/bin/sh
-          set -e -x
-          ls /opt/python/
-          cd /io
-          [ -d dist ]
-          ls dist/*
-          export PATH="/opt/python/${{ matrix.pyver }}/bin:\$PATH"
-          which python
-          python -m pip install -U pip
-          python -m pip install --only-binary numpy setuptools wheel nose2 numpy
-          python -m pip install $PRE setuptools-dso
-          python -m pip wheel -v -w dist --no-index --no-deps \
-           --no-build-isolation --no-use-pep517 \
-           --build-option --plat-name=${{ matrix.piparch }} \
-           $PRE \
-           dist/*.tar.*
-
-          cd dist
-          python -m pip install epicscorelibs*.whl
-          python -c 'import epicscorelibs; print("IMPORT", epicscorelibs.__file__)'
-          python -m nose2 -v epicscorelibs
-
-          EOF
-          cat runit.sh
-          chmod +x runit.sh
-          docker pull quay.io/pypa/${{ matrix.piparch }}
-          docker run --rm -v `pwd`:/io quay.io/pypa/${{ matrix.piparch }} ${{ matrix.pre }} /io/runit.sh
-
-      - name: List Artifacts
-        run: ls dist/*
-
-      - name: Save Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: epicscorelibs-${{ matrix.python || matrix.pyver }}-${{ matrix.piparch || 'source' }}
-          path: dist/*
+      - name: Check
+        run: twine check epicscorelibs*.gz epicscorelibs*.whl
 
       - name: Upload wheels
-        if: github.event_name=='push' && github.ref=='refs/heads/master' && !matrix.source
+        if: env.TWINE_USERNAME && github.event_name=='push' && github.ref=='refs/heads/master'
         env:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          python -m twine upload --skip-existing dist/epicscorelibs*.whl
-
-      - name: Upload source
-        if: github.event_name=='push' && github.ref=='refs/heads/master' && matrix.source
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          python -m twine upload --skip-existing dist/epicscorelibs*.tar.*
+        run: twine upload --skip-existing epicscorelibs*.gz epicscorelibs*.whl

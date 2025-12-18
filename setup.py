@@ -23,7 +23,7 @@ from epicscorelibs.config import get_config_var
 # our choice of version suffix is constrained by PEP 440
 # so we always append .99.ABI.SRC to most recent upstream version
 # the following line is matched from cibuild.py
-package_version = '7.0.7.99.1.2'
+package_version = '7.0.10.99.0.0a1'
 
 assert package_version.split('.')[-3]=='99', package_version
 
@@ -148,11 +148,19 @@ class GenVersionError(Command):
             with open(outfile, 'w') as F:
                 F.write("""
 #include <stddef.h>
+#include "errlog.h"
 #include "envDefs.h"
 """)
 
                 for N, V in defs.items():
-                    F.write('const ENV_PARAM %s = {"%s", "%s"};\n'%(N,N,V.strip('"')))
+                    if N=='IOCSH_PS1':
+                        # special case, value many include C macros from errlog.h
+                        pass
+
+                    else:
+                        V = '"%s"'%(V.strip('"'),)
+
+                    F.write('const ENV_PARAM %s = {"%s", %s};\n'%(N,N,V))
 
                 F.write('const ENV_PARAM* env_param_list[] = {\n')
                 for N, V in defs.items():
@@ -542,6 +550,7 @@ setup(
     long_description="""The EPICS (Experimental Physics and Industrial Control System) core libraries
 for use by python modules.  Either dynamically with ctypes or statically by compiled extension.
 """,
+    long_description_content_type='text/plain',
     url='https://github.com/mdavidsaver/epicscorelibs',
     author='Michael Davidsaver',
     author_email='mdavidsaver@gmail.com',
@@ -550,7 +559,6 @@ for use by python modules.  Either dynamically with ctypes or statically by comp
         'Development Status :: 5 - Production/Stable',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'License :: Freely Distributable',
         'Intended Audience :: Science/Research',
         'Topic :: Scientific/Engineering',
         'Topic :: Software Development :: Libraries',

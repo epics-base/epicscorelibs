@@ -80,6 +80,46 @@ recordtype(dfanout) {
 		promptgroup("50 - Output")
 		interest(1)
 	}
+	field(OUTI,DBF_OUTLINK) {
+		prompt("Output Spec I")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTJ,DBF_OUTLINK) {
+		prompt("Output Spec J")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTK,DBF_OUTLINK) {
+		prompt("Output Spec K")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTL,DBF_OUTLINK) {
+		prompt("Output Spec L")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTM,DBF_OUTLINK) {
+		prompt("Output Spec M")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTN,DBF_OUTLINK) {
+		prompt("Output Spec N")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTO,DBF_OUTLINK) {
+		prompt("Output Spec O")
+		promptgroup("50 - Output")
+		interest(1)
+	}
+	field(OUTP,DBF_OUTLINK) {
+		prompt("Output Spec P")
+		promptgroup("50 - Output")
+		interest(1)
+	}
 	field(DOL,DBF_INLINK) {
 		prompt("Desired Output Link")
 		promptgroup("40 - Input")
@@ -96,60 +136,60 @@ recordtype(dfanout) {
 		promptgroup("80 - Display")
 		interest(1)
 		size(16)
-		prop(YES)
+		prop(YES)		# get_units
 	}
 	field(PREC,DBF_SHORT) {
 		prompt("Display Precision")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_precision
 	}
 	field(HOPR,DBF_DOUBLE) {
 		prompt("High Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(LOPR,DBF_DOUBLE) {
 		prompt("Low Operating Range")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_graphic_double, get_control_double
 	}
 	field(HIHI,DBF_DOUBLE) {
 		prompt("Hihi Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(LOLO,DBF_DOUBLE) {
 		prompt("Lolo Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(HIGH,DBF_DOUBLE) {
 		prompt("High Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(LOW,DBF_DOUBLE) {
 		prompt("Low Alarm Limit")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 	}
 	field(HHSV,DBF_MENU) {
 		prompt("Hihi Severity")
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(LLSV,DBF_MENU) {
@@ -157,7 +197,7 @@ recordtype(dfanout) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(HSV,DBF_MENU) {
@@ -165,7 +205,7 @@ recordtype(dfanout) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(LSV,DBF_MENU) {
@@ -173,7 +213,7 @@ recordtype(dfanout) {
 		promptgroup("70 - Alarm")
 		pp(TRUE)
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_alarm_double
 		menu(menuAlarmSevr)
 	}
 	field(HYST,DBF_DOUBLE) {
@@ -205,6 +245,17 @@ recordtype(dfanout) {
 		prompt("Last Val Monitored")
 		special(SPC_NOMOD)
 		interest(3)
+	}
+	field(IVOA,DBF_MENU) {
+		prompt("INVALID output action")
+		promptgroup("50 - Output")
+		interest(2)
+		menu(menuIvoa)
+	}
+	field(IVOV,DBF_DOUBLE) {
+		prompt("INVALID output value")
+		promptgroup("50 - Output")
+		interest(2)
 	}
 
 }

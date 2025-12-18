@@ -43,7 +43,7 @@ static char ioc_log_file_command[256];
 
 
 struct iocLogClient {
-    int insock;
+    SOCKET insock;
     struct ioc_log_server *pserver;
     size_t nChar;
     char recvbuf[1024];
@@ -480,14 +480,14 @@ static void acceptNewClient ( void *pParam )
      * this task will find out and exit
      */
     {
-        long true = 1;
+        long True = 1;
 
         status = setsockopt(
                 pclient->insock,
                 SOL_SOCKET,
                 SO_KEEPALIVE,
-                (char *)&true,
-                sizeof(true) );
+                (char *)&True,
+                sizeof(True) );
         if(status<0){
             fprintf(stderr, "Keepalive option set failed\n");
         }
@@ -670,7 +670,7 @@ static void writeMessagesToLog (struct iocLogClient *pclient)
         }
         else {
             if (status != ntci) {
-                fprintf(stderr, "iocLogServer: didnt calculate number of characters correctly?\n");
+                fprintf(stderr, "iocLogServer: didn't calculate number of characters correctly?\n");
             }
             pclient->pserver->filePos += status;
         }

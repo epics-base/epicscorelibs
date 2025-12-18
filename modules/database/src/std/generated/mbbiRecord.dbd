@@ -172,6 +172,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(ONST,DBF_STRING) {
 		prompt("One String")
@@ -180,6 +181,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(TWST,DBF_STRING) {
 		prompt("Two String")
@@ -188,6 +190,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(THST,DBF_STRING) {
 		prompt("Three String")
@@ -196,6 +199,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(FRST,DBF_STRING) {
 		prompt("Four String")
@@ -204,6 +208,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(FVST,DBF_STRING) {
 		prompt("Five String")
@@ -212,6 +217,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(SXST,DBF_STRING) {
 		prompt("Six String")
@@ -220,6 +226,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(SVST,DBF_STRING) {
 		prompt("Seven String")
@@ -228,6 +235,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(EIST,DBF_STRING) {
 		prompt("Eight String")
@@ -236,6 +244,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(NIST,DBF_STRING) {
 		prompt("Nine String")
@@ -244,6 +253,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(TEST,DBF_STRING) {
 		prompt("Ten String")
@@ -252,6 +262,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(ELST,DBF_STRING) {
 		prompt("Eleven String")
@@ -260,6 +271,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(TVST,DBF_STRING) {
 		prompt("Twelve String")
@@ -268,6 +280,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(TTST,DBF_STRING) {
 		prompt("Thirteen String")
@@ -276,6 +289,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(FTST,DBF_STRING) {
 		prompt("Fourteen String")
@@ -284,6 +298,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 	field(FFST,DBF_STRING) {
 		prompt("Fifteen String")
@@ -292,6 +307,7 @@ recordtype(mbbi) {
 		pp(TRUE)
 		interest(1)
 		size(26)
+		prop(YES)		# get_enum_str, get_enum_strs, put_enum_str
 	}
 
 

@@ -20,14 +20,19 @@ static int yyparse(void);
 #include <stdlib.h>
 #include <stddef.h>
 #include <string.h>
+#include <errno.h>
 
 #include "osiUnistd.h"
 #include "macLib.h"
 #include "dbmf.h"
+#include "errlog.h"
 
 #include "epicsExport.h"
 #include "dbAccess.h"
+#include "dbStaticLib.h"
+#include "dbStaticPvt.h"
 #include "dbLoadTemplate.h"
+#include "osiFileName.h"
 
 static int line_num;
 static int yyerror(char* str);
@@ -48,7 +53,18 @@ static int var_count, sub_count;
 int dbTemplateMaxVars = 100;
 epicsExportAddress(int, dbTemplateMaxVars);
 
-#line 55 "../dbtemplate/dbLoadTemplate.y"
+static
+int msiLoadRecords(const char *fname, const char *subs)
+{
+    int ret = dbLoadRecords(fname, subs);
+    if(ret) {
+        fprintf(stderr, "dbLoadRecords(\"%s\", %s)\n", fname, subs);
+        yyerror("Error while reading included file");
+    }
+    return ret;
+}
+
+#line 71 "../dbtemplate/dbLoadTemplate.y"
 typedef union
 {
     int Int;
@@ -56,7 +72,7 @@ typedef union
     char *Str;
     double Real;
 } YYSTYPE;
-#line 60 "dbLoadTemplate.tab.c"
+#line 76 "dbLoadTemplate.tab.c"
 #define WORD 257
 #define QUOTE 258
 #define DBFILE 259
@@ -225,7 +241,7 @@ static YYSTYPE yylval;
 static short yyss[YYSTACKSIZE];
 static YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
-#line 311 "../dbtemplate/dbLoadTemplate.y"
+#line 327 "../dbtemplate/dbLoadTemplate.y"
 
 #include "dbLoadTemplate_lex.c"
 
@@ -241,10 +257,11 @@ static int yyerror(char* str)
 
 static int is_not_inited = 1;
 
-int dbLoadTemplate(const char *sub_file, const char *cmd_collect)
+int dbLoadTemplate(const char *sub_file, const char *cmd_collect, const char *path)
 {
     FILE *fp;
     int i;
+    int err;
 
     line_num = 1;
 
@@ -255,14 +272,22 @@ int dbLoadTemplate(const char *sub_file, const char *cmd_collect)
 
     if (dbTemplateMaxVars < 1)
     {
-        fprintf(stderr,"Error: dbTemplateMaxVars = %d, must be +ve\n",
+        fprintf(stderr,ERL_ERROR ": dbTemplateMaxVars = %d, must be +ve\n",
                 dbTemplateMaxVars);
         return -1;
     }
 
     fp = fopen(sub_file, "r");
+    // If the file does not exist locally, and it is not an absolute path...
+    if (!fp && sub_file[0] != OSI_PATH_SEPARATOR[0]) {
+        if (!path || !*path) {
+            path = getenv("EPICS_DB_INCLUDE_PATH");
+        }
+        dbPath(pdbbase, path);
+        dbOpenFile(pdbbase, sub_file, &fp);
+    }
     if (!fp) {
-        fprintf(stderr, "dbLoadTemplate: error opening sub file %s\n", sub_file);
+        fprintf(stderr, "dbLoadTemplate: error opening sub file %s: %s\n", sub_file, strerror(errno));
         return -1;
     }
 
@@ -294,7 +319,7 @@ int dbLoadTemplate(const char *sub_file, const char *cmd_collect)
         yyrestart(fp);
     }
 
-    yyparse();
+    err = yyparse();
 
     for (i = 0; i < var_count; i++) {
         dbmfFree(vars[i]);
@@ -307,9 +332,9 @@ int dbLoadTemplate(const char *sub_file, const char *cmd_collect)
         dbmfFree(db_file_name);
         db_file_name = NULL;
     }
-    return 0;
+    return err;
 }
-#line 313 "dbLoadTemplate.tab.c"
+#line 338 "dbLoadTemplate.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -443,7 +468,7 @@ yyreduce:
     switch (yyn)
     {
 case 6:
-#line 75 "../dbtemplate/dbLoadTemplate.y"
+#line 91 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "global_definitions: %s\n", sub_collect+1);
@@ -452,7 +477,7 @@ case 6:
     }
 break;
 case 7:
-#line 84 "../dbtemplate/dbLoadTemplate.y"
+#line 100 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_substitutions: %s unused\n", db_file_name);
@@ -462,7 +487,7 @@ case 7:
     }
 break;
 case 8:
-#line 92 "../dbtemplate/dbLoadTemplate.y"
+#line 108 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_substitutions: %s finished\n", db_file_name);
@@ -472,7 +497,7 @@ case 8:
     }
 break;
 case 9:
-#line 102 "../dbtemplate/dbLoadTemplate.y"
+#line 118 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_filename: %s\n", yyvsp[0].Str);
@@ -484,7 +509,7 @@ case 9:
     }
 break;
 case 10:
-#line 112 "../dbtemplate/dbLoadTemplate.y"
+#line 128 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "template_filename: \"%s\"\n", yyvsp[0].Str);
@@ -496,7 +521,7 @@ case 10:
     }
 break;
 case 20:
-#line 139 "../dbtemplate/dbLoadTemplate.y"
+#line 155 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_name: [%d] = %s\n", var_count, yyvsp[0].Str);
@@ -516,29 +541,29 @@ case 20:
     }
 break;
 case 24:
-#line 164 "../dbtemplate/dbLoadTemplate.y"
+#line 180 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_definition: pattern_values empty\n");
         fprintf(stderr, "    dbLoadRecords(%s)\n", sub_collect+1);
     #endif
-        dbLoadRecords(db_file_name, sub_collect+1);
+        if(msiLoadRecords(db_file_name, sub_collect+1)) YYABORT;
     }
 break;
 case 25:
-#line 172 "../dbtemplate/dbLoadTemplate.y"
+#line 188 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_definition:\n");
         fprintf(stderr, "    dbLoadRecords(%s)\n", sub_collect+1);
     #endif
-        dbLoadRecords(db_file_name, sub_collect+1);
+        if(msiLoadRecords(db_file_name, sub_collect+1)) YYABORT;
         *sub_locals = '\0';
         sub_count = 0;
     }
 break;
 case 26:
-#line 182 "../dbtemplate/dbLoadTemplate.y"
+#line 198 "../dbtemplate/dbLoadTemplate.y"
 {   /* DEPRECATED SYNTAX */
         fprintf(stderr,
             "dbLoadTemplate: Substitution file uses deprecated syntax.\n"
@@ -549,14 +574,14 @@ case 26:
         fprintf(stderr, "pattern_definition:\n");
         fprintf(stderr, "    dbLoadRecords(%s)\n", sub_collect+1);
     #endif
-        dbLoadRecords(db_file_name, sub_collect+1);
+        if(msiLoadRecords(db_file_name, sub_collect+1)) YYABORT;
         dbmfFree(yyvsp[-3].Str);
         *sub_locals = '\0';
         sub_count = 0;
     }
 break;
 case 30:
-#line 205 "../dbtemplate/dbLoadTemplate.y"
+#line 221 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_value: [%d] = \"%s\"\n", sub_count, yyvsp[0].Str);
@@ -576,7 +601,7 @@ case 30:
     }
 break;
 case 31:
-#line 223 "../dbtemplate/dbLoadTemplate.y"
+#line 239 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "pattern_value: [%d] = %s\n", sub_count, yyvsp[0].Str);
@@ -595,28 +620,28 @@ case 31:
     }
 break;
 case 35:
-#line 247 "../dbtemplate/dbLoadTemplate.y"
+#line 263 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_substitution: variable_definitions empty\n");
         fprintf(stderr, "    dbLoadRecords(%s)\n", sub_collect+1);
     #endif
-        dbLoadRecords(db_file_name, sub_collect+1);
+        if(msiLoadRecords(db_file_name, sub_collect+1)) YYABORT;
     }
 break;
 case 36:
-#line 255 "../dbtemplate/dbLoadTemplate.y"
+#line 271 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_substitution:\n");
         fprintf(stderr, "    dbLoadRecords(%s)\n", sub_collect+1);
     #endif
-        dbLoadRecords(db_file_name, sub_collect+1);
+        if(msiLoadRecords(db_file_name, sub_collect+1)) YYABORT;
         *sub_locals = '\0';
     }
 break;
 case 37:
-#line 264 "../dbtemplate/dbLoadTemplate.y"
+#line 280 "../dbtemplate/dbLoadTemplate.y"
 {   /* DEPRECATED SYNTAX */
         fprintf(stderr,
             "dbLoadTemplate: Substitution file uses deprecated syntax.\n"
@@ -627,13 +652,13 @@ case 37:
         fprintf(stderr, "variable_substitution:\n");
         fprintf(stderr, "    dbLoadRecords(%s)\n", sub_collect+1);
     #endif
-        dbLoadRecords(db_file_name, sub_collect+1);
+        if(msiLoadRecords(db_file_name, sub_collect+1)) YYABORT;
         dbmfFree(yyvsp[-3].Str);
         *sub_locals = '\0';
     }
 break;
 case 41:
-#line 286 "../dbtemplate/dbLoadTemplate.y"
+#line 302 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_definition: %s = %s\n", yyvsp[-2].Str, yyvsp[0].Str);
@@ -646,7 +671,7 @@ case 41:
     }
 break;
 case 42:
-#line 297 "../dbtemplate/dbLoadTemplate.y"
+#line 313 "../dbtemplate/dbLoadTemplate.y"
 {
     #ifdef ERROR_STUFF
         fprintf(stderr, "variable_definition: %s = \"%s\"\n", yyvsp[-2].Str, yyvsp[0].Str);
@@ -659,7 +684,7 @@ case 42:
         dbmfFree(yyvsp[-2].Str); dbmfFree(yyvsp[0].Str);
     }
 break;
-#line 663 "dbLoadTemplate.tab.c"
+#line 688 "dbLoadTemplate.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

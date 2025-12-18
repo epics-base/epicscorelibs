@@ -27,6 +27,7 @@
 #include "osiSock.h"
 #include "epicsAssert.h"
 #include "errlog.h"
+#include "epicsAtomic.h"
 
 /* Linux and *BSD (at least) specific way to atomically set O_CLOEXEC.
  * RTEMS 5.1 provides SOCK_CLOEXEC, but doesn't implement accept4()
@@ -40,6 +41,13 @@
 #  define SOCK_CLOEXEC (0)
 #endif
 
+#if defined(AI_PASSIVE) && !defined(__rtems__)
+#  define USE_INFO
+#else
+#  define USE_BY
+#endif
+
+#ifdef USE_BY
 /*
  * Protect some routines which are not thread-safe
  */
@@ -59,20 +67,19 @@ static void unlockInfo (void)
 {
     epicsMutexUnlock (infoMutex);
 }
+#endif
 
-/*
- * NOOP
- */
+static size_t nAttached;
+
 int osiSockAttach()
 {
+    epicsAtomicIncrSizeT(&nAttached);
     return 1;
 }
 
-/*
- * NOOP
- */
 void osiSockRelease()
 {
+    epicsAtomicDecrSizeT(&nAttached);
 }
 
 /*
@@ -83,6 +90,11 @@ void osiSockRelease()
 LIBCOM_API SOCKET epicsStdCall epicsSocketCreate ( 
     int domain, int type, int protocol )
 {
+    static unsigned char warnAttached;
+    if(!epicsAtomicGetSizeT(&nAttached) && !warnAttached) {
+        warnAttached = 1;
+        errlogPrintf(ERL_WARNING ": epicsSocketCreate() without osiSockAttach() is not portable\n");
+    }
     SOCKET sock = socket ( domain, type | SOCK_CLOEXEC, protocol );
     if ( sock < 0 ) {
         sock = INVALID_SOCKET;
@@ -119,8 +131,8 @@ LIBCOM_API SOCKET epicsStdCall epicsSocketCreate (
     return sock;
 }
 
-LIBCOM_API int epicsStdCall epicsSocketAccept ( 
-    int sock, struct sockaddr * pAddr, osiSocklen_t * addrlen )
+LIBCOM_API SOCKET epicsStdCall epicsSocketAccept (
+    SOCKET sock, struct sockaddr * pAddr, osiSocklen_t * addrlen )
 {
 #ifndef HAVE_SOCK_CLOEXEC
     int newSock = accept ( sock, pAddr, addrlen );
@@ -159,6 +171,7 @@ LIBCOM_API void epicsStdCall epicsSocketDestroy ( SOCKET s )
     }
 }
 
+#ifdef USE_BY
 /*
  * ipAddrToHostName
  * On many systems, gethostbyaddr must be protected by a
@@ -209,6 +222,53 @@ LIBCOM_API int epicsStdCall hostToIPAddr
     unlockInfo ();
     return ret;
 }
+#endif
 
+#ifdef USE_INFO
 
+unsigned epicsStdCall ipAddrToHostName(const struct in_addr *pAddr, char *pBuf, unsigned bufSize)
+{
+    osiSockAddr query;
 
+    if(!bufSize)
+        return 0; // non-sense
+
+    memset(&query, 0, sizeof(query));
+    query.ia.sin_family = AF_INET;
+    query.ia.sin_addr = *pAddr;
+
+    int ret = getnameinfo(&query.sa, sizeof(query), pBuf, bufSize, NULL, 0, NI_NAMEREQD);
+    if(ret==0) {
+        ret = strlen (pBuf);
+
+    } else { // lookup fails
+        ret = 0; // indicate failure to caller
+    }
+    return ret;
+}
+
+int epicsStdCall hostToIPAddr(const char *pHostName, struct in_addr *pIPA)
+{
+    struct addrinfo hint, *result = NULL;
+
+    memset(&hint, 0, sizeof(hint));
+    hint.ai_family = AF_INET;
+
+    int ret = getaddrinfo(pHostName, NULL, &hint, &result);
+    if(ret==0) {
+        const struct addrinfo *ai;
+        ret = -1;
+        for(ai = result; ai; ai = ai->ai_next) {
+            assert(ai->ai_family==AF_INET); // ensured by hint
+            const struct sockaddr_in *answer = (const struct sockaddr_in*)ai->ai_addr;
+            *pIPA = answer->sin_addr;
+            ret = 0;
+            break;
+        }
+    }
+    if(result) {
+        freeaddrinfo(result);
+    }
+    return ret;
+}
+#endif

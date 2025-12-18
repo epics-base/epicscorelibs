@@ -93,7 +93,7 @@ recordtype(aSub) {
 		prompt("Display Precision")
 		promptgroup("80 - Display")
 		interest(1)
-		prop(YES)
+		prop(YES)		# get_precision
 	}
 
 
@@ -221,7 +221,7 @@ recordtype(aSub) {
 		extra("void *a")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTA
+		#=type Set by FTA[NOA]
 	}
 	field(B,DBF_NOACCESS) {
 		prompt("Input value B")
@@ -231,7 +231,7 @@ recordtype(aSub) {
 		extra("void *b")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTB
+		#=type Set by FTB[NOB]
 	}
 	field(C,DBF_NOACCESS) {
 		prompt("Input value C")
@@ -241,7 +241,7 @@ recordtype(aSub) {
 		extra("void *c")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTC
+		#=type Set by FTC[NOC]
 	}
 	field(D,DBF_NOACCESS) {
 		prompt("Input value D")
@@ -251,7 +251,7 @@ recordtype(aSub) {
 		extra("void *d")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTD
+		#=type Set by FTD[NOD]
 	}
 	field(E,DBF_NOACCESS) {
 		prompt("Input value E")
@@ -261,7 +261,7 @@ recordtype(aSub) {
 		extra("void *e")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTE
+		#=type Set by FTE[NOE]
 	}
 	field(F,DBF_NOACCESS) {
 		prompt("Input value F")
@@ -271,7 +271,7 @@ recordtype(aSub) {
 		extra("void *f")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTF
+		#=type Set by FTF[NOF]
 	}
 	field(G,DBF_NOACCESS) {
 		prompt("Input value G")
@@ -281,7 +281,7 @@ recordtype(aSub) {
 		extra("void *g")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTG
+		#=type Set by FTG[NOG]
 	}
 	field(H,DBF_NOACCESS) {
 		prompt("Input value H")
@@ -291,7 +291,7 @@ recordtype(aSub) {
 		extra("void *h")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTH
+		#=type Set by FTH[NOH]
 	}
 	field(I,DBF_NOACCESS) {
 		prompt("Input value I")
@@ -301,7 +301,7 @@ recordtype(aSub) {
 		extra("void *i")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTI
+		#=type Set by FTI[NOI]
 	}
 	field(J,DBF_NOACCESS) {
 		prompt("Input value J")
@@ -311,7 +311,7 @@ recordtype(aSub) {
 		extra("void *j")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTJ
+		#=type Set by FTJ[NOJ]
 	}
 	field(K,DBF_NOACCESS) {
 		prompt("Input value K")
@@ -321,7 +321,7 @@ recordtype(aSub) {
 		extra("void *k")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTK
+		#=type Set by FTK[NOK]
 	}
 	field(L,DBF_NOACCESS) {
 		prompt("Input value L")
@@ -331,7 +331,7 @@ recordtype(aSub) {
 		extra("void *l")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTL
+		#=type Set by FTL[NOL]
 	}
 	field(M,DBF_NOACCESS) {
 		prompt("Input value M")
@@ -341,7 +341,7 @@ recordtype(aSub) {
 		extra("void *m")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTM
+		#=type Set by FTM[NOM]
 	}
 	field(N,DBF_NOACCESS) {
 		prompt("Input value N")
@@ -351,7 +351,7 @@ recordtype(aSub) {
 		extra("void *n")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTN
+		#=type Set by FTN[NON]
 	}
 	field(O,DBF_NOACCESS) {
 		prompt("Input value O")
@@ -361,7 +361,7 @@ recordtype(aSub) {
 		extra("void *o")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTO
+		#=type Set by FTO[NOO]
 	}
 	field(P,DBF_NOACCESS) {
 		prompt("Input value P")
@@ -371,7 +371,7 @@ recordtype(aSub) {
 		extra("void *p")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTP
+		#=type Set by FTP[NOP]
 	}
 	field(Q,DBF_NOACCESS) {
 		prompt("Input value Q")
@@ -381,7 +381,7 @@ recordtype(aSub) {
 		extra("void *q")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTQ
+		#=type Set by FTQ[NOQ]
 	}
 	field(R,DBF_NOACCESS) {
 		prompt("Input value R")
@@ -391,7 +391,7 @@ recordtype(aSub) {
 		extra("void *r")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTR
+		#=type Set by FTR[NOR]
 	}
 	field(S,DBF_NOACCESS) {
 		prompt("Input value S")
@@ -401,7 +401,7 @@ recordtype(aSub) {
 		extra("void *s")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTS
+		#=type Set by FTS[NOS]
 	}
 	field(T,DBF_NOACCESS) {
 		prompt("Input value T")
@@ -411,7 +411,7 @@ recordtype(aSub) {
 		extra("void *t")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTT
+		#=type Set by FTT[NOT]
 	}
 	field(U,DBF_NOACCESS) {
 		prompt("Input value U")
@@ -421,7 +421,7 @@ recordtype(aSub) {
 		extra("void *u")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTU
+		#=type Set by FTU[NOU]
 	}
 
 
@@ -986,7 +986,7 @@ recordtype(aSub) {
 		extra("void *vala")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVA
+		#=type Set by FTVA[NOVA]
 	}
 	field(VALB,DBF_NOACCESS) {
 		prompt("Output value B")
@@ -996,7 +996,7 @@ recordtype(aSub) {
 		extra("void *valb")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVB
+		#=type Set by FTVB[NOVB]
 	}
 	field(VALC,DBF_NOACCESS) {
 		prompt("Output value C")
@@ -1006,7 +1006,7 @@ recordtype(aSub) {
 		extra("void *valc")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVC
+		#=type Set by FTVC[NOVC]
 	}
 	field(VALD,DBF_NOACCESS) {
 		prompt("Output value D")
@@ -1016,7 +1016,7 @@ recordtype(aSub) {
 		extra("void *vald")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVD
+		#=type Set by FTVD[NOVD]
 	}
 	field(VALE,DBF_NOACCESS) {
 		prompt("Output value E")
@@ -1026,7 +1026,7 @@ recordtype(aSub) {
 		extra("void *vale")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVE
+		#=type Set by FTVE[NOVE]
 	}
 	field(VALF,DBF_NOACCESS) {
 		prompt("Output value F")
@@ -1036,7 +1036,7 @@ recordtype(aSub) {
 		extra("void *valf")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVF
+		#=type Set by FTVF[NOVF]
 	}
 	field(VALG,DBF_NOACCESS) {
 		prompt("Output value G")
@@ -1046,7 +1046,7 @@ recordtype(aSub) {
 		extra("void *valg")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVG
+		#=type Set by FTVG[NOVG]
 	}
 	field(VALH,DBF_NOACCESS) {
 		prompt("Output value H")
@@ -1056,7 +1056,7 @@ recordtype(aSub) {
 		extra("void *valh")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVH
+		#=type Set by FTVH[NOVH]
 	}
 	field(VALI,DBF_NOACCESS) {
 		prompt("Output value I")
@@ -1066,7 +1066,7 @@ recordtype(aSub) {
 		extra("void *vali")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVI
+		#=type Set by FTVI[NOVI]
 	}
 	field(VALJ,DBF_NOACCESS) {
 		prompt("Output value J")
@@ -1076,7 +1076,7 @@ recordtype(aSub) {
 		extra("void *valj")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVJ
+		#=type Set by FTVJ[NOVJ]
 	}
 	field(VALK,DBF_NOACCESS) {
 		prompt("Output value K")
@@ -1086,7 +1086,7 @@ recordtype(aSub) {
 		extra("void *valk")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVK
+		#=type Set by FTVK[NOVK]
 	}
 	field(VALL,DBF_NOACCESS) {
 		prompt("Output value L")
@@ -1096,7 +1096,7 @@ recordtype(aSub) {
 		extra("void *vall")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVL
+		#=type Set by FTVL[NOVL]
 	}
 	field(VALM,DBF_NOACCESS) {
 		prompt("Output value M")
@@ -1106,7 +1106,7 @@ recordtype(aSub) {
 		extra("void *valm")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVM
+		#=type Set by FTVM[NOVM]
 	}
 	field(VALN,DBF_NOACCESS) {
 		prompt("Output value N")
@@ -1116,7 +1116,7 @@ recordtype(aSub) {
 		extra("void *valn")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVN
+		#=type Set by FTVN[NOVN]
 	}
 	field(VALO,DBF_NOACCESS) {
 		prompt("Output value O")
@@ -1126,7 +1126,7 @@ recordtype(aSub) {
 		extra("void *valo")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVO
+		#=type Set by FTVO[NOVO]
 	}
 	field(VALP,DBF_NOACCESS) {
 		prompt("Output value P")
@@ -1136,7 +1136,7 @@ recordtype(aSub) {
 		extra("void *valp")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVP
+		#=type Set by FTVP[NOVP]
 	}
 	field(VALQ,DBF_NOACCESS) {
 		prompt("Output value Q")
@@ -1146,7 +1146,7 @@ recordtype(aSub) {
 		extra("void *valq")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVQ
+		#=type Set by FTVQ[NOVQ]
 	}
 	field(VALR,DBF_NOACCESS) {
 		prompt("Output value R")
@@ -1156,7 +1156,7 @@ recordtype(aSub) {
 		extra("void *valr")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVR
+		#=type Set by FTVR[NOVR]
 	}
 	field(VALS,DBF_NOACCESS) {
 		prompt("Output value S")
@@ -1166,7 +1166,7 @@ recordtype(aSub) {
 		extra("void *vals")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVS
+		#=type Set by FTVS[NOVS]
 	}
 	field(VALT,DBF_NOACCESS) {
 		prompt("Output value T")
@@ -1176,7 +1176,7 @@ recordtype(aSub) {
 		extra("void *valt")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVT
+		#=type Set by FTVT[NOVT]
 	}
 	field(VALU,DBF_NOACCESS) {
 		prompt("Output value U")
@@ -1186,7 +1186,7 @@ recordtype(aSub) {
 		extra("void *valu")
 		#=read Yes
 		#=write Yes
-		#=type Set by FTVU
+		#=type Set by FTVU[NOVU]
 	}
 
 

@@ -16,6 +16,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <sstream>
 
 #include <stddef.h>
 #include <string.h>
@@ -25,24 +26,15 @@
 
 #define EPICS_PRIVATE_API
 
-#include "epicsMath.h"
-#include "errlog.h"
-#include "macLib.h"
-#include "epicsStdio.h"
-#include "epicsString.h"
-#include "epicsStdlib.h"
-#include "epicsThread.h"
-#include "epicsMutex.h"
-#include "envDefs.h"
-#include "registry.h"
+// Recent readline.h uses printf in an attribute
+#define epicsStdioStdStreams
+#define epicsStdioStdPrintfEtc
+
 #include "epicsReadline.h"
-#include "cantProceed.h"
-#include "iocsh.h"
-
 #include "epicsReadlinePvt.h"
-
 #if EPICS_COMMANDLINE_LIBRARY == EPICS_COMMANDLINE_LIBRARY_READLINE
 #  include <readline/readline.h>
+#  include <readline/history.h>
 #  define USE_READLINE
 /* libedit also provides readline.h, but isn't fully compatible with
  * GNU readline.  It also doesn't specifically identify itself.
@@ -59,6 +51,19 @@
 static const char *rl_basic_quote_characters;
 #  endif
 #endif
+
+#include "epicsMath.h"
+#include "errlog.h"
+#include "macLib.h"
+#include "epicsStdio.h"
+#include "epicsString.h"
+#include "epicsStdlib.h"
+#include "epicsThread.h"
+#include "epicsMutex.h"
+#include "envDefs.h"
+#include "registry.h"
+#include "cantProceed.h"
+#include "iocsh.h"
 
 extern "C" {
 
@@ -202,7 +207,7 @@ showError (const char *filename, int lineno, const char *msg, ...)
 
     va_start (ap, msg);
     if (filename)
-        fprintf(epicsGetStderr(), "%s line %d: ", filename, lineno);
+        fprintf(epicsGetStderr(), ERL_ERROR " %s line %d: ", filename, lineno);
     vfprintf (epicsGetStderr(), msg, ap);
     fputc ('\n', epicsGetStderr());
     va_end (ap);
@@ -351,17 +356,17 @@ struct Tokenize {
 
         if (redirect != NULL) {
             if(noise)
-                showError(filename, lineno, "Illegal redirection.");
+                showError(filename, lineno, ANSI_RED("Invalid redirection."));
             return true;
         }
         if (quote) {
             if(noise)
-                showError(filename, lineno, "Unbalanced quote.");
+                showError(filename, lineno, ANSI_RED("Unbalanced quote."));
             return true;
         }
         if (backslash) {
             if(noise)
-                showError(filename, lineno, "Trailing backslash.");
+                showError(filename, lineno, ANSI_RED("Trailing backslash."));
             return true;
         }
 
@@ -382,8 +387,8 @@ struct Tokenize {
             redirect->fp = fopen(redirect->name, redirect->mode);
             if (redirect->fp == NULL) {
                 int err = errno;
-                showError(filename, lineno, "Can't open \"%s\": %s.",
-                                            redirect->name, strerror(err));
+                showError(filename, lineno, ANSI_RED("Can't open '%s': %s"),
+                    redirect->name, strerror(err));
                 redirect->name = NULL;
                 // caller will clear tok.redirects
                 return -1;
@@ -633,6 +638,16 @@ struct ReadlineContext {
             rl_completer_quote_characters = (char*)"\"";
             rl_attempted_completion_function = &iocsh_attempt_completion;
             rl_bind_key('\t', rl_complete);
+            compute_hist_file();
+            if(!hist_file.empty()) {
+                if(int err = read_history(hist_file.c_str())) {
+                    if(err!=ENOENT)
+                        fprintf(epicsGetStderr(),
+                            ERL_ERROR " %s (%d) loading '%s'\n",
+                            strerror(err), err, hist_file.c_str());
+                }
+                stifle_history(1024); // some limit...
+            }
         }
 #endif
         return context;
@@ -641,6 +656,13 @@ struct ReadlineContext {
     ~ReadlineContext() {
         if(context) {
 #ifdef USE_READLINE
+            if(!hist_file.empty()) {
+                if(int err = write_history(hist_file.c_str())) {
+                    fprintf(epicsGetStderr(),
+                        ERL_ERROR " %s (%d) writing '%s'\n",
+                        strerror(err), err, hist_file.c_str());
+                }
+            }
             rl_readline_name = prev_rl_readline_name;
             rl_basic_word_break_characters = prev_rl_basic_word_break_characters;
             rl_completer_word_break_characters = prev_rl_completer_word_break_characters;
@@ -653,6 +675,26 @@ struct ReadlineContext {
             epicsReadlineEnd(context);
         }
     }
+
+#ifdef USE_READLINE
+    std::string hist_file;
+
+    void compute_hist_file() {
+        std::string scratch;
+        if(const char *env = getenv("EPICS_IOCSH_HISTFILE")) {
+            scratch = env;
+        } else {
+            scratch = ".iocsh_history";
+        }
+        const char *home = getenv("HOME");
+        if(home && scratch.size()>=2 && scratch[0]=='~' && scratch[1]=='/') {
+            std::ostringstream strm;
+            strm<<home<<'/'<<scratch.substr(2);
+            scratch = strm.str();
+        }
+        hist_file.swap(scratch);
+    }
+#endif // USE_READLINE
 };
 
 } // namespace
@@ -755,6 +797,13 @@ void epicsStdCall iocshFree(void)
     iocshTableUnlock ();
 }
 
+/*
+ * Parse argument input based on the arg type specified.
+ * It is worth noting that depending on type this argument may 
+ * be defaulted if a value is not specified. For example, a 
+ * double/int with no value will default to 0 which may allow
+ * you to add optional arguments to the end of your argument list.
+ */
 static int
 cvtArg (const char *filename, int lineno, char *arg, iocshArgBuf *argBuf,
     const iocshArg *piocshArg)
@@ -770,13 +819,14 @@ cvtArg (const char *filename, int lineno, char *arg, iocshArgBuf *argBuf,
                 errno = 0;
                 argBuf->ival = strtoul (arg, &endp, 0);
                 if (errno == ERANGE) {
-                    showError(filename, lineno, "Integer '%s' out of range",
-                        arg);
+                    showError(filename, lineno,
+                        ANSI_RED("Integer '%s' out of range."), arg);
                     return 0;
                 }
             }
             if (*endp) {
-                showError(filename, lineno, "Illegal integer '%s'", arg);
+                showError(filename, lineno,
+                    ANSI_RED("Invalid integer '%s'."), arg);
                 return 0;
             }
         }
@@ -789,7 +839,8 @@ cvtArg (const char *filename, int lineno, char *arg, iocshArgBuf *argBuf,
         if (arg && *arg) {
             argBuf->dval = epicsStrtod (arg, &endp);
             if (*endp) {
-                showError(filename, lineno, "Illegal double '%s'", arg);
+                showError(filename, lineno,
+                    ANSI_RED("Invalid double '%s'."), arg);
                 return 0;
             }
         }
@@ -806,12 +857,13 @@ cvtArg (const char *filename, int lineno, char *arg, iocshArgBuf *argBuf,
 
     case iocshArgPersistentString:
         if (arg != NULL) {
-            argBuf->sval = (char *) malloc(strlen(arg) + 1);
+            size_t slen = strlen(arg);
+            argBuf->sval = (char *) malloc(slen + 1);
             if (argBuf->sval == NULL) {
-                showError(filename, lineno, "Out of memory");
+                showError(filename, lineno, ANSI_RED("Out of memory!"));
                 return 0;
             }
-            strcpy(argBuf->sval, arg);
+            strncpy(argBuf->sval, arg, slen);
         } else {
           argBuf->sval = NULL;
         }
@@ -821,18 +873,19 @@ cvtArg (const char *filename, int lineno, char *arg, iocshArgBuf *argBuf,
         /* Argument must be missing or 0 or pdbbase */
         if(!arg || !*arg || (*arg == '0') || (strcmp(arg, "pdbbase") == 0)) {
             if(!iocshPpdbbase || !*iocshPpdbbase) {
-                showError(filename, lineno, "pdbbase not present");
+                showError(filename, lineno, ANSI_RED("pdbbase not set!"));
                 return 0;
             }
             argBuf->vval = *iocshPpdbbase;
             break;
         }
-        showError(filename, lineno, "Expecting 'pdbbase' got '%s'", arg);
+        showError(filename, lineno,
+            ANSI_RED("Expecting 'pdbbase' got '%s'."), arg);
         return 0;
 
     default:
-        showError(filename, lineno, "Illegal argument type %d",
-            piocshArg->type);
+        showError(filename, lineno,
+            ANSI_RED("Invalid argument type %d."), piocshArg->type);
         return 0;
     }
     return 1;
@@ -883,21 +936,25 @@ static void helpCallFunc(const iocshArgBuf *args)
             fputc('\n', epicsGetStdout());
         iocshTableUnlock ();
 
-        fprintf(epicsGetStdout(),
-                "\n"
-                "Type 'help <command>' to see the arguments of <command>.  eg. 'help db*'\n");
+        fprintf(epicsGetStdout(), "\n"
+            "Type 'help <glob>' for information about commands matching\n"
+            "the name or pattern <glob>, e.g. 'help db*'\n");
     }
     else {
+        bool firstFunction = true;
         for (int iarg = 1 ; iarg < argc ; iarg++) {
             for (pcmd = iocshCommandHead ; pcmd != NULL ; pcmd = pcmd->next) {
                 piocshFuncDef = pcmd->def.pFuncDef;
                 if (epicsStrGlobMatch(piocshFuncDef->name, argv[iarg]) != 0) {
-                    if(piocshFuncDef->usage) {
-                        fputs("\nUsage: ", epicsGetStdout());
+
+                    if (! firstFunction) {
+                        fprintf(epicsGetStdout(), 
+                            ANSI_UNDERLINE("                                                            ")
+                            "\n");
                     }
-                    fprintf(epicsGetStdout(),
-                            ANSI_BOLD("%s"),
-                            piocshFuncDef->name);
+
+                    fprintf(epicsGetStdout(), "\n" ANSI_BOLD("%s"),
+                        piocshFuncDef->name);
 
                     for (int a = 0 ; a < piocshFuncDef->nargs ; a++) {
                         const char *cp = piocshFuncDef->arg[a]->name;
@@ -909,11 +966,14 @@ static void helpCallFunc(const iocshArgBuf *args)
                             fprintf(epicsGetStdout(), " '%s'", cp);
                         }
                     }
-                    fprintf(epicsGetStdout(),"\n");;
+                    fprintf(epicsGetStdout(),"\n");
                     if(piocshFuncDef->usage) {
                         fprintf(epicsGetStdout(), "\n%s", piocshFuncDef->usage);
                     }
+                    
+                    firstFunction = false;
                 }
+
             }
         }
     }
@@ -985,14 +1045,15 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
     if (commandLine == NULL) {
         if ((pathname == NULL) || (strcmp (pathname, "<telnet>") == 0)) {
             if ((prompt = envGetConfigParamPtr(&IOCSH_PS1)) == NULL) {
-                prompt = "epics> ";
+                prompt = ANSI_GREEN("epics> ");
             }
             scope.interactive = true;
         }
         else {
             fp = fopen (pathname, "r");
             if (fp == NULL) {
-                fprintf(epicsGetStderr(), "Can't open %s: %s\n", pathname,
+                fprintf(epicsGetStderr(),
+                    ANSI_RED("Can't open %s: %s") "\n", pathname,
                     strerror (errno));
                 return -1;
             }
@@ -1007,7 +1068,8 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
          * Create a command-line input context
          */
         if (!readline.setup(fp)) {
-            fprintf(epicsGetStderr(), "Can't allocate command-line object.\n");
+            fprintf(epicsGetStderr(),
+                ANSI_RED("Can't allocate command-line object!") "\n");
             if (fp)
                 fclose(fp);
             return -1;
@@ -1109,8 +1171,9 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
          */
         if (c == '#') {
             if ((prompt == NULL) && (commandLine == NULL))
-                if (raw[icin + 1] != '-')
-                    puts(raw);
+                if (raw[icin + 1] != '-') {
+                    fprintf(epicsGetStdout(), ANSI_BLUE("%s") "\n", raw);
+                }
             continue;
         }
 
@@ -1136,7 +1199,7 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
          */
         if ((prompt == NULL) && *line && (commandLine == NULL)) {
             if ((c != '#') || (line[icin + 1] != '-')) {
-                puts(line);
+                fprintf(epicsGetStdout(), ANSI_BOLD("%s") "\n", line);
             }
         }
 
@@ -1206,10 +1269,12 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
                         try {
                             (*found->def.func)(&argBuf[0]);
                         } catch(std::exception& e){
-                            fprintf(epicsGetStderr(), "c++ error: %s\n", e.what());
+                            fprintf(epicsGetStderr(),
+                                ANSI_RED("C++ error: %s") "\n", e.what());
                             scope.errored = true;
                         } catch(...) {
-                            fprintf(epicsGetStderr(), "c++ error unknown\n");
+                            fprintf(epicsGetStderr(),
+                                ANSI_RED("C++ error unknown.") "\n");
                             scope.errored = true;
                         }
                         break;
@@ -1234,7 +1299,8 @@ iocshBody (const char *pathname, const char *commandLine, const char *macros)
                 }
             }
             else {
-                showError(filename, lineno, "Command %s not found.", tokenize.argv[0]);
+                showError(filename, lineno,
+                    ANSI_RED("Command '%s' not registered."), tokenize.argv[0]);
             }
         }
         tokenize.stopRedirect();
@@ -1274,7 +1340,7 @@ iocshCmd (const char *cmd)
 int epicsStdCall
 iocshLoad(const char *pathname, const char *macros)
 {
-    if (pathname)
+    if (pathname && !getenv("IOCSH_STARTUP_SCRIPT"))
         epicsEnvSet("IOCSH_STARTUP_SCRIPT", pathname);
     return iocshBody(pathname, NULL, macros);
 }
@@ -1323,7 +1389,8 @@ static void varHandler(const iocshVarDef *v, const char *setString)
 {
     switch(v->type) {
     default:
-        fprintf(epicsGetStderr(), "Can't handle variable %s of type %d.\n",
+        fprintf(epicsGetStderr(),
+            ANSI_RED("Can't handle variable '%s' of type %d.") "\n",
             v->name, v->type);
         return;
     case iocshArgInt: break;
@@ -1333,10 +1400,10 @@ static void varHandler(const iocshVarDef *v, const char *setString)
         switch(v->type) {
         default: break;
         case iocshArgInt:
-            fprintf(epicsGetStdout(), "%s = %d\n", v->name, *(int *)v->pval);
+            fprintf(epicsGetStdout(), "int %s = %d\n", v->name, *(int *)v->pval);
             break;
         case iocshArgDouble:
-            fprintf(epicsGetStdout(), "%s = %g\n", v->name, *(double *)v->pval);
+            fprintf(epicsGetStdout(), "double %s = %g\n", v->name, *(double *)v->pval);
             break;
         }
     }
@@ -1351,7 +1418,8 @@ static void varHandler(const iocshVarDef *v, const char *setString)
                 *(int *)v->pval = ltmp;
             else
                 fprintf(epicsGetStderr(),
-                    "Invalid integer value. Var %s not changed.\n", v->name);
+                    ANSI_RED("Invalid integer, var '%s' not changed.") "\n",
+                    v->name);
             break;
           }
         case iocshArgDouble:
@@ -1362,7 +1430,8 @@ static void varHandler(const iocshVarDef *v, const char *setString)
                 *(double *)v->pval = dtmp;
             else
                 fprintf(epicsGetStderr(),
-                    "Invalid double value. Var %s not changed.\n", v->name);
+                    ANSI_RED("Invalid double, var '%s' not changed.") "\n",
+                    v->name);
             break;
           }
         }
@@ -1382,13 +1451,18 @@ static void varCallFunc(const iocshArgBuf *args)
                 varHandler(v->pVarDef, NULL);
                 found = 1;
             }
-        if (!found && name != NULL)
-            fprintf(epicsGetStderr(), "No var matching %s found.\n", name);
+        if (!found && name != NULL) {
+            fprintf(epicsGetStderr(),
+                ANSI_RED("No known vars match '%s'.") "\n", name);
+            iocshSetError(1);
+        }
     }
     else {
         v = (iocshVariable *)registryFind(iocshVarID, args[0].sval);
         if (v == NULL) {
-            fprintf(epicsGetStderr(), "Var %s not found.\n", name);
+            fprintf(epicsGetStderr(),
+                ANSI_RED("No known var '%s'.") "\n", name);
+            iocshSetError(1);
         }
         else {
             varHandler(v->pVarDef, value);
@@ -1405,7 +1479,7 @@ static const iocshFuncDef iocshCmdFuncDef = {"iocshCmd",1,iocshCmdArgs,
                                              "    from vxWorks or RTEMS startup script (or command line)\n"};
 static void iocshCmdCallFunc(const iocshArgBuf *args)
 {
-    iocshCmd(args[0].sval);
+    iocshSetError(iocshCmd(args[0].sval));
 }
 
 /* iocshLoad */
@@ -1417,7 +1491,7 @@ static const iocshFuncDef iocshLoadFuncDef = {"iocshLoad",2,iocshLoadArgs,
                                               "  * (optional) replace macros within the file with provided values\n"};
 static void iocshLoadCallFunc(const iocshArgBuf *args)
 {
-    iocshLoad(args[0].sval, args[1].sval);
+    iocshSetError(iocshLoad(args[0].sval, args[1].sval));
 }
 
 /* iocshRun */
@@ -1430,23 +1504,24 @@ static const iocshFuncDef iocshRunFuncDef = {"iocshRun",2,iocshRunArgs,
                                              "    from vxWorks or RTEMS startup script (or command line)\n"};
 static void iocshRunCallFunc(const iocshArgBuf *args)
 {
-    iocshRun(args[0].sval, args[1].sval);
+    iocshSetError(iocshRun(args[0].sval, args[1].sval));
 }
 
 /* on */
-static const iocshArg onArg0 = { "'error' 'continue' | 'break' | 'wait' [value] | 'halt'", iocshArgArgv };
+static const iocshArg onArg0 = { ANSI_BOLD("error") " [continue | break | halt | wait <delay>]", iocshArgArgv };
 static const iocshArg *onArgs[1] = {&onArg0};
 static const iocshFuncDef onFuncDef = {"on", 1, onArgs,
                                        "Change IOC shell error handling.\n"
                                        "  continue (default) - Ignores error and continue with next commands.\n"
-                                       "  break - Return to caller without executing futher commands.\n"
+                                       "  break - Return to caller without executing further commands.\n"
                                        "  halt - Suspend process.\n"
-                                       "  wait - stall process for [value] seconds, then continue.\n"};
+                                       "  wait - stall process for <delay> seconds, then continue.\n"};
 static void onCallFunc(const iocshArgBuf *args)
 {
     iocshContext *context = (iocshContext *) epicsThreadPrivateGet(iocshContextId);
 
-#define USAGE() fprintf(epicsGetStderr(), "Usage: on error [continue | break | halt | wait <delay>]\n")
+#define USAGE() fprintf(epicsGetStderr(), "Usage: " \
+    ANSI_BOLD("on error") " [continue | break | halt | wait <delay>]\n")
 
     if(!context || !context->scope) {
         // we are not called through iocshBody()...
@@ -1455,7 +1530,8 @@ static void onCallFunc(const iocshArgBuf *args)
         USAGE();
 
     } else if(context->scope->interactive) {
-        fprintf(epicsGetStderr(), "Interactive shell ignores  on error ...\n");
+        fprintf(epicsGetStderr(),
+            ANSI_RED("Interactive shell, 'on error' ignored.") "\n");
 
     } else {
         // don't fault on previous, ignored, errors
@@ -1475,15 +1551,18 @@ static void onCallFunc(const iocshArgBuf *args)
             context->scope->onerr = Halt;
             if(args->aval.ac<=3) {
                 USAGE();
-            } else if(epicsParseDouble(args->aval.av[3], &context->scope->timeout, NULL)) {
+            } else if (epicsParseDouble(args->aval.av[3],
+                          &context->scope->timeout, NULL)) {
                 context->scope->timeout = 5.0;
             } else {
                 USAGE();
-                fprintf(epicsGetStderr(), "Unable to parse 'on error wait' time %s\n", args->aval.av[3]);
+                fprintf(epicsGetStderr(),
+                    ANSI_RED("Invalid 'on error wait' delay '%s'.") "\n",
+                    args->aval.av[3]);
             }
 
         } else {
-            fprintf(epicsGetStderr(), "Usage: on error [continue | break | halt | wait <delay>]\n");
+            USAGE();
             context->scope->errored = true;
         }
     }
