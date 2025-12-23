@@ -89,16 +89,16 @@ jobs:
                 setuptools_dso wheel numpy ply nose2
 
             # create source tar
-            pip install --no-index -f ./output setuptools_dso
+            pip install $PRE --no-index -f ./output setuptools_dso
             python setup.py sdist -d ./output
             ls -lh output
 
             # build wheel from source tar
-            pip wheel -w ./output --no-index -f ./output epicscorelibs
+            pip wheel $PRE -w ./output --no-index -f ./output epicscorelibs
             ls -lh output
 
             # install wheel for testing
-            pip install --no-index -f ./output epicscorelibs nose2
+            pip install $PRE --no-index -f ./output epicscorelibs nose2
 
             # switch away from root when running test to avoid inclusion in PYTHONPATH
             cd output
@@ -225,16 +225,16 @@ jobs:
 
             export SETUPTOOLS_DSO_PLAT_NAME=${{ matrix.arch }}
 
-            pip install --no-index -f ./output setuptools_dso
+            pip install $PRE --no-index -f ./output setuptools_dso
             python setup.py sdist -d ./output
             ls -lh output
 
             # build wheel from source tar
-            pip wheel -w ./output --no-index -f ./output epicscorelibs
+            pip wheel $PRE -w ./output --no-index -f ./output epicscorelibs
             ls -lh output
 
             # install wheel for testing
-            pip install --no-index -f ./output epicscorelibs nose2
+            pip install $PRE --no-index -f ./output epicscorelibs nose2
 
             # switch away from root when running test to avoid inclusion in PYTHONPATH
             cd output
