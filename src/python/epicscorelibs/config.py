@@ -63,6 +63,8 @@ def _makeconf():
     elif osname=='Darwin':
         if machine=='ppc':
             HA = 'darwin-ppc'
+        elif machine=='arm64':
+            HA = 'darwin-aarch64'
         else:
             HA = 'darwin-x86'
 
