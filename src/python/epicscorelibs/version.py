@@ -6,7 +6,6 @@ BASEVERSION.99.ABI.SRC
 
 """
 import re
-from pkg_resources import get_distribution, parse_version
 
 __all__ = (
     'version',
@@ -14,9 +13,16 @@ __all__ = (
     'abi_requires',
 )
 
-_me = get_distribution('epicscorelibs')
+def version():
+    try:
+        from importlib.metadata import version # >= py 3.8
+    except ImportError: # removed from setuptools v82
+        from pkg_resources import get_distribution
+        return get_distribution('epicscorelibs').version
+    else:
+        return version('epicscorelibs')
 
-version = _me.version # as a string
+version = version() # as a string
 
 # in old setuptools parse_version() returns a tuple
 #version_info = parse_version(version)
