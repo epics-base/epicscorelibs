@@ -26,7 +26,7 @@ jobs:
           py: cp37-cp37m
           skip: true
 
-        - ml: manylinux2014_x86_64
+        - ml: manylinux2010_x86_64
           py: cp38-cp38
 
         - ml: manylinux2014_x86_64
@@ -44,15 +44,12 @@ jobs:
         - ml: manylinux2014_x86_64
           py: cp313-cp313
 
-        - ml: manylinux2014_x86_64
-          py: cp313-cp313t
-
         - ml: manylinux_2_28_x86_64
           py: cp314-cp314
+          src: true
 
         - ml: manylinux_2_28_x86_64
           py: cp314-cp314t
-          src: true
 
     steps:
       - uses: actions/checkout@v6
