@@ -15,12 +15,11 @@
 
 $| = 1;
 foreach( @files ) {
-    open(INPUT, "<$_");
+    open(INPUT, "<", $_) or die "Unable to read $_\n$!\n";
     $backup = "$_.bak";
     rename( $_, $backup) || die "Unable to rename $_\n$!\n";
+    open(OUTPUT, ">", $_) or die "Unable to write $_\n$!\n";
     # Make the output be binary so it won't convert /n back to /r/n
-    binmode OUTPUT, ":raw";
-    open(OUTPUT, ">$_");
     binmode OUTPUT, ":raw";
     while(<INPUT>) {
         # Remove CR-LF sequences
