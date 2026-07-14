@@ -103,17 +103,17 @@ def start_ioc(database=None, macros='', dbs=None, extra_dbd_load=(), extra_dso_l
 pva_dbd_load = (("PVAServerRegister.dbd", DEFAULT_DBD_PATH), ("qsrv.dbd", DEFAULT_DBD_PATH))
 pva_dso_load = ("epicscorelibs.lib.pvAccessIOC", "epicscorelibs.lib.qsrv",)
 def main(extra_dbd_load=pva_dbd_load, extra_dso_load=pva_dso_load):
-    class DbAction(argparse.Action):
-        def __call__(self, parser, ns, values, opt):
-            ns.database.append((values, ns.macros))
     parser = argparse.ArgumentParser(
         description="Run a cut down softIoc by calling the functions from Python")
     parser.add_argument('-m', '--macros', default="",
         help="Macro definitions when expanding database, e.g. -d \"macro=value,macro2=value2\"")
-    parser.add_argument('-d', '--database', default=[], action=DbAction,
+    parser.add_argument('-d', '--database', default=[], action='append',
         help="Path to database file to load")
     args = parser.parse_args()
-    start_ioc(dbs=args.database, extra_dbd_load=extra_dbd_load, extra_dso_load=extra_dso_load)
+    # Apply the macros to every database regardless of -m/-d order on the
+    # command line (matches the documented "-d db -m macro=value" usage).
+    dbs = [(database, args.macros) for database in args.database]
+    start_ioc(dbs=dbs, extra_dbd_load=extra_dbd_load, extra_dso_load=extra_dso_load)
     code.interact(local={
         'exit':sys.exit,
         'ioc':ioc,
