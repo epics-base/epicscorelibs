@@ -69,7 +69,9 @@ def start_ioc(database=None, macros='', dbs=None, extra_dbd_load=(), extra_dso_l
     if dbs is None:
         dbs = []
     if database is not None:
-        dbs += [(database, macros)]
+        # rebind rather than mutate: "dbs += ..." would extend a list passed
+        # in by the caller in place, corrupting it for later reuse.
+        dbs = dbs + [(database, macros)]
 
     def out(msg, *args):
         sys.stderr.write(msg%args)
