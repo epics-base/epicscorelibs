@@ -23,7 +23,11 @@ def main(args):
         ]
 
     elif args.version:
-        M=re.match(r'R?(\d+).(\d+).(\d+)(?:.(\d+))?(-.*)?', args.version)
+        M=re.match(r'R?(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?(-.*)?$', args.version)
+        if M is None:
+            print("Unable to parse version %r; expected e.g. R1.2.3, 1.2.3, "
+                  "or 1.2.3.4-suffix" % (args.version,))
+            sys.exit(1)
         actions=[
             ('SITE_VERSION', None),
             ('SHORT_VERSION', None),
