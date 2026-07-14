@@ -212,6 +212,10 @@ ca_field_type.errcheck = expect_connected(TYPENOTCONN)
 # channel.  Returns 0 if the channel is not connected.
 ca_element_count = libca.ca_element_count
 ca_element_count.argtypes = [ctypes.c_void_p]
+# C signature is "unsigned long ca_element_count(chid)"; without an explicit
+# restype ctypes defaults to c_int (32-bit signed), truncating the count on
+# LP64 platforms.
+ca_element_count.restype = ctypes.c_ulong
 ca_element_count.errcheck = expect_connected(0)
 
 
