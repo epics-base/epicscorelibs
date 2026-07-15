@@ -2,6 +2,11 @@ name: epicscorelibs
 
 on: [push, pull_request, workflow_dispatch]
 
+# Least privilege.  No job here needs to write to the repository; twine
+# authenticates to PyPI with its own credentials, not GITHUB_TOKEN.
+permissions:
+  contents: read
+
 defaults:
   run:
     shell: bash
@@ -57,7 +62,7 @@ jobs:
             submodules: recursive
 
       - name: Automatic core dumper analysis
-        uses: mdavidsaver/ci-core-dumper@master
+        uses: mdavidsaver/ci-core-dumper@5b5a8bc37e4296f4d2cc9f7914fc79b30ba64ce9 # v4
 
       - name: Detect pre-release
         run: python ./gha-set-pre.py
@@ -210,7 +215,7 @@ jobs:
         run: python ./gha-set-pre.py
 
       - name: Automatic core dumper analysis
-        uses: mdavidsaver/ci-core-dumper@master
+        uses: mdavidsaver/ci-core-dumper@5b5a8bc37e4296f4d2cc9f7914fc79b30ba64ce9 # v4
 
       - name: Build
         run: |
