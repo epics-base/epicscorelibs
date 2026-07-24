@@ -443,7 +443,11 @@ if toolchain_macros.get('__GNUC__') is not None:
 modules = []
 headers = ['epicsVersion.h']
 
-local_defs = [('USE_TYPED_RSET', None)]
+local_defs = [
+    ('USE_TYPED_RSET', None),
+    ('USE_TYPED_DSET', None),
+    ('USE_TYPED_DRVET', None),
+]
 
 def build_module(name, srcdir, defs=[], deps=[], srcs=[], soversion=None):
     #print("Include EPICS module %s in %s"%(name, srcdir))
