@@ -53,7 +53,9 @@ def _makeconf():
             HA = 'linux-x86_64'
         elif machine=='ppc':
             HA = 'linux-ppc'
-        elif machine.startswith('arm') or machine=="aarch64":
+        elif machine=='aarch64':
+            HA = 'linux-aarch64'
+        elif machine.startswith('arm'):
             HA = 'linux-arm'
         elif machine.endswith('86'):
             HA = 'linux-x86'
